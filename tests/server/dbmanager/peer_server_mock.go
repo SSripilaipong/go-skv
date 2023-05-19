@@ -1,4 +1,4 @@
-package dbmanager
+package dbmanagerTest
 
 type PeerServerMock struct {
 	Start_IsCalled bool
