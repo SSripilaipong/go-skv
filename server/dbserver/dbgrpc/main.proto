@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option go_package = "server/dbserver/dbgrpc";
+
+service DbService {
+  rpc GetValue(GetValueRequest) returns (GetValueResponse) {}
+}
+
+message GetValueRequest {
+  string key = 1;
+}
+
+message GetValueResponse {
+  string value = 1;
+}
