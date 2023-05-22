@@ -10,13 +10,18 @@ import (
 )
 
 func New(port int, dep Dependency) dbmanager.DbServer {
-	return &server{port: port, getValueUsecase: dep.GetValueUsecase}
+	return &server{
+		port:            port,
+		getValueUsecase: dep.GetValueUsecase,
+		setValueUsecase: dep.SetValueUsecase,
+	}
 }
 
 type server struct {
 	port            int
 	grpcServer      *grpc.Server
 	getValueUsecase dbusecase.GetValueFunc
+	setValueUsecase dbusecase.SetValueFunc
 }
 
 func (s *server) Start() error {
@@ -27,6 +32,7 @@ func (s *server) Start() error {
 	s.grpcServer = grpc.NewServer()
 	dbgrpc.RegisterDbServiceServer(s.grpcServer, &controller{
 		getValueUsecase: s.getValueUsecase,
+		setValueUsecase: s.setValueUsecase,
 	})
 
 	go func() {
