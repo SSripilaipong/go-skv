@@ -2,6 +2,7 @@ package dbserver
 
 import (
 	"context"
+	"fmt"
 	"go-skv/server/dbserver/dbgrpc"
 	"go-skv/server/dbusecase"
 )
@@ -13,11 +14,17 @@ type controller struct {
 }
 
 func (c *controller) GetValue(_ context.Context, request *dbgrpc.GetValueRequest) (*dbgrpc.GetValueResponse, error) {
-	_, _ = c.getValueUsecase(&dbusecase.GetValueRequest{Key: request.Key})
-	return nil, nil
+	result, err := c.getValueUsecase(&dbusecase.GetValueRequest{Key: request.Key})
+	if err != nil {
+		panic(fmt.Errorf("unhandled error: %f", err))
+	}
+	return &dbgrpc.GetValueResponse{Value: result.Value}, nil
 }
 
 func (c *controller) SetValue(_ context.Context, request *dbgrpc.SetValueRequest) (*dbgrpc.SetValueResponse, error) {
-	_, _ = c.setValueUsecase(&dbusecase.SetValueRequest{Key: request.Key, Value: request.Value})
+	_, err := c.setValueUsecase(&dbusecase.SetValueRequest{Key: request.Key, Value: request.Value})
+	if err != nil {
+		panic(fmt.Errorf("unhandled error: %f", err))
+	}
 	return nil, nil
 }
