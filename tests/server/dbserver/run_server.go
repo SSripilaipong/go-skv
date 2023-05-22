@@ -7,20 +7,20 @@ import (
 	"go-skv/server/dbusecase"
 )
 
-func RunWithPortAndGetValueUsecase(port int, usecase dbusecase.GetValueFunc, execute func(server dbmanager.DbServer) error) error {
-	return runWithPortAndDependency(port, dbserver.Dependency{
+func RunWithGetValueUsecase(usecase dbusecase.GetValueFunc, execute func(server dbmanager.DbServer) error) error {
+	return runWithDependency(dbserver.Dependency{
 		GetValueUsecase: usecase,
 	}, execute)
 }
 
-func RunWithPortAndSetValueUsecase(port int, usecase dbusecase.SetValueFunc, execute func(server dbmanager.DbServer) error) error {
-	return runWithPortAndDependency(port, dbserver.Dependency{
+func RunWithSetValueUsecase(usecase dbusecase.SetValueFunc, execute func(server dbmanager.DbServer) error) error {
+	return runWithDependency(dbserver.Dependency{
 		SetValueUsecase: usecase,
 	}, execute)
 }
 
-func runWithPortAndDependency(port int, dependency dbserver.Dependency, execute func(server dbmanager.DbServer) error) error {
-	server := dbserver.New(port, dependency)
+func runWithDependency(dependency dbserver.Dependency, execute func(server dbmanager.DbServer) error) error {
+	server := dbserver.New(0, dependency)
 	if err := server.Start(); err != nil {
 		panic(fmt.Errorf("unexpected error"))
 	}
