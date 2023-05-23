@@ -10,15 +10,35 @@ import (
 )
 
 func Test_should_send_get_value_message_to_storage(t *testing.T) {
-	storageChan := make(chan storage.Packet, 2)
+	storageChan := make(chan any, 2)
 	execute := dbusecase.GetValueUsecase(dbusecase.NewDependency(storageChan))
 
 	_, _ = execute(&dbusecase.GetValueRequest{Key: "Go"})
 
-	packet, ok := goutil.ReceiveNoBlock(storageChan)
+	message, ok := goutil.ReceiveNoBlock(storageChan)
 	if !ok {
 		panic(fmt.Errorf("unexpected error"))
 	}
 
-	assert.Equal(t, storage.GetValueMessage{Key: "Go"}, packet.Message())
+	_, isGetValueMessage := message.(storage.GetValueMessage)
+	assert.True(t, isGetValueMessage)
+}
+
+func Test_should_send_get_value_message_with_key(t *testing.T) {
+	storageChan := make(chan any, 2)
+	execute := dbusecase.GetValueUsecase(dbusecase.NewDependency(storageChan))
+
+	_, _ = execute(&dbusecase.GetValueRequest{Key: "Go"})
+
+	message, ok := goutil.ReceiveNoBlock(storageChan)
+	if !ok {
+		panic(fmt.Errorf("unexpected error"))
+	}
+
+	getValueMessage, isGetValueMessage := message.(storage.GetValueMessage)
+	if !isGetValueMessage {
+		panic(fmt.Errorf("unexpected error"))
+	}
+
+	assert.Equal(t, "Go", getValueMessage.Key())
 }

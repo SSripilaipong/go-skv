@@ -1,9 +1,5 @@
 package storage
 
-type GetValueMessage struct {
-	Key string
-}
-
-type Packet interface {
-	Message() any
+type GetValueMessage interface {
+	Key() string
 }

@@ -1,12 +1,10 @@
 package dbusecase
 
-import "go-skv/server/storage"
-
 type Dependency struct {
-	storageChan chan storage.Packet
+	storageChan chan any
 }
 
-func NewDependency(storageChan chan storage.Packet) *Dependency {
+func NewDependency(storageChan chan any) *Dependency {
 	return &Dependency{
 		storageChan: storageChan,
 	}

@@ -1,7 +1,5 @@
 package dbusecase
 
-import "go-skv/server/storage"
-
 type GetValueRequest struct {
 	Key string
 }
@@ -14,15 +12,15 @@ type GetValueFunc func(*GetValueRequest) (*GetValueResponse, error)
 
 func GetValueUsecase(dep *Dependency) GetValueFunc {
 	return func(request *GetValueRequest) (*GetValueResponse, error) {
-		dep.storageChan <- &storagePacket{message: storage.GetValueMessage{Key: request.Key}}
+		dep.storageChan <- &getValueMessage{key: request.Key}
 		return nil, nil
 	}
 }
 
-type storagePacket struct {
-	message any
+type getValueMessage struct {
+	key string
 }
 
-func (s *storagePacket) Message() any {
-	return s.message
+func (m *getValueMessage) Key() string {
+	return m.key
 }
