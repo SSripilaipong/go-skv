@@ -1,6 +1,7 @@
 package getValue
 
 import (
+	"context"
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"go-skv/goutil"
@@ -17,7 +18,7 @@ func Test_should_send_get_value_message_to_storage(t *testing.T) {
 	execute := dbusecase.GetValueUsecase(dbusecase.NewDependency(storageChan))
 
 	go func() {
-		_, _ = execute(&dbusecase.GetValueRequest{Key: "Go"})
+		_, _ = execute(context.Background(), &dbusecase.GetValueRequest{Key: "Go"})
 	}()
 
 	message, ok := goutil.ReceiveWithTimeout(storageChan, defaultTimeout)
@@ -34,7 +35,7 @@ func Test_should_send_get_value_message_with_key(t *testing.T) {
 	execute := dbusecase.GetValueUsecase(dbusecase.NewDependency(storageChan))
 
 	go func() {
-		_, _ = execute(&dbusecase.GetValueRequest{Key: "Go"})
+		_, _ = execute(context.Background(), &dbusecase.GetValueRequest{Key: "Go"})
 	}()
 
 	message, ok := goutil.ReceiveWithTimeout(storageChan, defaultTimeout)
@@ -68,7 +69,7 @@ func Test_should_return_value_when_get_value_completed(t *testing.T) {
 		_ = getValueMessage.Completed(storage.GetValueResponse{Value: "Lang"})
 	}()
 
-	result, _ := execute(&dbusecase.GetValueRequest{Key: "Go"})
+	result, _ := execute(context.Background(), &dbusecase.GetValueRequest{Key: "Go"})
 
 	assert.Equal(t, &dbusecase.GetValueResponse{Value: "Lang"}, result)
 }

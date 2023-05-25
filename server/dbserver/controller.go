@@ -14,7 +14,7 @@ type controller struct {
 }
 
 func (c *controller) GetValue(_ context.Context, request *dbgrpc.GetValueRequest) (*dbgrpc.GetValueResponse, error) {
-	result, err := c.getValueUsecase(&dbusecase.GetValueRequest{Key: request.Key})
+	result, err := c.getValueUsecase(context.Background(), &dbusecase.GetValueRequest{Key: request.Key})
 	if err != nil {
 		panic(fmt.Errorf("unhandled error: %f", err))
 	}
