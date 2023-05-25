@@ -18,12 +18,14 @@ type GetValueResponse struct {
 type GetValueFunc func(context.Context, *GetValueRequest) (*GetValueResponse, error)
 
 func GetValueUsecase(dep *Dependency) GetValueFunc {
-	return func(_ context.Context, request *GetValueRequest) (*GetValueResponse, error) {
+	return func(ctx context.Context, request *GetValueRequest) (*GetValueResponse, error) {
 		resultChan := make(chan storage.GetValueResponse)
 		dep.storageChan <- getValueMessage{key: request.Key, resultChan: resultChan}
 		select {
 		case result := <-resultChan:
 			return &GetValueResponse{Value: result.Value}, nil
+		case <-ctx.Done():
+			return nil, fmt.Errorf("context closed")
 		case <-time.After(time.Second): // TODO: parameterize
 			panic(fmt.Errorf("unhandled error"))
 		}

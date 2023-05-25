@@ -73,3 +73,15 @@ func Test_should_return_value_when_get_value_completed(t *testing.T) {
 
 	assert.Equal(t, &dbusecase.GetValueResponse{Value: "Lang"}, result)
 }
+
+func Test_should_return_error_when_context_is_closed(t *testing.T) {
+	storageChan := make(chan any, 2)
+	execute := dbusecase.GetValueUsecase(dbusecase.NewDependency(storageChan))
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+
+	_, err := execute(ctx, &dbusecase.GetValueRequest{Key: "Go"})
+
+	assert.Equal(t, fmt.Errorf("context closed"), err)
+}
