@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"go-skv/server/dbmanager"
 	"go-skv/server/dbserver/dbgrpc"
-	"go-skv/server/dbusecase"
 	"google.golang.org/grpc"
 	"net"
 	"strconv"
@@ -13,16 +12,14 @@ import (
 
 func New(port int, dep Dependency) dbmanager.DbServer {
 	return &server{
-		port:            port,
-		getValueUsecase: dep.GetValueUsecase,
-		setValueUsecase: dep.SetValueUsecase,
+		port: port,
+		dep:  dep,
 	}
 }
 
 type server struct {
-	port            int
-	getValueUsecase dbusecase.GetValueFunc
-	setValueUsecase dbusecase.SetValueFunc
+	port int
+	dep  Dependency
 
 	grpcServer *grpc.Server
 }
@@ -36,10 +33,7 @@ func (s *server) Start() error {
 	s.updatePort(lis)
 
 	s.grpcServer = grpc.NewServer()
-	dbgrpc.RegisterDbServiceServer(s.grpcServer, &controller{
-		getValueUsecase: s.getValueUsecase,
-		setValueUsecase: s.setValueUsecase,
-	})
+	dbgrpc.RegisterDbServiceServer(s.grpcServer, NewController(s.dep))
 
 	go func() {
 		if err := s.grpcServer.Serve(lis); err != nil {

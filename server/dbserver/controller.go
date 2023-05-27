@@ -7,21 +7,28 @@ import (
 	"go-skv/server/dbusecase"
 )
 
-type controller struct {
+type Controller struct {
 	dbgrpc.UnimplementedDbServiceServer
 	getValueUsecase dbusecase.GetValueFunc
 	setValueUsecase dbusecase.SetValueFunc
 }
 
-func (c *controller) GetValue(_ context.Context, request *dbgrpc.GetValueRequest) (*dbgrpc.GetValueResponse, error) {
-	result, err := c.getValueUsecase(context.Background(), &dbusecase.GetValueRequest{Key: request.Key})
+func NewController(dep Dependency) *Controller {
+	return &Controller{
+		getValueUsecase: dep.GetValueUsecase,
+		setValueUsecase: dep.SetValueUsecase,
+	}
+}
+
+func (c *Controller) GetValue(ctx context.Context, request *dbgrpc.GetValueRequest) (*dbgrpc.GetValueResponse, error) {
+	result, err := c.getValueUsecase(ctx, &dbusecase.GetValueRequest{Key: request.Key})
 	if err != nil {
 		panic(fmt.Errorf("unhandled error: %f", err))
 	}
 	return &dbgrpc.GetValueResponse{Value: result.Value}, nil
 }
 
-func (c *controller) SetValue(_ context.Context, request *dbgrpc.SetValueRequest) (*dbgrpc.SetValueResponse, error) {
+func (c *Controller) SetValue(_ context.Context, request *dbgrpc.SetValueRequest) (*dbgrpc.SetValueResponse, error) {
 	_, err := c.setValueUsecase(context.Background(), &dbusecase.SetValueRequest{Key: request.Key, Value: request.Value})
 	if err != nil {
 		panic(fmt.Errorf("unhandled error: %f", err))
