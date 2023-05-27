@@ -1,5 +1,8 @@
 package dbstorage
 
-func (s *storage) handleSetValueMessage(SetValueMessage) {
-	s.recordFactory.New()
+import "go-skv/goutil"
+
+func (s *storage) handleSetValueMessage(message SetValueMessage) {
+	record := s.recordFactory.New()
+	goutil.PanicUnhandledError(record.SetValue(message.Value())) // TODO: handle error
 }

@@ -1,3 +1,5 @@
 package dbstorage
 
-type DbRecord interface{}
+type DbRecord interface {
+	SetValue(value string) error
+}
