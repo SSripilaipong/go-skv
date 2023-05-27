@@ -1,10 +1,12 @@
 package dbstorageTest
 
+import "go-skv/server/dbstorage"
+
 type RecordMock struct {
-	SetValue_value string
+	SetValue_message dbstorage.SetValueMessage
 }
 
-func (r *RecordMock) SetValue(value string) error {
-	r.SetValue_value = value
+func (r *RecordMock) SetValue(message dbstorage.SetValueMessage) error {
+	r.SetValue_message = message
 	return nil
 }

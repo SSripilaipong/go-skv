@@ -26,8 +26,9 @@ func Test_should_set_value_to_record(t *testing.T) {
 	storage := dbstorageTest.NewStorageWithChannelAndRecordFactory(storageChan, factory)
 	goutil.PanicUnhandledError(storage.Start())
 
-	goutil.SendWithTimeoutOrPanic(storageChan, any(&message{value: "vvv"}), defaultTimeout)
+	m := &message{value: "vvv"}
+	goutil.SendWithTimeoutOrPanic(storageChan, any(m), defaultTimeout)
 	goutil.PanicUnhandledError(storage.Stop())
 
-	assert.Equal(t, record.SetValue_value, "vvv")
+	assert.Equal(t, record.SetValue_message, m)
 }
