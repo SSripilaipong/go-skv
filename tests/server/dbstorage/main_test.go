@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func Test_should_read_message_from_channel(t *testing.T) {
+func Test_should_receive_message_from_channel(t *testing.T) {
 	storageChan := make(chan any)
 	storage := dbstorage.New(storageChan)
 	goutil.PanicUnhandledError(storage.Start())
@@ -16,4 +16,16 @@ func Test_should_read_message_from_channel(t *testing.T) {
 	isReceived := goutil.SendWithTimeout(storageChan, any(struct{}{}), defaultTimeout)
 
 	assert.True(t, isReceived)
+}
+
+func Test_should_receive_multiple_messages_from_channel(t *testing.T) {
+	storageChan := make(chan any)
+	storage := dbstorage.New(storageChan)
+	goutil.PanicUnhandledError(storage.Start())
+	defer goutil.PanicUnhandledError(storage.Stop())
+
+	goutil.SendWithTimeout(storageChan, any(struct{}{}), defaultTimeout)
+	isReceived2 := goutil.SendWithTimeout(storageChan, any(struct{}{}), defaultTimeout)
+
+	assert.True(t, isReceived2)
 }

@@ -15,7 +15,9 @@ type storage struct {
 
 func (s *storage) Start() error {
 	go func() {
-		goutil.ReceiveWithTimeout(s.ch, time.Second)
+		for {
+			goutil.ReceiveWithTimeout(s.ch, time.Second)
+		}
 	}()
 	return nil
 }
