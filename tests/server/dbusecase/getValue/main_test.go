@@ -8,10 +8,7 @@ import (
 	"go-skv/server/dbusecase"
 	"go-skv/server/storage"
 	"testing"
-	"time"
 )
-
-const defaultTimeout = 100 * time.Millisecond
 
 func Test_should_send_get_value_message_to_storage(t *testing.T) {
 	storageChan := make(chan any, 2)
