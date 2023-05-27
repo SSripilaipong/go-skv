@@ -18,7 +18,7 @@ type SetValueFunc func(context.Context, *SetValueRequest) (*SetValueResponse, er
 func SetValueUsecase(dep *Dependency) SetValueFunc {
 	return func(ctx context.Context, request *SetValueRequest) (*SetValueResponse, error) {
 		dep.storageChan <- setValueMessage{key: request.Key, value: request.Value}
-		return nil, nil
+		return &SetValueResponse{}, nil
 	}
 }
 
