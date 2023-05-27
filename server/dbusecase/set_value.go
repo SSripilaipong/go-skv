@@ -1,6 +1,9 @@
 package dbusecase
 
-import "go-skv/server/storage"
+import (
+	"context"
+	"go-skv/server/storage"
+)
 
 type SetValueRequest struct {
 	Key   string
@@ -10,10 +13,10 @@ type SetValueRequest struct {
 type SetValueResponse struct {
 }
 
-type SetValueFunc func(*SetValueRequest) (*SetValueResponse, error)
+type SetValueFunc func(context.Context, *SetValueRequest) (*SetValueResponse, error)
 
 func SetValueUsecase(dep *Dependency) SetValueFunc {
-	return func(*SetValueRequest) (*SetValueResponse, error) {
+	return func(context.Context, *SetValueRequest) (*SetValueResponse, error) {
 		dep.storageChan <- setValueMessage{}
 		return nil, nil
 	}

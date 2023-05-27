@@ -22,7 +22,7 @@ func (c *controller) GetValue(_ context.Context, request *dbgrpc.GetValueRequest
 }
 
 func (c *controller) SetValue(_ context.Context, request *dbgrpc.SetValueRequest) (*dbgrpc.SetValueResponse, error) {
-	_, err := c.setValueUsecase(&dbusecase.SetValueRequest{Key: request.Key, Value: request.Value})
+	_, err := c.setValueUsecase(context.Background(), &dbusecase.SetValueRequest{Key: request.Key, Value: request.Value})
 	if err != nil {
 		panic(fmt.Errorf("unhandled error: %f", err))
 	}

@@ -1,6 +1,7 @@
 package setValue
 
 import (
+	"context"
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"go-skv/goutil"
@@ -14,7 +15,7 @@ func Test_should_send_set_value_message_to_storage(t *testing.T) {
 	execute := dbusecase.SetValueUsecase(dbusecase.NewDependency(storageChan))
 
 	go func() {
-		_, _ = execute(&dbusecase.SetValueRequest{Key: "Go", Value: "Lang"})
+		_, _ = execute(context.Background(), &dbusecase.SetValueRequest{Key: "Go", Value: "Lang"})
 	}()
 
 	message, ok := goutil.ReceiveWithTimeout(storageChan, defaultTimeout)
