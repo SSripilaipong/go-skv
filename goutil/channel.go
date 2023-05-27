@@ -32,3 +32,18 @@ func ReceiveWithTimeoutOrPanic[T any](dataChan chan T, timeout time.Duration) T 
 	}
 	return message
 }
+
+func SendWithTimeout[T any](dataChan chan T, data T, timeout time.Duration) bool {
+	select {
+	case dataChan <- data:
+		return true
+	case <-time.After(timeout):
+		return false
+	}
+}
+
+func SendWithTimeoutOrPanic[T any](dataChan chan T, data T, timeout time.Duration) {
+	if !SendWithTimeout(dataChan, data, timeout) {
+		panic(fmt.Errorf("unexpected error"))
+	}
+}
