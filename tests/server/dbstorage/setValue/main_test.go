@@ -13,7 +13,7 @@ func Test_should_create_new_record(t *testing.T) {
 	storage := dbstorageTest.NewStorageWithChannelAndRecordFactory(storageChan, factory)
 	goutil.PanicUnhandledError(storage.Start())
 
-	goutil.SendWithTimeoutOrPanic(storageChan, any(&message{}), defaultTimeout)
+	goutil.SendWithTimeoutOrPanic(storageChan, any(&dbstorageTest.SetValueMessage{}), defaultTimeout)
 	goutil.PanicUnhandledError(storage.Stop())
 
 	assert.True(t, factory.New_IsCalled)
@@ -26,7 +26,7 @@ func Test_should_set_value_to_record(t *testing.T) {
 	storage := dbstorageTest.NewStorageWithChannelAndRecordFactory(storageChan, factory)
 	goutil.PanicUnhandledError(storage.Start())
 
-	m := &message{value: "vvv"}
+	m := &dbstorageTest.SetValueMessage{ValueField: "vvv"}
 	goutil.SendWithTimeoutOrPanic(storageChan, any(m), defaultTimeout)
 	goutil.PanicUnhandledError(storage.Stop())
 

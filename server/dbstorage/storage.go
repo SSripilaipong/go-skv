@@ -11,7 +11,9 @@ func New(ch chan any, recordFactory RecordFactory) Interface {
 		recordFactory: recordFactory,
 		ctx:           ctx,
 		cancel:        cancel,
-		stopped:       make(chan struct{}),
+
+		stopped: make(chan struct{}),
+		records: make(map[string]DbRecord),
 	}
 }
 
@@ -20,7 +22,9 @@ type storage struct {
 	recordFactory RecordFactory
 	ctx           context.Context
 	cancel        context.CancelFunc
-	stopped       chan struct{}
+
+	stopped chan struct{}
+	records map[string]DbRecord
 }
 
 func (s *storage) Start() error {
