@@ -19,6 +19,22 @@ func Test_should_create_new_record(t *testing.T) {
 	assert.True(t, factory.New_IsCalled)
 }
 
+func Test_should_not_create_same_record_twice(t *testing.T) {
+	storageChan := make(chan any)
+	factory := &dbstorageTest.RecordFactoryMock{}
+	storage := dbstorageTest.NewStorageWithChannelAndRecordFactory(storageChan, factory)
+	goutil.PanicUnhandledError(storage.Start())
+
+	goutil.SendWithTimeoutOrPanic(storageChan, any(&dbstorageTest.SetValueMessage{KeyField: "aaa"}), defaultTimeout)
+	factory.New_CaptureReset()
+
+	goutil.SendWithTimeoutOrPanic(storageChan, any(&dbstorageTest.SetValueMessage{KeyField: "aaa"}), defaultTimeout)
+
+	goutil.PanicUnhandledError(storage.Stop())
+
+	assert.False(t, factory.New_IsCalled)
+}
+
 func Test_should_set_value_to_record(t *testing.T) {
 	storageChan := make(chan any)
 	record := &dbstorageTest.RecordMock{}

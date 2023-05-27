@@ -14,3 +14,7 @@ func (f *RecordFactoryMock) New() dbstorage.DbRecord {
 	f.New_IsCalled = true
 	return goutil.Coalesce[dbstorage.DbRecord](f.New_Return, &RecordMock{})
 }
+
+func (f *RecordFactoryMock) New_CaptureReset() {
+	f.New_IsCalled = false
+}
