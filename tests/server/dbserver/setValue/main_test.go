@@ -3,7 +3,7 @@ package setValue
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
-	"go-skv/server/dbmanager"
+	"go-skv/server/dbserver"
 	"go-skv/server/dbserver/dbgrpc"
 	"go-skv/server/dbusecase"
 	"go-skv/tests"
@@ -15,7 +15,7 @@ import (
 func Test_should_call_set_value_usecase(t *testing.T) {
 	usecase := &setValueUsecaseMock{}
 
-	_ = dbserverTest.RunWithSetValueUsecase(usecase.New(), func(server dbmanager.DbServer) error {
+	_ = dbserverTest.RunWithSetValueUsecase(usecase.New(), func(server dbserver.Interface) error {
 		return dbserverTest.ConnectWithPort(server.Port(), func(client dbgrpc.DbServiceClient) error {
 			return tests.ExecuteWithTimeout(time.Second, func(ctx context.Context) error {
 				_, _ = client.SetValue(ctx, &dbgrpc.SetValueRequest{Key: "Hello", Value: "World"})

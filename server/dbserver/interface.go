@@ -1,6 +1,6 @@
-package dbmanager
+package dbserver
 
-type DbServer interface {
+type Interface interface {
 	Start() error
 	Stop() error
 	Port() int

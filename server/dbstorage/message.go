@@ -1,4 +1,4 @@
-package storage
+package dbstorage
 
 type GetValueMessage interface {
 	Key() string

@@ -1,4 +1,4 @@
-package storage
+package dbstorage
 
 type GetValueResponse struct {
 	Value *string

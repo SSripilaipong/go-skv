@@ -23,3 +23,12 @@ func Test_should_start_db_server(t *testing.T) {
 
 	assert.True(t, dbServer.Start_IsCalled)
 }
+
+func Test_should_start_db_storage(t *testing.T) {
+	dbStorage := &dbmanagerTest.DbStorageMock{}
+	mgr := dbmanagerTest.NewWithDbStorage(dbStorage)
+
+	_ = doStart(mgr)
+
+	assert.True(t, dbStorage.Start_IsCalled)
+}

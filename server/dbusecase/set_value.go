@@ -3,7 +3,7 @@ package dbusecase
 import (
 	"context"
 	"fmt"
-	"go-skv/server/storage"
+	"go-skv/server/dbstorage"
 	"time"
 )
 
@@ -19,7 +19,7 @@ type SetValueFunc func(context.Context, *SetValueRequest) (*SetValueResponse, er
 
 func SetValueUsecase(dep *Dependency) SetValueFunc {
 	return func(ctx context.Context, request *SetValueRequest) (*SetValueResponse, error) {
-		resultChan := make(chan storage.SetValueResponse)
+		resultChan := make(chan dbstorage.SetValueResponse)
 		dep.storageChan <- setValueMessage{key: request.Key, value: request.Value, resultChan: resultChan}
 		select {
 		case <-resultChan:
@@ -35,7 +35,7 @@ func SetValueUsecase(dep *Dependency) SetValueFunc {
 type setValueMessage struct {
 	key        string
 	value      string
-	resultChan chan storage.SetValueResponse
+	resultChan chan dbstorage.SetValueResponse
 }
 
 func (m setValueMessage) Key() string {
@@ -46,7 +46,7 @@ func (m setValueMessage) Value() string {
 	return m.value
 }
 
-func (m setValueMessage) Completed(result storage.SetValueResponse) error {
+func (m setValueMessage) Completed(result dbstorage.SetValueResponse) error {
 	m.resultChan <- result
 	return nil
 }

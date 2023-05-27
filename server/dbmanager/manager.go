@@ -1,22 +1,35 @@
 package dbmanager
 
-import "fmt"
+import (
+	"fmt"
+	"go-skv/server/dbpeerserver"
+	"go-skv/server/dbserver"
+	"go-skv/server/dbstorage"
+)
 
 type Manager interface {
 	Start() error
 	Stop() error
 }
 
-func New(peerServer PeerServer, dbServer DbServer) Manager {
-	return &manager{peerServer: peerServer, dbServer: dbServer}
+func New(peerServer dbpeerserver.Interface, dbServer dbserver.Interface, dbStorage dbstorage.Interface) Manager {
+	return &manager{
+		peerServer: peerServer,
+		dbServer:   dbServer,
+		dbStorage:  dbStorage,
+	}
 }
 
 type manager struct {
-	peerServer PeerServer
-	dbServer   DbServer
+	peerServer dbpeerserver.Interface
+	dbServer   dbserver.Interface
+	dbStorage  dbstorage.Interface
 }
 
 func (m *manager) Start() error {
+	if err := m.dbStorage.Start(); err != nil {
+		panic(fmt.Errorf("unhandled error"))
+	}
 	if err := m.peerServer.Start(); err != nil {
 		panic(fmt.Errorf("unhandled error"))
 	}

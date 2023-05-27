@@ -2,7 +2,6 @@ package dbserver
 
 import (
 	"fmt"
-	"go-skv/server/dbmanager"
 	"go-skv/server/dbserver/dbgrpc"
 	"google.golang.org/grpc"
 	"net"
@@ -10,7 +9,7 @@ import (
 	"strings"
 )
 
-func New(port int, dep Dependency) dbmanager.DbServer {
+func New(port int, dep Dependency) Interface {
 	return &server{
 		port: port,
 		dep:  dep,
