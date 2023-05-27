@@ -12,7 +12,7 @@ message GetValueRequest {
 }
 
 message GetValueResponse {
-  string value = 1;
+  optional string value = 1;
 }
 
 message SetValueRequest {

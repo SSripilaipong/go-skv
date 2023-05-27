@@ -66,12 +66,12 @@ func Test_should_return_value_when_get_value_completed(t *testing.T) {
 			panic(fmt.Errorf("unexpected error"))
 		}
 
-		_ = getValueMessage.Completed(storage.GetValueResponse{Value: "Lang"})
+		_ = getValueMessage.Completed(storage.GetValueResponse{Value: goutil.Pointer("Lang")})
 	}()
 
 	result, _ := execute(context.Background(), &dbusecase.GetValueRequest{Key: "Go"})
 
-	assert.Equal(t, &dbusecase.GetValueResponse{Value: "Lang"}, result)
+	assert.Equal(t, &dbusecase.GetValueResponse{Value: goutil.Pointer("Lang")}, result)
 }
 
 func Test_should_return_error_when_context_is_closed(t *testing.T) {

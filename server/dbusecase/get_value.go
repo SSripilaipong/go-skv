@@ -12,7 +12,7 @@ type GetValueRequest struct {
 }
 
 type GetValueResponse struct {
-	Value string
+	Value *string
 }
 
 type GetValueFunc func(context.Context, *GetValueRequest) (*GetValueResponse, error)

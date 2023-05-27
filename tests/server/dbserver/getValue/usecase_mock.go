@@ -12,7 +12,7 @@ type getValueUsecaseMock struct {
 }
 
 func (m *getValueUsecaseMock) New() dbusecase.GetValueFunc {
-	response := goutil.Coalesce(m.Return, &dbusecase.GetValueResponse{Value: ""})
+	response := goutil.Coalesce(m.Return, &dbusecase.GetValueResponse{Value: goutil.Pointer("")})
 
 	return func(ctx context.Context, request *dbusecase.GetValueRequest) (*dbusecase.GetValueResponse, error) {
 		m.Request = request

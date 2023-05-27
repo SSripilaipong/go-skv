@@ -3,6 +3,7 @@ package getValue
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
+	"go-skv/goutil"
 	"go-skv/server/dbmanager"
 	"go-skv/server/dbserver/dbgrpc"
 	"go-skv/server/dbusecase"
@@ -28,7 +29,7 @@ func Test_should_call_get_value_usecase(t *testing.T) {
 }
 
 func Test_should_return_value_from_usecase(t *testing.T) {
-	usecase := &getValueUsecaseMock{Return: &dbusecase.GetValueResponse{Value: "World"}}
+	usecase := &getValueUsecaseMock{Return: &dbusecase.GetValueResponse{Value: goutil.Pointer("World")}}
 
 	var result *dbgrpc.GetValueResponse
 	_ = dbserverTest.RunWithGetValueUsecase(usecase.New(), func(server dbmanager.DbServer) error {
@@ -40,5 +41,5 @@ func Test_should_return_value_from_usecase(t *testing.T) {
 		})
 	})
 
-	assert.Equal(t, "World", result.Value)
+	assert.Equal(t, goutil.Pointer("World"), result.Value)
 }
