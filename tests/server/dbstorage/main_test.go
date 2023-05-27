@@ -11,7 +11,7 @@ func Test_should_receive_message_from_channel(t *testing.T) {
 	storageChan := make(chan any)
 	storage := dbstorage.New(storageChan)
 	goutil.PanicUnhandledError(storage.Start())
-	defer goutil.PanicUnhandledError(storage.Stop())
+	defer goutil.WillPanicUnhandledError(storage.Stop)()
 
 	isReceived := goutil.SendWithTimeout(storageChan, any(struct{}{}), defaultTimeout)
 
@@ -22,10 +22,21 @@ func Test_should_receive_multiple_messages_from_channel(t *testing.T) {
 	storageChan := make(chan any)
 	storage := dbstorage.New(storageChan)
 	goutil.PanicUnhandledError(storage.Start())
-	defer goutil.PanicUnhandledError(storage.Stop())
+	defer goutil.WillPanicUnhandledError(storage.Stop)()
 
 	goutil.SendWithTimeout(storageChan, any(struct{}{}), defaultTimeout)
 	isReceived2 := goutil.SendWithTimeout(storageChan, any(struct{}{}), defaultTimeout)
 
 	assert.True(t, isReceived2)
+}
+
+func Test_should_not_receive_message_after_closed(t *testing.T) {
+	storageChan := make(chan any)
+	storage := dbstorage.New(storageChan)
+	goutil.PanicUnhandledError(storage.Start())
+
+	goutil.PanicUnhandledError(storage.Stop())
+	isReceived := goutil.SendWithTimeout(storageChan, any(struct{}{}), defaultTimeout)
+
+	assert.False(t, isReceived)
 }

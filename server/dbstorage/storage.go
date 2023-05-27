@@ -1,27 +1,38 @@
 package dbstorage
 
 import (
-	"go-skv/goutil"
-	"time"
+	"context"
 )
 
 func New(ch chan any) Interface {
-	return &storage{ch: ch}
+	ctx, cancel := context.WithCancel(context.Background())
+	return &storage{ch: ch, ctx: ctx, cancel: cancel, stopped: make(chan struct{})}
 }
 
 type storage struct {
-	ch chan any
+	ch      chan any
+	ctx     context.Context
+	cancel  context.CancelFunc
+	stopped chan struct{}
 }
 
 func (s *storage) Start() error {
 	go func() {
 		for {
-			goutil.ReceiveWithTimeout(s.ch, time.Second)
+			select {
+			case <-s.ch:
+			case <-s.ctx.Done():
+				goto stop
+			}
 		}
+	stop:
+		s.stopped <- struct{}{}
 	}()
 	return nil
 }
 
 func (s *storage) Stop() error {
+	s.cancel()
+	<-s.stopped
 	return nil
 }
