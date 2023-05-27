@@ -14,3 +14,12 @@ func Test_should_stop_db_server(t *testing.T) {
 
 	assert.True(t, dbServer.Stop_IsCalled)
 }
+
+func Test_should_stop_db_storage(t *testing.T) {
+	dbStorage := &dbmanagerTest.DbStorageMock{}
+	mgr := dbmanagerTest.NewWithDbStorage(dbStorage)
+
+	_ = doStop(mgr)
+
+	assert.True(t, dbStorage.Stop_IsCalled)
+}
