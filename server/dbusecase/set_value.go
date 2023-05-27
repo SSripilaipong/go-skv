@@ -17,13 +17,14 @@ type SetValueFunc func(context.Context, *SetValueRequest) (*SetValueResponse, er
 
 func SetValueUsecase(dep *Dependency) SetValueFunc {
 	return func(ctx context.Context, request *SetValueRequest) (*SetValueResponse, error) {
-		dep.storageChan <- setValueMessage{key: request.Key}
+		dep.storageChan <- setValueMessage{key: request.Key, value: request.Value}
 		return nil, nil
 	}
 }
 
 type setValueMessage struct {
-	key string
+	key   string
+	value string
 }
 
 func (m setValueMessage) Key() string {
@@ -31,7 +32,7 @@ func (m setValueMessage) Key() string {
 }
 
 func (m setValueMessage) Value() string {
-	return ""
+	return m.value
 }
 
 func (m setValueMessage) Completed(storage.SetValueResponse) error {
