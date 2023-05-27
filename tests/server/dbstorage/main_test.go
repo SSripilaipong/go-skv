@@ -1,15 +1,14 @@
-package dbstorage
+package dbstorageTest
 
 import (
 	"github.com/stretchr/testify/assert"
 	"go-skv/goutil"
-	"go-skv/server/dbstorage"
 	"testing"
 )
 
 func Test_should_receive_message_from_channel(t *testing.T) {
 	storageChan := make(chan any)
-	storage := dbstorage.New(storageChan)
+	storage := NewStorageWithChannel(storageChan)
 	goutil.PanicUnhandledError(storage.Start())
 	defer goutil.WillPanicUnhandledError(storage.Stop)()
 
@@ -20,7 +19,7 @@ func Test_should_receive_message_from_channel(t *testing.T) {
 
 func Test_should_receive_multiple_messages_from_channel(t *testing.T) {
 	storageChan := make(chan any)
-	storage := dbstorage.New(storageChan)
+	storage := NewStorageWithChannel(storageChan)
 	goutil.PanicUnhandledError(storage.Start())
 	defer goutil.WillPanicUnhandledError(storage.Stop)()
 
@@ -32,7 +31,7 @@ func Test_should_receive_multiple_messages_from_channel(t *testing.T) {
 
 func Test_should_not_receive_message_after_closed(t *testing.T) {
 	storageChan := make(chan any)
-	storage := dbstorage.New(storageChan)
+	storage := NewStorageWithChannel(storageChan)
 	goutil.PanicUnhandledError(storage.Start())
 
 	goutil.PanicUnhandledError(storage.Stop())

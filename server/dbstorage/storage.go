@@ -4,30 +4,27 @@ import (
 	"context"
 )
 
-func New(ch chan any) Interface {
+func New(ch chan any, recordFactory RecordFactory) Interface {
 	ctx, cancel := context.WithCancel(context.Background())
-	return &storage{ch: ch, ctx: ctx, cancel: cancel, stopped: make(chan struct{})}
+	return &storage{
+		ch:            ch,
+		recordFactory: recordFactory,
+		ctx:           ctx,
+		cancel:        cancel,
+		stopped:       make(chan struct{}),
+	}
 }
 
 type storage struct {
-	ch      chan any
-	ctx     context.Context
-	cancel  context.CancelFunc
-	stopped chan struct{}
+	ch            chan any
+	recordFactory RecordFactory
+	ctx           context.Context
+	cancel        context.CancelFunc
+	stopped       chan struct{}
 }
 
 func (s *storage) Start() error {
-	go func() {
-		for {
-			select {
-			case <-s.ch:
-			case <-s.ctx.Done():
-				goto stop
-			}
-		}
-	stop:
-		s.stopped <- struct{}{}
-	}()
+	go s.mainLoop()
 	return nil
 }
 
