@@ -28,8 +28,8 @@ func (c *Controller) GetValue(ctx context.Context, request *dbgrpc.GetValueReque
 	return &dbgrpc.GetValueResponse{Value: result.Value}, nil
 }
 
-func (c *Controller) SetValue(_ context.Context, request *dbgrpc.SetValueRequest) (*dbgrpc.SetValueResponse, error) {
-	_, err := c.setValueUsecase(context.Background(), &dbusecase.SetValueRequest{Key: request.Key, Value: request.Value})
+func (c *Controller) SetValue(ctx context.Context, request *dbgrpc.SetValueRequest) (*dbgrpc.SetValueResponse, error) {
+	_, err := c.setValueUsecase(ctx, &dbusecase.SetValueRequest{Key: request.Key, Value: request.Value})
 	if err != nil {
 		panic(fmt.Errorf("unhandled error: %f", err))
 	}
