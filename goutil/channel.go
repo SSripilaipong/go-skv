@@ -1,6 +1,9 @@
 package goutil
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 func ReceiveNoBlock[T any](dataChan chan T) (T, bool) {
 	var zero T
@@ -20,4 +23,12 @@ func ReceiveWithTimeout[T any](dataChan chan T, timeout time.Duration) (T, bool)
 	case <-time.After(timeout):
 		return zero, false
 	}
+}
+
+func ReceiveWithTimeoutOrPanic[T any](dataChan chan T, timeout time.Duration) T {
+	message, ok := ReceiveWithTimeout(dataChan, timeout)
+	if !ok {
+		panic(fmt.Errorf("unexpected error"))
+	}
+	return message
 }

@@ -11,41 +11,18 @@ import (
 )
 
 func Test_should_send_get_value_message_to_storage(t *testing.T) {
-	storageChan := make(chan any, 2)
-	execute := dbusecase.GetValueUsecase(dbusecase.NewDependency(storageChan))
+	storageChan := getStorageChannelAfterExecute(context.Background(), &dbusecase.GetValueRequest{Key: "Go"})
 
-	go func() {
-		_, _ = execute(context.Background(), &dbusecase.GetValueRequest{Key: "Go"})
-	}()
+	message := goutil.ReceiveWithTimeoutOrPanic(storageChan, defaultTimeout)
 
-	message, ok := goutil.ReceiveWithTimeout(storageChan, defaultTimeout)
-	if !ok {
-		panic(fmt.Errorf("unexpected error"))
-	}
-
-	_, isGetValueMessage := message.(storage.GetValueMessage)
-	assert.True(t, isGetValueMessage)
+	assert.True(t, goutil.CanCast[storage.GetValueMessage](message))
 }
 
 func Test_should_send_get_value_message_with_key(t *testing.T) {
-	storageChan := make(chan any, 2)
-	execute := dbusecase.GetValueUsecase(dbusecase.NewDependency(storageChan))
+	storageChan := getStorageChannelAfterExecute(context.Background(), &dbusecase.GetValueRequest{Key: "Go"})
 
-	go func() {
-		_, _ = execute(context.Background(), &dbusecase.GetValueRequest{Key: "Go"})
-	}()
-
-	message, ok := goutil.ReceiveWithTimeout(storageChan, defaultTimeout)
-	if !ok {
-		panic(fmt.Errorf("unexpected error"))
-	}
-
-	getValueMessage, isGetValueMessage := message.(storage.GetValueMessage)
-	if !isGetValueMessage {
-		panic(fmt.Errorf("unexpected error"))
-	}
-
-	assert.Equal(t, "Go", getValueMessage.Key())
+	message := goutil.ReceiveWithTimeoutOrPanic(storageChan, defaultTimeout)
+	assert.Equal(t, "Go", goutil.CastOrPanic[storage.GetValueMessage](message).Key())
 }
 
 func Test_should_return_value_when_get_value_completed(t *testing.T) {
@@ -53,15 +30,8 @@ func Test_should_return_value_when_get_value_completed(t *testing.T) {
 	execute := dbusecase.GetValueUsecase(dbusecase.NewDependency(storageChan))
 
 	go func() {
-		message, ok := goutil.ReceiveWithTimeout(storageChan, defaultTimeout)
-		if !ok {
-			panic(fmt.Errorf("unexpected error"))
-		}
-
-		getValueMessage, isGetValueMessage := message.(storage.GetValueMessage)
-		if !isGetValueMessage {
-			panic(fmt.Errorf("unexpected error"))
-		}
+		message := goutil.ReceiveWithTimeoutOrPanic(storageChan, defaultTimeout)
+		getValueMessage := goutil.CastOrPanic[storage.GetValueMessage](message)
 
 		_ = getValueMessage.Completed(storage.GetValueResponse{Value: goutil.Pointer("Lang")})
 	}()
@@ -72,8 +42,7 @@ func Test_should_return_value_when_get_value_completed(t *testing.T) {
 }
 
 func Test_should_return_error_when_context_is_closed(t *testing.T) {
-	storageChan := make(chan any, 2)
-	execute := dbusecase.GetValueUsecase(dbusecase.NewDependency(storageChan))
+	execute := dbusecase.GetValueUsecase(dbusecase.NewDependency(make(chan any, 2)))
 
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()

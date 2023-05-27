@@ -5,7 +5,7 @@ import (
 	"go-skv/server/dbusecase"
 )
 
-func getStorageChannelAfterExecute(ctx context.Context, request *dbusecase.SetValueRequest, f func(storageChan chan any)) {
+func getStorageChannelAfterExecute(ctx context.Context, request *dbusecase.SetValueRequest) chan any {
 	storageChan := make(chan any, 2)
 	execute := dbusecase.SetValueUsecase(dbusecase.NewDependency(storageChan))
 
@@ -13,5 +13,5 @@ func getStorageChannelAfterExecute(ctx context.Context, request *dbusecase.SetVa
 		_, _ = execute(ctx, request)
 	}()
 
-	f(storageChan)
+	return storageChan
 }
