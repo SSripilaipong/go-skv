@@ -4,12 +4,12 @@ import (
 	"context"
 )
 
-func New(ch chan any, recordFactory RecordFactory) Interface {
-	ctx, cancel := context.WithCancel(context.Background())
+func New(ctx context.Context, ch chan any, recordFactory RecordFactory) Interface {
+	ctxWithCancel, cancel := context.WithCancel(ctx)
 	return &storage{
 		ch:            ch,
 		recordFactory: recordFactory,
-		ctx:           ctx,
+		ctx:           ctxWithCancel,
 		cancel:        cancel,
 
 		stopped: make(chan struct{}),
