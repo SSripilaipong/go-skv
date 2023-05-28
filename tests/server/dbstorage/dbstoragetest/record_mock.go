@@ -1,4 +1,4 @@
-package dbstorageTest
+package dbstoragetest
 
 import "go-skv/server/dbstorage"
 
@@ -14,5 +14,9 @@ func (r *RecordMock) SetValue(message dbstorage.SetValueMessage) error {
 
 func (r *RecordMock) GetValue(message dbstorage.GetValueMessage) error {
 	r.GetValue_message = message
+	return nil
+}
+
+func (r *RecordMock) Destroy() error {
 	return nil
 }

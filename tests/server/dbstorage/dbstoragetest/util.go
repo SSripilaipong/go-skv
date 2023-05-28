@@ -1,4 +1,4 @@
-package dbstorageTest
+package dbstoragetest
 
 import (
 	"context"

@@ -4,6 +4,11 @@ import (
 	"context"
 )
 
+type Interface interface {
+	Start() error
+	Stop() error
+}
+
 func New(ctx context.Context, ch chan any, recordFactory RecordFactory) Interface {
 	ctxWithCancel, cancel := context.WithCancel(ctx)
 	return &storage{
