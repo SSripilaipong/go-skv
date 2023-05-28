@@ -21,10 +21,10 @@ type Connection struct {
 	conn    *grpc.ClientConn
 }
 
-func (c *Connection) GetValue(ctx context.Context, key string) (string, error) {
-	_, err := c.service.GetValue(ctx, &dbgrpc.GetValueRequest{Key: key})
+func (c *Connection) GetValue(_ context.Context, key string) (string, error) {
+	response, err := c.service.GetValue(context.Background(), &dbgrpc.GetValueRequest{Key: key})
 	goutil.PanicUnhandledError(err)
-	return "", nil
+	return *goutil.Coalesce(response.Value, goutil.Pointer("")), nil
 }
 
 func (c *Connection) Close() error {
