@@ -21,9 +21,15 @@ type Connection struct {
 	conn    *grpc.ClientConn
 }
 
-func (c *Connection) GetValue(_ context.Context, key string) (string, error) {
-	response, err := c.service.GetValue(context.Background(), &dbgrpc.GetValueRequest{Key: key})
+func (c *Connection) GetValue(ctx context.Context, key string) (string, error) {
+	response, grpcErr := c.service.GetValue(ctx, &dbgrpc.GetValueRequest{Key: key})
+	clientErr, err := parseGrpcError(grpcErr)
 	goutil.PanicUnhandledError(err)
+
+	if clientErr != nil {
+		return "", clientErr
+	}
+
 	return *goutil.Coalesce(response.Value, goutil.Pointer("")), nil
 }
 
