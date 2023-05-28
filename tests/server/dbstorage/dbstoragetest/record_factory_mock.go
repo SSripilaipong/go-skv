@@ -1,8 +1,8 @@
 package dbstoragetest
 
 import (
-	"go-skv/goutil"
 	"go-skv/server/dbstorage"
+	"go-skv/util/goutil"
 )
 
 type RecordFactoryMock struct {

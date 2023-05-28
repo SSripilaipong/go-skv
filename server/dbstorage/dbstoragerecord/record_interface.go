@@ -2,8 +2,8 @@ package dbstoragerecord
 
 import (
 	"context"
-	"go-skv/goutil"
 	"go-skv/server/dbstorage"
+	"go-skv/util/goutil"
 )
 
 type recordInterface struct {

@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/stretchr/testify/assert"
-	"go-skv/goutil"
 	"go-skv/server/dbstorage"
 	"go-skv/server/dbusecase"
+	goutil2 "go-skv/util/goutil"
 	"testing"
 )
 
@@ -15,8 +15,8 @@ func Test_should_return_value_when_set_value_completed(t *testing.T) {
 	execute := dbusecase.SetValueUsecase(dbusecase.NewDependency(storageChan))
 
 	go func() {
-		message := goutil.ReceiveWithTimeoutOrPanic(storageChan, defaultTimeout)
-		setValueMessage := goutil.CastOrPanic[dbstorage.SetValueMessage](message)
+		message := goutil2.ReceiveWithTimeoutOrPanic(storageChan, defaultTimeout)
+		setValueMessage := goutil2.CastOrPanic[dbstorage.SetValueMessage](message)
 
 		_ = setValueMessage.Completed(dbstorage.SetValueResponse{})
 	}()

@@ -2,8 +2,8 @@ package dbstoragerecord
 
 import (
 	"context"
-	"go-skv/goutil"
 	"go-skv/server/dbstorage"
+	goutil2 "go-skv/util/goutil"
 )
 
 func recordMainLoop(ctx context.Context, ch chan any, stopped chan struct{}) {
@@ -14,9 +14,9 @@ func recordMainLoop(ctx context.Context, ch chan any, stopped chan struct{}) {
 		case raw := <-ch:
 			if message, isSetMessage := raw.(dbstorage.SetValueMessage); isSetMessage {
 				value = message.Value()
-				goutil.PanicUnhandledError(message.Completed(dbstorage.SetValueResponse{}))
+				goutil2.PanicUnhandledError(message.Completed(dbstorage.SetValueResponse{}))
 			} else if message, isGetMessage := raw.(dbstorage.GetValueMessage); isGetMessage {
-				goutil.PanicUnhandledError(message.Completed(dbstorage.GetValueResponse{Value: goutil.Pointer(value)}))
+				goutil2.PanicUnhandledError(message.Completed(dbstorage.GetValueResponse{Value: goutil2.Pointer(value)}))
 			}
 		case <-ctx.Done():
 			goto stop

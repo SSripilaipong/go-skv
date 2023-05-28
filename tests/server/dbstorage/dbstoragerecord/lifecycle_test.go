@@ -2,9 +2,9 @@ package dbstoragerecord
 
 import (
 	"github.com/stretchr/testify/assert"
-	"go-skv/goutil"
 	"go-skv/server/dbstorage"
 	"go-skv/tests/server/dbstorage/dbstoragerecord/dbstoragerecordtest"
+	"go-skv/util/goutil"
 	"testing"
 	"time"
 )
