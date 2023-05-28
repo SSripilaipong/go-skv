@@ -1,4 +1,4 @@
-package getValue
+package setValue
 
 import (
 	"context"
@@ -20,7 +20,7 @@ func Test_should_return_error_when_context_is_cancelled(t *testing.T) {
 		conn := client.NewConnection(addr.String())
 		defer goutil.WillPanicUnhandledError(conn.Close)()
 
-		_, err = conn.GetValue(cancelledContext, "")
+		err = conn.SetValue(cancelledContext, "", "")
 	})
 
 	assert.Equal(t, client.CancelledError{}, err)

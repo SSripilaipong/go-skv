@@ -23,9 +23,9 @@ type Connection struct {
 
 func (c *Connection) GetValue(ctx context.Context, key string) (string, error) {
 	response, grpcErr := c.service.GetValue(ctx, &dbgrpc.GetValueRequest{Key: key})
+
 	clientErr, err := parseGrpcError(grpcErr)
 	goutil.PanicUnhandledError(err)
-
 	if clientErr != nil {
 		return "", clientErr
 	}
@@ -34,7 +34,14 @@ func (c *Connection) GetValue(ctx context.Context, key string) (string, error) {
 }
 
 func (c *Connection) SetValue(ctx context.Context, key string, value string) error {
-	_, _ = c.service.SetValue(ctx, &dbgrpc.SetValueRequest{Key: key, Value: value})
+	_, grpcErr := c.service.SetValue(ctx, &dbgrpc.SetValueRequest{Key: key, Value: value})
+
+	clientErr, err := parseGrpcError(grpcErr)
+	goutil.PanicUnhandledError(err)
+	if clientErr != nil {
+		return clientErr
+	}
+
 	return nil
 }
 
