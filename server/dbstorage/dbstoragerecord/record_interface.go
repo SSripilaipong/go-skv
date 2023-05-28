@@ -7,14 +7,16 @@ import (
 )
 
 type recordInterface struct {
-	ctx context.Context
-	ch  chan any
+	ctx       context.Context
+	ch        chan any
+	ctxCancel context.CancelFunc
 }
 
-func newRecordInterface(ctx context.Context, ch chan any) dbstorage.DbRecord {
+func newRecordInterface(ctx context.Context, ctxCancel context.CancelFunc, ch chan any) dbstorage.DbRecord {
 	return &recordInterface{
-		ctx: ctx,
-		ch:  ch,
+		ctx:       ctx,
+		ctxCancel: ctxCancel,
+		ch:        ch,
 	}
 }
 
@@ -35,6 +37,7 @@ func (r *recordInterface) GetValue(dbstorage.GetValueMessage) error {
 }
 
 func (r *recordInterface) Destroy() error {
+	r.ctxCancel()
 	return nil
 }
 
