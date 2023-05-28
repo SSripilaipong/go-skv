@@ -20,6 +20,8 @@ func NewFactory(ctx context.Context, channelBufferSize int) dbstorage.RecordFact
 func (r *recordFactory) New() dbstorage.DbRecord {
 	ctx, ctxCancel := context.WithCancel(r.ctx)
 	ch := make(chan any, r.chBufferSize)
-	go recordMainLoop(ctx, ch)
-	return newRecordInterface(ctx, ctxCancel, ch)
+	stopped := make(chan struct{})
+
+	go recordMainLoop(ctx, ch, stopped)
+	return newRecordInterface(ctx, ctxCancel, ch, stopped)
 }

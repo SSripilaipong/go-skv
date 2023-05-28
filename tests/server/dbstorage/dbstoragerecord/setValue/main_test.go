@@ -7,15 +7,18 @@ import (
 	"go-skv/tests/server/dbstorage/dbstoragerecord/dbstoragerecordtest"
 	"go-skv/tests/server/dbstorage/dbstoragetest"
 	"testing"
+	"time"
 )
 
 func Test_should_call_completed(t *testing.T) {
 	factory := dbstoragerecordtest.NewFactory()
 	record := factory.New()
-	defer goutil.WillPanicUnhandledError(record.Destroy)
 
-	message := &dbstoragetest.SetValueMessage{}
+	message := &dbstoragetest.SetValueMessage{KeyField: "xxx"}
 	goutil.PanicUnhandledError(record.SetValue(message))
 
-	assert.Equal(t, dbstorage.SetValueResponse{}, message.Completed_Response)
+	time.Sleep(time.Millisecond)
+	goutil.PanicUnhandledError(record.Destroy())
+
+	assert.Equal(t, &dbstorage.SetValueResponse{}, message.Completed_Response)
 }

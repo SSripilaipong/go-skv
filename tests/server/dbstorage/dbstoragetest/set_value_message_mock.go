@@ -5,7 +5,7 @@ import "go-skv/server/dbstorage"
 type SetValueMessage struct {
 	KeyField           string
 	ValueField         string
-	Completed_Response dbstorage.SetValueResponse
+	Completed_Response *dbstorage.SetValueResponse
 }
 
 func (m *SetValueMessage) Key() string {
@@ -17,6 +17,6 @@ func (m *SetValueMessage) Value() string {
 }
 
 func (m *SetValueMessage) Completed(response dbstorage.SetValueResponse) error {
-	m.Completed_Response = response
+	m.Completed_Response = &response
 	return nil
 }
