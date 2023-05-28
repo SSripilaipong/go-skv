@@ -1,13 +1,24 @@
 package dbstoragerecord
 
-import "go-skv/server/dbstorage"
+import (
+	"context"
+	"go-skv/server/dbstorage"
+)
 
-type recordFactory struct{}
+type recordFactory struct {
+	ctx          context.Context
+	chBufferSize int
+}
 
-func NewFactory() dbstorage.RecordFactory {
-	return &recordFactory{}
+func NewFactory(ctx context.Context, channelBufferSize int) dbstorage.RecordFactory {
+	return &recordFactory{
+		ctx:          ctx,
+		chBufferSize: channelBufferSize,
+	}
 }
 
 func (r *recordFactory) New() dbstorage.DbRecord {
-	return newRecordInterface()
+	ch := make(chan any, r.chBufferSize)
+	go recordMainLoop(r.ctx, ch)
+	return newRecordInterface(r.ctx, ch)
 }

@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func ReceiveNoBlock[T any](dataChan chan T) (T, bool) {
+func ReceiveNoBlock[T any](dataChan <-chan T) (T, bool) {
 	var zero T
 	select {
 	case data := <-dataChan:

@@ -9,3 +9,9 @@ type DbRecord interface {
 	GetValue(GetValueMessage) error
 	Destroy() error
 }
+
+type RecordDestroyedError struct{}
+
+func (e RecordDestroyedError) Error() string {
+	return "record destroyed"
+}
