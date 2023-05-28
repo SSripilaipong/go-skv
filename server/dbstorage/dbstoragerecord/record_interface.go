@@ -19,7 +19,7 @@ func newRecordInterface(ctx context.Context, ch chan any) dbstorage.DbRecord {
 }
 
 func (r *recordInterface) SetValue(message dbstorage.SetValueMessage) error {
-	if _, isDone := goutil.ReceiveNoBlock(r.ctx.Done()); isDone {
+	if r.isContextEnded() {
 		return dbstorage.RecordDestroyedError{}
 	}
 
@@ -28,9 +28,17 @@ func (r *recordInterface) SetValue(message dbstorage.SetValueMessage) error {
 }
 
 func (r *recordInterface) GetValue(dbstorage.GetValueMessage) error {
+	if r.isContextEnded() {
+		return dbstorage.RecordDestroyedError{}
+	}
 	return nil
 }
 
 func (r *recordInterface) Destroy() error {
 	return nil
+}
+
+func (r *recordInterface) isContextEnded() bool {
+	_, isEnded := goutil.ReceiveNoBlock(r.ctx.Done())
+	return isEnded
 }
