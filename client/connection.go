@@ -33,6 +33,11 @@ func (c *Connection) GetValue(ctx context.Context, key string) (string, error) {
 	return *goutil.Coalesce(response.Value, goutil.Pointer("")), nil
 }
 
+func (c *Connection) SetValue(ctx context.Context, key string, value string) error {
+	_, _ = c.service.SetValue(ctx, &dbgrpc.SetValueRequest{Key: key, Value: value})
+	return nil
+}
+
 func (c *Connection) Close() error {
 	return c.conn.Close()
 }
