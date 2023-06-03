@@ -7,8 +7,10 @@ import (
 )
 
 func RunCli() {
-	cli := clientcli.New(clientcli.Dependency{
-		ConnectToServer: clientrepl.NewReplRunner(clientconnection.New),
-	})
+	cli := clientcli.New(
+		clientrepl.NewReplRunner(
+			clientconnection.New,
+		),
+	)
 	cli.Run()
 }

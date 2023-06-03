@@ -1,5 +1,5 @@
 package clientcli
 
-type Dependency struct {
+type dependency struct {
 	ConnectToServer func(string) error
 }

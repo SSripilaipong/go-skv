@@ -6,12 +6,12 @@ import (
 	"os"
 )
 
-func New(dep Dependency) Interface {
-	app := &cli.App{
-		EnableBashCompletion: true,
-		Commands:             commands(dep),
+func New(connectToServer func(string) error) Interface {
+	return &clientCli{
+		app: newCliApp(dependency{
+			ConnectToServer: connectToServer,
+		}),
 	}
-	return &clientCli{app: app}
 }
 
 type clientCli struct {
