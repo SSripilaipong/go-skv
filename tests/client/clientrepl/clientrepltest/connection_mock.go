@@ -20,6 +20,8 @@ func (f *ConnectionFactoryMock) New() clientconnection.ConnectionFactory {
 type ConnectionMock struct {
 	GetValue_key   string
 	GetValue_Value string
+	SetValue_key   string
+	SetValue_value string
 }
 
 func (c *ConnectionMock) GetValue(_ context.Context, key string) (string, error) {
@@ -27,9 +29,10 @@ func (c *ConnectionMock) GetValue(_ context.Context, key string) (string, error)
 	return c.GetValue_Value, nil
 }
 
-func (c *ConnectionMock) SetValue(context.Context, string, string) error {
-	//TODO implement me
-	panic("implement me")
+func (c *ConnectionMock) SetValue(_ context.Context, key string, value string) error {
+	c.SetValue_key = key
+	c.SetValue_value = value
+	return nil
 }
 
 func (c *ConnectionMock) Close() error {

@@ -25,3 +25,7 @@ func DoInputWithText(ctrl *clientrepl.Controller, text string) (string, error) {
 func DoGetValueInputWithKey(ctrl *clientrepl.Controller, key string) (string, error) {
 	return DoInputWithText(ctrl, fmt.Sprintf(`getvalue "%s"`+"\n", key))
 }
+
+func DoSetValueInputWithKeyAndValue(ctrl *clientrepl.Controller, key string, value string) (string, error) {
+	return DoInputWithText(ctrl, fmt.Sprintf(`setvalue "%s" "%s"`+"\n", key, value))
+}
