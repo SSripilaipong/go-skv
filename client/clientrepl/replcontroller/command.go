@@ -1,4 +1,4 @@
-package clientrepl
+package replcontroller
 
 func (c *Controller) generateCommandMapper() {
 	c.commandMapper = map[string]func([]string) (string, error){

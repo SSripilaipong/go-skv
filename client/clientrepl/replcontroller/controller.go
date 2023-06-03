@@ -1,4 +1,4 @@
-package clientrepl
+package replcontroller
 
 import (
 	"go-skv/client/clientconnection"

@@ -1,4 +1,4 @@
-package clientrepltest
+package replcontrollertest
 
 import (
 	"context"

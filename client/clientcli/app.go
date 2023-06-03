@@ -2,7 +2,7 @@ package clientcli
 
 import (
 	"github.com/urfave/cli/v2"
-	"go-skv/client/clientrepl"
+	"go-skv/client/clientrepl/replcontroller"
 	"log"
 	"os"
 )
@@ -31,7 +31,7 @@ func commands() []*cli.Command {
 			Name: "connect",
 			Action: func(ctx *cli.Context) error {
 				serverIp := ctx.Args().First()
-				return clientrepl.RunRuntimeRepl(serverIp)
+				return replcontroller.RunRuntimeRepl(serverIp)
 			},
 		},
 	}
