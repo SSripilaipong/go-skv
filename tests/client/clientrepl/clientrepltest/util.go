@@ -29,3 +29,7 @@ func DoGetValueInputWithKey(ctrl *clientrepl.Controller, key string) (string, er
 func DoSetValueInputWithKeyAndValue(ctrl *clientrepl.Controller, key string, value string) (string, error) {
 	return DoInputWithText(ctrl, fmt.Sprintf(`setvalue "%s" "%s"`+"\n", key, value))
 }
+
+func DoExit(ctrl *clientrepl.Controller) (string, error) {
+	return DoInputWithText(ctrl, "exit\n")
+}

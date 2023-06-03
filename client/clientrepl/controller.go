@@ -7,14 +7,17 @@ import (
 )
 
 func NewController(connectionFactory clientconnection.ConnectionFactory) *Controller {
-	return &Controller{
+	ctrl := &Controller{
 		connectionFactory: connectionFactory,
 	}
+	ctrl.generateCommandMapper()
+	return ctrl
 }
 
 type Controller struct {
 	connectionFactory clientconnection.ConnectionFactory
 	connection        clientconnection.Interface
+	commandMapper     map[string]func([]string) (string, error)
 }
 
 func (c *Controller) Connect(address string) (err error) {
@@ -28,11 +31,11 @@ func (c *Controller) Input(s string) (string, error) {
 	command, err := goutil.ElementAt(tokens, 0)
 	goutil.PanicUnhandledError(err)
 
-	switch strings.ToLower(command) {
-	case "getvalue":
-		return c.handleGetValueCommand(tokens[1:])
-	case "setvalue":
-		return c.handleSetValueCommand(tokens[1:])
+	params := tokens[1:]
+	handle, matches := c.commandMapper[strings.ToLower(command)]
+	if !matches {
+		return "", nil
 	}
-	return "", nil
+
+	return handle(params)
 }

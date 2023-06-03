@@ -22,6 +22,7 @@ type ConnectionMock struct {
 	GetValue_Value string
 	SetValue_key   string
 	SetValue_value string
+	Close_IsCalled bool
 }
 
 func (c *ConnectionMock) GetValue(_ context.Context, key string) (string, error) {
@@ -36,6 +37,6 @@ func (c *ConnectionMock) SetValue(_ context.Context, key string, value string) e
 }
 
 func (c *ConnectionMock) Close() error {
-	//TODO implement me
-	panic("implement me")
+	c.Close_IsCalled = true
+	return nil
 }
