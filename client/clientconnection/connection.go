@@ -1,4 +1,4 @@
-package client
+package clientconnection
 
 import (
 	"context"
@@ -8,15 +8,9 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type Connection interface {
-	GetValue(ctx context.Context, key string) (string, error)
-	SetValue(ctx context.Context, key string, value string) error
-	Close() error
-}
+type ConnectionFactory func(string) (Interface, error)
 
-type ConnectionFactory func(string) (Connection, error)
-
-func NewConnection(address string) (Connection, error) {
+func New(address string) (Interface, error) {
 	conn, err := grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	goutil.PanicUnhandledError(err)
 

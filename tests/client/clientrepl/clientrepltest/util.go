@@ -1,11 +1,11 @@
 package clientrepltest
 
 import (
-	"go-skv/client"
+	"go-skv/client/clientconnection"
 	"go-skv/client/clientrepl"
 )
 
-func NewControllerWithConnectionFactory(connectionFactory client.ConnectionFactory) *clientrepl.Controller {
+func NewControllerWithConnectionFactory(connectionFactory clientconnection.ConnectionFactory) *clientrepl.Controller {
 	return clientrepl.NewController(connectionFactory)
 }
 

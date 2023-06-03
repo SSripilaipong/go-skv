@@ -1,4 +1,4 @@
-package client
+package clientconnection
 
 import (
 	"google.golang.org/grpc/codes"

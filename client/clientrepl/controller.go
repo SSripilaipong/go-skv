@@ -2,20 +2,20 @@ package clientrepl
 
 import (
 	"context"
-	"go-skv/client"
+	"go-skv/client/clientconnection"
 	"go-skv/util/goutil"
 	"strings"
 )
 
-func NewController(connectionFactory client.ConnectionFactory) *Controller {
+func NewController(connectionFactory clientconnection.ConnectionFactory) *Controller {
 	return &Controller{
 		connectionFactory: connectionFactory,
 	}
 }
 
 type Controller struct {
-	connectionFactory client.ConnectionFactory
-	connection        client.Connection
+	connectionFactory clientconnection.ConnectionFactory
+	connection        clientconnection.Interface
 }
 
 func (c *Controller) Connect(address string) (err error) {

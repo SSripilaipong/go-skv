@@ -3,7 +3,7 @@ package setValue
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
-	"go-skv/client"
+	"go-skv/client/clientconnection"
 	"go-skv/tests/client/clienttest"
 	"go-skv/util/goutil"
 	"net"
@@ -17,11 +17,11 @@ func Test_should_return_error_when_context_is_cancelled(t *testing.T) {
 
 	var err error
 	clienttest.RunServerWithService(service, func(addr net.Addr) {
-		conn, _ := client.NewConnection(addr.String())
+		conn, _ := clientconnection.New(addr.String())
 		defer goutil.WillPanicUnhandledError(conn.Close)()
 
 		err = conn.SetValue(cancelledContext, "", "")
 	})
 
-	assert.Equal(t, client.CancelledError{}, err)
+	assert.Equal(t, clientconnection.CancelledError{}, err)
 }

@@ -2,16 +2,16 @@ package clientrepltest
 
 import (
 	"context"
-	"go-skv/client"
+	"go-skv/client/clientconnection"
 )
 
 type ConnectionFactoryMock struct {
 	Address string
-	Return  client.Connection
+	Return  clientconnection.Interface
 }
 
-func (f *ConnectionFactoryMock) New() client.ConnectionFactory {
-	return func(address string) (client.Connection, error) {
+func (f *ConnectionFactoryMock) New() clientconnection.ConnectionFactory {
+	return func(address string) (clientconnection.Interface, error) {
 		f.Address = address
 		return f.Return, nil
 	}
