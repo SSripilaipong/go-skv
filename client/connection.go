@@ -8,22 +8,28 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type ConnectionFactory func(string) (*Connection, error)
+type Connection interface {
+	GetValue(ctx context.Context, key string) (string, error)
+	SetValue(ctx context.Context, key string, value string) error
+	Close() error
+}
 
-func NewConnection(address string) (*Connection, error) {
+type ConnectionFactory func(string) (Connection, error)
+
+func NewConnection(address string) (Connection, error) {
 	conn, err := grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	goutil.PanicUnhandledError(err)
 
 	service := dbgrpc.NewDbServiceClient(conn)
-	return &Connection{service: service, conn: conn}, nil
+	return &connection{service: service, conn: conn}, nil
 }
 
-type Connection struct {
+type connection struct {
 	service dbgrpc.DbServiceClient
 	conn    *grpc.ClientConn
 }
 
-func (c *Connection) GetValue(ctx context.Context, key string) (string, error) {
+func (c *connection) GetValue(ctx context.Context, key string) (string, error) {
 	response, grpcErr := c.service.GetValue(ctx, &dbgrpc.GetValueRequest{Key: key})
 
 	clientErr, err := parseGrpcError(grpcErr)
@@ -35,7 +41,7 @@ func (c *Connection) GetValue(ctx context.Context, key string) (string, error) {
 	return *goutil.Coalesce(response.Value, goutil.Pointer("")), nil
 }
 
-func (c *Connection) SetValue(ctx context.Context, key string, value string) error {
+func (c *connection) SetValue(ctx context.Context, key string, value string) error {
 	_, grpcErr := c.service.SetValue(ctx, &dbgrpc.SetValueRequest{Key: key, Value: value})
 
 	clientErr, err := parseGrpcError(grpcErr)
@@ -47,6 +53,6 @@ func (c *Connection) SetValue(ctx context.Context, key string, value string) err
 	return nil
 }
 
-func (c *Connection) Close() error {
+func (c *connection) Close() error {
 	return c.conn.Close()
 }
