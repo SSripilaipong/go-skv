@@ -2,6 +2,7 @@ package clientrepl
 
 import (
 	"context"
+	"fmt"
 	"go-skv/client/clientconnection"
 	"go-skv/util/goutil"
 	"strings"
@@ -24,13 +25,15 @@ func (c *Controller) Connect(address string) (err error) {
 	return nil
 }
 
-func (c *Controller) Input(s string) error {
+func (c *Controller) Input(s string) (string, error) {
 	tokens := strings.Split(strings.Trim(s, "\n"), " ")
-	key, err := goutil.ElementAt(tokens, 1)
+	keyWithQuotes, err := goutil.ElementAt(tokens, 1)
 	goutil.PanicUnhandledError(err)
 
-	_, err = c.connection.GetValue(context.Background(), strings.Trim(key, "\""))
+	key := strings.Trim(keyWithQuotes, "\"")
+
+	value, err := c.connection.GetValue(context.Background(), key)
 	goutil.PanicUnhandledError(err)
 
-	return nil
+	return fmt.Sprintf("%#v => %#v\n", key, value), nil
 }

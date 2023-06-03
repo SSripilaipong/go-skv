@@ -18,12 +18,13 @@ func (f *ConnectionFactoryMock) New() clientconnection.ConnectionFactory {
 }
 
 type ConnectionMock struct {
-	GetValue_key string
+	GetValue_key   string
+	GetValue_Value string
 }
 
 func (c *ConnectionMock) GetValue(_ context.Context, key string) (string, error) {
 	c.GetValue_key = key
-	return "", nil
+	return c.GetValue_Value, nil
 }
 
 func (c *ConnectionMock) SetValue(context.Context, string, string) error {
