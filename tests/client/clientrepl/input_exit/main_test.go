@@ -1,20 +1,28 @@
-package input_setvalue
+package input_exit
 
 import (
 	"github.com/stretchr/testify/assert"
+	"go-skv/client/clientrepl"
 	"go-skv/tests/client/clientrepl/clientrepltest"
 	"go-skv/util/goutil"
 	"testing"
 )
 
-func Test_should_call_set_value_with_key_and_value(t *testing.T) {
+func Test_should_close_connection(t *testing.T) {
 	connection := &clientrepltest.ConnectionMock{}
 	ctrl := clientrepltest.NewControllerWithConnectionFactory((&clientrepltest.ConnectionFactoryMock{Return: connection}).New())
 	goutil.PanicUnhandledError(clientrepltest.DoConnect(ctrl))
 
-	_, err := clientrepltest.DoSetValueInputWithKeyAndValue(ctrl, "Go", "Lang")
-	goutil.PanicUnhandledError(err)
+	_, _ = clientrepltest.DoExit(ctrl)
 
-	assert.Equal(t, "Go", connection.SetValue_key)
-	assert.Equal(t, "Lang", connection.SetValue_value)
+	assert.True(t, connection.Close_IsCalled)
+}
+
+func Test_should_return_repl_closed_error(t *testing.T) {
+	ctrl := clientrepltest.NewController()
+	goutil.PanicUnhandledError(clientrepltest.DoConnect(ctrl))
+
+	_, err := clientrepltest.DoExit(ctrl)
+
+	assert.Equal(t, clientrepl.ReplClosedError{}, err)
 }

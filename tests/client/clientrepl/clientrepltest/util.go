@@ -6,6 +6,11 @@ import (
 	"go-skv/client/clientrepl"
 )
 
+func NewController() *clientrepl.Controller {
+	factory := &ConnectionFactoryMock{Return: &ConnectionMock{}}
+	return NewControllerWithConnectionFactory(factory.New())
+}
+
 func NewControllerWithConnectionFactory(connectionFactory clientconnection.ConnectionFactory) *clientrepl.Controller {
 	return clientrepl.NewController(connectionFactory)
 }

@@ -7,12 +7,14 @@ import (
 	"testing"
 )
 
-func Test_should_close_connection(t *testing.T) {
+func Test_should_call_set_value_with_key_and_value(t *testing.T) {
 	connection := &clientrepltest.ConnectionMock{}
 	ctrl := clientrepltest.NewControllerWithConnectionFactory((&clientrepltest.ConnectionFactoryMock{Return: connection}).New())
 	goutil.PanicUnhandledError(clientrepltest.DoConnect(ctrl))
 
-	_, _ = clientrepltest.DoExit(ctrl)
+	_, err := clientrepltest.DoSetValueInputWithKeyAndValue(ctrl, "Go", "Lang")
+	goutil.PanicUnhandledError(err)
 
-	assert.True(t, connection.Close_IsCalled)
+	assert.Equal(t, "Go", connection.SetValue_key)
+	assert.Equal(t, "Lang", connection.SetValue_value)
 }
