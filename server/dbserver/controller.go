@@ -33,5 +33,5 @@ func (c *Controller) SetValue(ctx context.Context, request *dbgrpc.SetValueReque
 	if err != nil {
 		panic(fmt.Errorf("unhandled error: %f", err))
 	}
-	return nil, nil
+	return &dbgrpc.SetValueResponse{}, nil
 }
