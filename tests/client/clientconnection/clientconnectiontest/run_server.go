@@ -1,4 +1,4 @@
-package clienttest
+package clientconnectiontest
 
 import (
 	"go-skv/server/dbserver/dbgrpc"
