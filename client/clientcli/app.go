@@ -31,7 +31,7 @@ func commands() []*cli.Command {
 			Name: "connect",
 			Action: func(ctx *cli.Context) error {
 				serverIp := ctx.Args().First()
-				return clientrepl.Run(serverIp)
+				return clientrepl.RunRuntimeRepl(serverIp)
 			},
 		},
 	}

@@ -8,12 +8,14 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func NewConnection(address string) *Connection {
+type ConnectionFactory func(string) (*Connection, error)
+
+func NewConnection(address string) (*Connection, error) {
 	conn, err := grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	goutil.PanicUnhandledError(err)
 
 	service := dbgrpc.NewDbServiceClient(conn)
-	return &Connection{service: service, conn: conn}
+	return &Connection{service: service, conn: conn}, nil
 }
 
 type Connection struct {

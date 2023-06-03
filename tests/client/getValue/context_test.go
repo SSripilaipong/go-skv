@@ -17,7 +17,7 @@ func Test_should_return_error_when_context_is_cancelled(t *testing.T) {
 
 	var err error
 	clienttest.RunServerWithService(service, func(addr net.Addr) {
-		conn := client.NewConnection(addr.String())
+		conn, _ := client.NewConnection(addr.String())
 		defer goutil.WillPanicUnhandledError(conn.Close)()
 
 		_, err = conn.GetValue(cancelledContext, "")

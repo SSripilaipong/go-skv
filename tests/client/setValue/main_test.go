@@ -14,7 +14,7 @@ func Test_should_call_set_value(t *testing.T) {
 	service := &clienttest.DbServiceServerMock{}
 
 	clienttest.RunServerWithService(service, func(addr net.Addr) {
-		conn := client.NewConnection(addr.String())
+		conn, _ := client.NewConnection(addr.String())
 		defer goutil.WillPanicUnhandledError(conn.Close)()
 
 		err := conn.SetValue(context.Background(), "aaa", "bbb")

@@ -2,7 +2,7 @@ package clientrepl
 
 import "fmt"
 
-func Run(serverIp string) error {
+func RunRuntimeRepl(serverIp string) error {
 	var s string
 	for {
 		fmt.Printf(">>> ")

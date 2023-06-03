@@ -15,7 +15,7 @@ func Test_should_call_get_value(t *testing.T) {
 	service := &clienttest.DbServiceServerMock{}
 
 	clienttest.RunServerWithService(service, func(addr net.Addr) {
-		conn := client.NewConnection(addr.String())
+		conn, _ := client.NewConnection(addr.String())
 		defer goutil.WillPanicUnhandledError(conn.Close)()
 
 		_, err := conn.GetValue(context.Background(), "kkk")
@@ -32,7 +32,7 @@ func Test_should_return_value(t *testing.T) {
 
 	var value string
 	clienttest.RunServerWithService(service, func(addr net.Addr) {
-		conn := client.NewConnection(addr.String())
+		conn, _ := client.NewConnection(addr.String())
 		defer goutil.WillPanicUnhandledError(conn.Close)()
 
 		var err error
