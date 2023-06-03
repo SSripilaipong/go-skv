@@ -5,7 +5,7 @@ import (
 	"go-skv/util/goutil"
 )
 
-func (c *Controller) handleSetValueCommand(params []string) (string, error) {
+func (c *controller) handleSetValueCommand(params []string) (string, error) {
 	key, err := stringTokenAt(params, 0)
 	goutil.PanicUnhandledError(err)
 

@@ -1,7 +1,7 @@
 package main
 
-import "go-skv/client/clientcli"
+import "go-skv/client"
 
 func main() {
-	clientcli.Run()
+	client.RunCli()
 }
