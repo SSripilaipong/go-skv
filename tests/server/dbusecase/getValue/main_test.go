@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/stretchr/testify/assert"
-	"go-skv/server/dbstorage"
+	"go-skv/server/dbstorage/storagemanager"
 	"go-skv/server/dbusecase"
 	goutil2 "go-skv/util/goutil"
 	"testing"
@@ -15,14 +15,14 @@ func Test_should_send_get_value_message_to_storage(t *testing.T) {
 
 	message := goutil2.ReceiveWithTimeoutOrPanic(storageChan, defaultTimeout)
 
-	assert.True(t, goutil2.CanCast[dbstorage.GetValueMessage](message))
+	assert.True(t, goutil2.CanCast[storagemanager.GetValueMessage](message))
 }
 
 func Test_should_send_get_value_message_with_key(t *testing.T) {
 	storageChan := getStorageChannelAfterExecute(context.Background(), &dbusecase.GetValueRequest{Key: "Go"})
 
 	message := goutil2.ReceiveWithTimeoutOrPanic(storageChan, defaultTimeout)
-	assert.Equal(t, "Go", goutil2.CastOrPanic[dbstorage.GetValueMessage](message).Key())
+	assert.Equal(t, "Go", goutil2.CastOrPanic[storagemanager.GetValueMessage](message).Key())
 }
 
 func Test_should_return_value_when_get_value_completed(t *testing.T) {
@@ -31,9 +31,9 @@ func Test_should_return_value_when_get_value_completed(t *testing.T) {
 
 	go func() {
 		message := goutil2.ReceiveWithTimeoutOrPanic(storageChan, defaultTimeout)
-		getValueMessage := goutil2.CastOrPanic[dbstorage.GetValueMessage](message)
+		getValueMessage := goutil2.CastOrPanic[storagemanager.GetValueMessage](message)
 
-		_ = getValueMessage.Completed(dbstorage.GetValueResponse{Value: goutil2.Pointer("Lang")})
+		_ = getValueMessage.Completed(storagemanager.GetValueResponse{Value: goutil2.Pointer("Lang")})
 	}()
 
 	result, _ := execute(context.Background(), &dbusecase.GetValueRequest{Key: "Go"})

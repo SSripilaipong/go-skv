@@ -1,12 +1,10 @@
 package server
 
 import (
-	"context"
 	"go-skv/server/dbmanager"
 	"go-skv/server/dbpeerserver"
 	"go-skv/server/dbserver"
 	"go-skv/server/dbstorage"
-	"go-skv/server/dbstorage/dbstoragerecord"
 	"go-skv/server/dbusecase"
 	"go-skv/server/servercli"
 	"go-skv/util/goutil"
@@ -20,14 +18,15 @@ func RunCli() {
 }
 
 func startServer() error {
-	ctx, cancelCtx := context.WithCancel(context.Background())
-	storageChan := make(chan any, 16)
-	storage := dbstorage.New(ctx, storageChan, dbstoragerecord.NewFactory(ctx, 4))
+	storage, storageChan := dbstorage.New(16, 4)
 	usecaseDep := dbusecase.NewDependency(storageChan)
-	manager := dbmanager.New(dbpeerserver.New(), dbserver.New(5555, dbserver.Dependency{
+	peerServer := dbpeerserver.New()
+	rpcServer := dbserver.New(5555, dbserver.Dependency{
 		GetValueUsecase: dbusecase.GetValueUsecase(usecaseDep),
 		SetValueUsecase: dbusecase.SetValueUsecase(usecaseDep),
-	}), storage)
+	})
+
+	manager := dbmanager.New(peerServer, rpcServer, storage)
 	goutil.PanicUnhandledError(manager.Start())
 
 	interrupt := make(chan os.Signal, 1)
@@ -35,6 +34,5 @@ func startServer() error {
 	<-interrupt
 
 	goutil.PanicUnhandledError(manager.Stop())
-	cancelCtx()
 	return nil
 }

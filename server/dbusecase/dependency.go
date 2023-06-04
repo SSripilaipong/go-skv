@@ -1,10 +1,10 @@
 package dbusecase
 
 type Dependency struct {
-	storageChan chan any
+	storageChan chan<- any
 }
 
-func NewDependency(storageChan chan any) *Dependency {
+func NewDependency(storageChan chan<- any) *Dependency {
 	return &Dependency{
 		storageChan: storageChan,
 	}
