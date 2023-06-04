@@ -2,8 +2,8 @@ package storagemanager
 
 import "context"
 
-func New(ctx context.Context, ch chan any, recordFactory RecordFactory) Interface {
-	ctxWithCancel, cancel := context.WithCancel(ctx)
+func New(ch chan any, recordFactory RecordFactory) Interface {
+	ctxWithCancel, cancel := context.WithCancel(context.Background())
 	return &manager{
 		ch:            ch,
 		recordFactory: recordFactory,
