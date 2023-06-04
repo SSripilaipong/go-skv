@@ -9,6 +9,6 @@ import (
 func New(storageBufferSize int, recordBufferSize int) (storagemanager.Interface, chan<- any) {
 	ctx := context.Background()
 	ch := make(chan any, storageBufferSize)
-	s := storagemanager.New(ctx, ch, storagerecord.NewFactory(ctx, recordBufferSize))
+	s := storagemanager.New(ctx, ch, storagerecord.NewFactory(recordBufferSize))
 	return s, ch
 }

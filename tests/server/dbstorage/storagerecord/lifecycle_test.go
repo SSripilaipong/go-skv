@@ -10,8 +10,7 @@ import (
 )
 
 func Test_should_return_error_when_destroyed(t *testing.T) {
-	factory := storagerecordtest.NewFactory()
-	record := factory.New()
+	record := storagerecordtest.DoNewRecord(storagerecordtest.NewFactory())
 
 	goutil.PanicUnhandledError(record.Destroy())
 	time.Sleep(time.Millisecond)

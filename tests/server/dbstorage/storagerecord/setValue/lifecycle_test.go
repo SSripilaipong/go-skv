@@ -12,8 +12,7 @@ import (
 
 func Test_should_return_error_when_context_is_cancelled(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
-	factory := storagerecordtest.NewFactoryWithContext(ctx)
-	record := factory.New()
+	record := storagerecordtest.DoNewRecordWithContext(storagerecordtest.NewFactory(), ctx)
 
 	cancel()
 	time.Sleep(time.Millisecond)

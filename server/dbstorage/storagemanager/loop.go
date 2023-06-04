@@ -1,6 +1,7 @@
 package storagemanager
 
 import (
+	"context"
 	"fmt"
 	"go-skv/util/goutil"
 )
@@ -33,7 +34,7 @@ func (m *manager) handleGetValueMessage(message GetValueMessage) {
 func (m *manager) handleSetValueMessage(message SetValueMessage) {
 	record, exists := m.records[message.Key()]
 	if !exists {
-		record = m.recordFactory.New()
+		record = m.recordFactory.New(context.Background()) // TODO: use manager context
 	}
 	goutil.PanicUnhandledError(record.SetValue(message))
 	m.records[message.Key()] = record

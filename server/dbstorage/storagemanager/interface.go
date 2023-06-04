@@ -1,12 +1,14 @@
 package storagemanager
 
+import "context"
+
 type Interface interface {
 	Start() error
 	Stop() error
 }
 
 type RecordFactory interface {
-	New() DbRecord // TODO: manager should destroy all records with ctx when stops
+	New(ctx context.Context) DbRecord
 }
 
 type DbRecord interface {

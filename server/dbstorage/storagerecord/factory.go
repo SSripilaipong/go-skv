@@ -6,15 +6,14 @@ import (
 )
 
 type recordFactory struct {
-	ctx          context.Context
 	chBufferSize int
 }
 
-func (r *recordFactory) New() storagemanager.DbRecord {
-	ctx, ctxCancel := context.WithCancel(r.ctx)
+func (r *recordFactory) New(ctx context.Context) storagemanager.DbRecord {
+	recordCtx, ctxCancel := context.WithCancel(ctx)
 	ch := make(chan any, r.chBufferSize)
 	stopped := make(chan struct{})
 
-	go recordMainLoop(ctx, ch, stopped)
-	return newRecordInteractor(ctx, ctxCancel, ch, stopped)
+	go recordMainLoop(recordCtx, ch, stopped)
+	return newRecordInteractor(recordCtx, ctxCancel, ch, stopped)
 }
