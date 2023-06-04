@@ -8,8 +8,6 @@ import (
 	"go-skv/server/dbusecase"
 	"go-skv/server/servercli"
 	"go-skv/util/goutil"
-	"os"
-	"os/signal"
 )
 
 func RunCli() {
@@ -29,9 +27,7 @@ func startServer() error {
 	manager := dbmanager.New(peerServer, rpcServer, storage)
 	goutil.PanicUnhandledError(manager.Start())
 
-	interrupt := make(chan os.Signal, 1)
-	signal.Notify(interrupt, os.Interrupt)
-	<-interrupt
+	goutil.WaitForInterrupt()
 
 	goutil.PanicUnhandledError(manager.Stop())
 	return nil
