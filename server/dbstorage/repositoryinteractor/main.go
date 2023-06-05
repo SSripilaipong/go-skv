@@ -1,7 +1,7 @@
 package repositoryinteractor
 
 import (
-	"go-skv/server/dbstorage/storagerepository/repositoryroutine"
+	"go-skv/server/dbstorage/repositoryroutine"
 	"time"
 )
 

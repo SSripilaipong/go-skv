@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/stretchr/testify/assert"
 	"go-skv/server/dbstorage/storagerecord"
+	"go-skv/tests/server/dbstorage/repositoryroutine/repositoryroutinetest"
 	"go-skv/tests/server/dbstorage/storagerecord/storagerecordtest"
-	"go-skv/tests/server/dbstorage/storagerepository/repositoryroutine/repositoryroutinetest"
 	"testing"
 	"time"
 )

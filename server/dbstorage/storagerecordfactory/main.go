@@ -15,7 +15,7 @@ type recordFactory struct {
 	chBufferSize int
 }
 
-func (r recordFactory) New(ctx context.Context) storagerecord.DbRecord {
+func (r recordFactory) New(ctx context.Context) storagerecord.Interface {
 	recordCtx, ctxCancel := context.WithCancel(ctx)
 	ch := make(chan any, r.chBufferSize)
 	stopped := make(chan struct{})

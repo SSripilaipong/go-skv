@@ -2,9 +2,9 @@ package repositoryroutine
 
 import "go-skv/server/dbstorage/storagerecord"
 
-type GetRecordSuccessCallback func(storagerecord.DbRecord)
+type GetRecordSuccessCallback func(storagerecord.Interface)
 
-type GetOrCreateRecordSuccessCallback func(storagerecord.DbRecord)
+type GetOrCreateRecordSuccessCallback func(storagerecord.Interface)
 
 type GetRecordMessage struct {
 	Key     string

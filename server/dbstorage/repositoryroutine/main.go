@@ -15,6 +15,6 @@ func New(ch chan any, recordFactory storagerecordfactory.Interface) Interface {
 		cancel:        cancel,
 
 		stopped: make(chan struct{}),
-		records: make(map[string]storagerecord.DbRecord),
+		records: make(map[string]storagerecord.Interface),
 	}
 }

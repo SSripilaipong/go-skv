@@ -2,7 +2,7 @@ package repositoryroutine
 
 import (
 	"github.com/stretchr/testify/assert"
-	"go-skv/tests/server/dbstorage/storagerepository/repositoryroutine/repositoryroutinetest"
+	"go-skv/tests/server/dbstorage/repositoryroutine/repositoryroutinetest"
 	"go-skv/util/goutil"
 	"testing"
 )

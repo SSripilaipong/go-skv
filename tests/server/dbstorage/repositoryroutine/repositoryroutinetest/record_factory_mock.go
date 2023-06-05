@@ -7,15 +7,15 @@ import (
 )
 
 type RecordFactoryMock struct {
-	New_Return   storagerecord.DbRecord
+	New_Return   storagerecord.Interface
 	New_IsCalled bool
 	New_ctx      context.Context
 }
 
-func (f *RecordFactoryMock) New(ctx context.Context) storagerecord.DbRecord {
+func (f *RecordFactoryMock) New(ctx context.Context) storagerecord.Interface {
 	f.New_IsCalled = true
 	f.New_ctx = ctx
-	return goutil.Coalesce[storagerecord.DbRecord](f.New_Return, &RecordMock{})
+	return goutil.Coalesce[storagerecord.Interface](f.New_Return, &RecordMock{})
 }
 
 func (f *RecordFactoryMock) New_CaptureReset() {

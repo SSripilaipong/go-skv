@@ -13,7 +13,7 @@ type manager struct {
 	cancel        context.CancelFunc
 
 	stopped chan struct{}
-	records map[string]storagerecord.DbRecord
+	records map[string]storagerecord.Interface
 }
 
 func (m *manager) Start() error {

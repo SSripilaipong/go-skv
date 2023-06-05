@@ -6,10 +6,10 @@ import (
 	"go-skv/server/dbstorage/storagerecordfactory"
 )
 
-func DoNewRecord(factory storagerecordfactory.Interface) storagerecord.DbRecord {
+func DoNewRecord(factory storagerecordfactory.Interface) storagerecord.Interface {
 	return factory.New(context.Background())
 }
 
-func DoNewRecordWithContext(factory storagerecordfactory.Interface, ctx context.Context) storagerecord.DbRecord {
+func DoNewRecordWithContext(factory storagerecordfactory.Interface, ctx context.Context) storagerecord.Interface {
 	return factory.New(ctx)
 }

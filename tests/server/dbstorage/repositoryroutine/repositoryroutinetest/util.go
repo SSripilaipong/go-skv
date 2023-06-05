@@ -1,8 +1,8 @@
 package repositoryroutinetest
 
 import (
+	"go-skv/server/dbstorage/repositoryroutine"
 	"go-skv/server/dbstorage/storagerecordfactory"
-	"go-skv/server/dbstorage/storagerepository/repositoryroutine"
 )
 
 func NewStorageWithChannel(ch chan any) repositoryroutine.Interface {

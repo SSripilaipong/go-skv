@@ -5,7 +5,7 @@ import (
 	"go-skv/util/goutil"
 )
 
-type DbRecord interface {
+type Interface interface {
 	SetValue(SetValueMessage) error
 	GetValue(GetValueMessage) error
 	Destroy() error
@@ -19,7 +19,7 @@ type recordInteractor struct {
 	stopped chan struct{}
 }
 
-func NewRecordInteractor(ctx context.Context, ctxCancel context.CancelFunc, ch chan any, stopped chan struct{}) DbRecord {
+func NewRecordInteractor(ctx context.Context, ctxCancel context.CancelFunc, ch chan any, stopped chan struct{}) Interface {
 	return recordInteractor{
 		ctx:       ctx,
 		ctxCancel: ctxCancel,

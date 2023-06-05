@@ -6,5 +6,5 @@ import (
 )
 
 type Interface interface {
-	New(ctx context.Context) storagerecord.DbRecord
+	New(ctx context.Context) storagerecord.Interface
 }
