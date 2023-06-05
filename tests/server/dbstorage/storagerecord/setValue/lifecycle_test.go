@@ -3,7 +3,7 @@ package setValue
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
-	"go-skv/server/dbstorage/storagemanager"
+	"go-skv/server/dbstorage/storagerecord"
 	"go-skv/tests/server/dbstorage/storagemanager/storagemanagertest"
 	"go-skv/tests/server/dbstorage/storagerecord/storagerecordtest"
 	"testing"
@@ -18,5 +18,5 @@ func Test_should_return_error_when_context_is_cancelled(t *testing.T) {
 	time.Sleep(time.Millisecond)
 	err := record.SetValue(&storagemanagertest.SetValueMessage{})
 
-	assert.Equal(t, storagemanager.RecordDestroyedError{}, err)
+	assert.Equal(t, storagerecord.RecordDestroyedError{}, err)
 }

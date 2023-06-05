@@ -1,10 +1,9 @@
 package storagerecordtest
 
 import (
-	"go-skv/server/dbstorage/storagemanager"
-	"go-skv/server/dbstorage/storagerecord"
+	"go-skv/server/dbstorage/storagerecordfactory"
 )
 
-func NewFactory() storagemanager.RecordFactory {
-	return storagerecord.NewFactory(1)
+func NewFactory() storagerecordfactory.Interface {
+	return storagerecordfactory.NewFactory(1)
 }

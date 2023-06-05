@@ -2,9 +2,14 @@ package storagerecord
 
 import (
 	"context"
-	"go-skv/server/dbstorage/storagemanager"
 	"go-skv/util/goutil"
 )
+
+type DbRecord interface {
+	SetValue(SetValueMessage) error
+	GetValue(GetValueMessage) error
+	Destroy() error
+}
 
 type recordInteractor struct {
 	ctx       context.Context
@@ -14,7 +19,7 @@ type recordInteractor struct {
 	stopped chan struct{}
 }
 
-func newRecordInteractor(ctx context.Context, ctxCancel context.CancelFunc, ch chan any, stopped chan struct{}) storagemanager.DbRecord {
+func NewRecordInteractor(ctx context.Context, ctxCancel context.CancelFunc, ch chan any, stopped chan struct{}) DbRecord {
 	return &recordInteractor{
 		ctx:       ctx,
 		ctxCancel: ctxCancel,
@@ -24,17 +29,17 @@ func newRecordInteractor(ctx context.Context, ctxCancel context.CancelFunc, ch c
 	}
 }
 
-func (r *recordInteractor) SetValue(message storagemanager.SetValueMessage) error {
+func (r *recordInteractor) SetValue(message SetValueMessage) error {
 	if r.isContextEnded() {
-		return storagemanager.RecordDestroyedError{}
+		return RecordDestroyedError{}
 	}
 	r.ch <- message
 	return nil
 }
 
-func (r *recordInteractor) GetValue(message storagemanager.GetValueMessage) error {
+func (r *recordInteractor) GetValue(message GetValueMessage) error {
 	if r.isContextEnded() {
-		return storagemanager.RecordDestroyedError{}
+		return RecordDestroyedError{}
 	}
 	r.ch <- message
 	return nil

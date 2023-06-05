@@ -1,20 +1,20 @@
 package storagemanagertest
 
 import (
-	"go-skv/server/dbstorage/storagemanager"
+	"go-skv/server/dbstorage/storagerecord"
 )
 
 type RecordMock struct {
-	SetValue_message storagemanager.SetValueMessage
-	GetValue_message storagemanager.GetValueMessage
+	SetValue_message storagerecord.SetValueMessage
+	GetValue_message storagerecord.GetValueMessage
 }
 
-func (r *RecordMock) SetValue(message storagemanager.SetValueMessage) error {
+func (r *RecordMock) SetValue(message storagerecord.SetValueMessage) error {
 	r.SetValue_message = message
 	return nil
 }
 
-func (r *RecordMock) GetValue(message storagemanager.GetValueMessage) error {
+func (r *RecordMock) GetValue(message storagerecord.GetValueMessage) error {
 	r.GetValue_message = message
 	return nil
 }

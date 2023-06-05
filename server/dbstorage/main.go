@@ -2,11 +2,11 @@ package dbstorage
 
 import (
 	"go-skv/server/dbstorage/storagemanager"
-	"go-skv/server/dbstorage/storagerecord"
+	"go-skv/server/dbstorage/storagerecordfactory"
 )
 
-func New(storageBufferSize int, recordBufferSize int) (storagemanager.Interface, chan<- any) {
+func New(storageBufferSize int, recordBufferSize int) (Manager, chan<- any) {
 	ch := make(chan any, storageBufferSize)
-	s := storagemanager.New(ch, storagerecord.NewFactory(recordBufferSize))
+	s := storagemanager.New(ch, storagerecordfactory.NewFactory(recordBufferSize))
 	return s, ch
 }

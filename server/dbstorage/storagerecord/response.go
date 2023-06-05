@@ -1,4 +1,4 @@
-package storagemanager
+package storagerecord
 
 type GetValueResponse struct {
 	Value *string

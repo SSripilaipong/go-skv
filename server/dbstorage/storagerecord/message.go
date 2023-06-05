@@ -1,4 +1,4 @@
-package storagemanager
+package storagerecord
 
 type GetValueMessage interface {
 	Key() string
