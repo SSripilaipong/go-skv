@@ -14,24 +14,24 @@ type interactor struct {
 }
 
 func (i interactor) GetRecord(key string, success storagerepository.GetRecordSuccessCallback, timeout time.Duration) error {
-	select {
-	case i.ch <- storagerepository.GetRecordMessage{
+	return i.sendMessage(storagerepository.GetRecordMessage{
 		Key:     key,
 		Success: success,
-	}:
+	}, timeout)
+}
+
+func (i interactor) GetOrCreateRecord(key string, success storagerepository.GetOrCreateRecordSuccessCallback, timeout time.Duration) error {
+	return i.sendMessage(storagerepository.GetOrCreateRecordMessage{
+		Key:     key,
+		Success: success,
+	}, timeout)
+}
+
+func (i interactor) sendMessage(message any, timeout time.Duration) error {
+	select {
+	case i.ch <- message:
 	case <-time.After(timeout):
 		return TimeoutError{}
 	}
 	return nil
-}
-
-func (i interactor) GetOrCreateRecord(key string, success storagerepository.GetOrCreateRecordSuccessCallback, timeout time.Duration) error {
-	select {
-	case i.ch <- storagerepository.GetOrCreateRecordMessage{
-		Key:     key,
-		Success: success,
-	}:
-	case <-time.After(timeout):
-	}
-	return TimeoutError{}
 }

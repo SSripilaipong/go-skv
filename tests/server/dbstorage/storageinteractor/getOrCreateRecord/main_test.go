@@ -7,14 +7,13 @@ import (
 	"go-skv/server/dbstorage/storagerepository"
 	"go-skv/util/goutil"
 	"testing"
-	"time"
 )
 
 func Test_should_send_get_or_create_record_message(t *testing.T) {
 	ch := make(chan any, 1)
 	interactor := storageinteractor.New(ch)
 
-	_ = interactor.GetOrCreateRecord("", func(storagerecord.DbRecord) {}, 0)
+	_ = interactor.GetOrCreateRecord("", func(storagerecord.DbRecord) {}, defaultTimeout)
 
 	raw := goutil.ReceiveWithTimeoutOrPanic(ch, defaultTimeout)
 	assert.True(t, goutil.CanCast[storagerepository.GetOrCreateRecordMessage](raw))
@@ -24,7 +23,7 @@ func Test_should_send_get_or_create_record_message_with_key_to_repository(t *tes
 	ch := make(chan any, 1)
 	interactor := storageinteractor.New(ch)
 
-	_ = interactor.GetOrCreateRecord("aaa", func(storagerecord.DbRecord) {}, 0)
+	_ = interactor.GetOrCreateRecord("aaa", func(storagerecord.DbRecord) {}, defaultTimeout)
 
 	raw := goutil.ReceiveWithTimeoutOrPanic(ch, defaultTimeout)
 	message := goutil.CastOrPanic[storagerepository.GetOrCreateRecordMessage](raw)
@@ -36,7 +35,7 @@ func Test_should_send_get_or_create_record_message_with_success_callback_to_repo
 	interactor := storageinteractor.New(ch)
 
 	var isTheSameFunction bool
-	_ = interactor.GetOrCreateRecord("", func(storagerecord.DbRecord) { isTheSameFunction = true }, 0)
+	_ = interactor.GetOrCreateRecord("", func(storagerecord.DbRecord) { isTheSameFunction = true }, defaultTimeout)
 
 	raw := goutil.ReceiveWithTimeoutOrPanic(ch, defaultTimeout)
 	message := goutil.CastOrPanic[storagerepository.GetOrCreateRecordMessage](raw)
@@ -50,7 +49,16 @@ func Test_should_return_timeout_error_when_cannot_send_message_within_timeout(t 
 	ch := make(chan any)
 	interactor := storageinteractor.New(ch)
 
-	err := interactor.GetOrCreateRecord("", func(storagerecord.DbRecord) {}, time.Second)
+	err := interactor.GetOrCreateRecord("", func(storagerecord.DbRecord) {}, defaultTimeout)
 
 	assert.Equal(t, storageinteractor.TimeoutError{}, err)
+}
+
+func Test_should_not_return_timeout_error_when_message_is_sent_within_timeout(t *testing.T) {
+	ch := make(chan any, 1)
+	interactor := storageinteractor.New(ch)
+
+	err := interactor.GetOrCreateRecord("", func(storagerecord.DbRecord) {}, defaultTimeout)
+
+	assert.Nil(t, err)
 }
