@@ -13,14 +13,19 @@ type interactor struct {
 	ch chan<- any
 }
 
-func (i interactor) GetRecord(key string, callback storagerepository.GetRecordSuccessCallback, timeout time.Duration) error {
+func (i interactor) GetRecord(key string, success storagerepository.GetRecordSuccessCallback, timeout time.Duration) error {
 	select {
 	case i.ch <- storagerepository.GetRecordMessage{
 		Key:     key,
-		Success: callback,
+		Success: success,
 	}:
 	case <-time.After(timeout):
 		return TimeoutError{}
 	}
+	return nil
+}
+
+func (i interactor) GetOrCreateRecord(key string, success storagerepository.GetOrCreateRecordSuccessCallback, timeout time.Duration) error {
+	i.ch <- storagerepository.GetOrCreateRecordMessage{}
 	return nil
 }

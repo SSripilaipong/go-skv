@@ -6,5 +6,6 @@ import (
 )
 
 type Interface interface {
-	GetRecord(key string, callback storagerepository.GetRecordSuccessCallback, timeout time.Duration) error
+	GetRecord(key string, success storagerepository.GetRecordSuccessCallback, timeout time.Duration) error
+	GetOrCreateRecord(key string, success storagerepository.GetOrCreateRecordSuccessCallback, timeout time.Duration) error
 }

@@ -1,4 +1,4 @@
-package storageinteractor
+package getRecord
 
 import (
 	"github.com/stretchr/testify/assert"

@@ -1,4 +1,4 @@
-package storageinteractor
+package getRecord
 
 import "time"
 
