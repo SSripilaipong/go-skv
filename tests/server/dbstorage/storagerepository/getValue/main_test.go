@@ -2,7 +2,7 @@ package getValue
 
 import (
 	"github.com/stretchr/testify/assert"
-	storagemanagertest2 "go-skv/tests/server/dbstorage/storagemanager/storagemanagertest"
+	storagemanagertest2 "go-skv/tests/server/dbstorage/storagerepository/storagerepositorytest"
 	goutil2 "go-skv/util/goutil"
 	"testing"
 )

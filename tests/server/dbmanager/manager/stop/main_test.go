@@ -2,13 +2,13 @@ package stop
 
 import (
 	"github.com/stretchr/testify/assert"
-	dbmanagerTest "go-skv/tests/server/dbmanager"
+	"go-skv/tests/server/dbmanager/dbmanagertest"
 	"testing"
 )
 
 func Test_should_stop_db_server(t *testing.T) {
-	dbServer := &dbmanagerTest.DbServerMock{}
-	mgr := dbmanagerTest.NewWithDbServer(dbServer)
+	dbServer := &dbmanagertest.DbServerMock{}
+	mgr := dbmanagertest.NewWithDbServer(dbServer)
 
 	_ = doStop(mgr)
 
@@ -16,8 +16,8 @@ func Test_should_stop_db_server(t *testing.T) {
 }
 
 func Test_should_stop_db_storage(t *testing.T) {
-	dbStorage := &dbmanagerTest.DbStorageMock{}
-	mgr := dbmanagerTest.NewWithDbStorage(dbStorage)
+	dbStorage := &dbmanagertest.DbStorageMock{}
+	mgr := dbmanagertest.NewWithDbStorage(dbStorage)
 
 	_ = doStop(mgr)
 

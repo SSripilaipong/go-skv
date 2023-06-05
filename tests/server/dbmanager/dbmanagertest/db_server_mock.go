@@ -1,4 +1,4 @@
-package dbmanagerTest
+package dbmanagertest
 
 type DbServerMock struct {
 	Start_IsCalled bool

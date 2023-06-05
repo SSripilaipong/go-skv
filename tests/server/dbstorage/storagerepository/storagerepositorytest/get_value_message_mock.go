@@ -1,4 +1,4 @@
-package storagemanagertest
+package storagerepositorytest
 
 import (
 	"go-skv/server/dbstorage/storagerecord"

@@ -1,4 +1,4 @@
-package storagemanager
+package storagerepository
 
 import (
 	"fmt"

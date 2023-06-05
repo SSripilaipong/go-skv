@@ -1,4 +1,4 @@
-package storagemanager
+package storagerepository
 
 type Interface interface {
 	Start() error

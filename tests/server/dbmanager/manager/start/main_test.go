@@ -2,13 +2,13 @@ package start
 
 import (
 	"github.com/stretchr/testify/assert"
-	dbmanagerTest "go-skv/tests/server/dbmanager"
+	"go-skv/tests/server/dbmanager/dbmanagertest"
 	"testing"
 )
 
 func Test_should_start_peer_server(t *testing.T) {
-	peerServer := &dbmanagerTest.PeerServerMock{}
-	mgr := dbmanagerTest.NewWithPeerServer(peerServer)
+	peerServer := &dbmanagertest.PeerServerMock{}
+	mgr := dbmanagertest.NewWithPeerServer(peerServer)
 
 	_ = doStart(mgr)
 
@@ -16,8 +16,8 @@ func Test_should_start_peer_server(t *testing.T) {
 }
 
 func Test_should_start_db_server(t *testing.T) {
-	dbServer := &dbmanagerTest.DbServerMock{}
-	mgr := dbmanagerTest.NewWithDbServer(dbServer)
+	dbServer := &dbmanagertest.DbServerMock{}
+	mgr := dbmanagertest.NewWithDbServer(dbServer)
 
 	_ = doStart(mgr)
 
@@ -25,8 +25,8 @@ func Test_should_start_db_server(t *testing.T) {
 }
 
 func Test_should_start_db_storage(t *testing.T) {
-	dbStorage := &dbmanagerTest.DbStorageMock{}
-	mgr := dbmanagerTest.NewWithDbStorage(dbStorage)
+	dbStorage := &dbmanagertest.DbStorageMock{}
+	mgr := dbmanagertest.NewWithDbStorage(dbStorage)
 
 	_ = doStart(mgr)
 

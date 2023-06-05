@@ -1,4 +1,4 @@
-package dbmanagerTest
+package dbmanagertest
 
 type DbStorageMock struct {
 	Start_IsCalled bool

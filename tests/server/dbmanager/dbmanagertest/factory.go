@@ -1,4 +1,4 @@
-package dbmanagerTest
+package dbmanagertest
 
 import (
 	"go-skv/server/dbmanager"
@@ -15,6 +15,6 @@ func NewWithDbServer(dbServer dbserver.Interface) dbmanager.Manager {
 	return dbmanager.New(&PeerServerMock{}, dbServer, &DbStorageMock{})
 }
 
-func NewWithDbStorage(dbStorage dbstorage.Manager) dbmanager.Manager {
+func NewWithDbStorage(dbStorage dbstorage.Repository) dbmanager.Manager {
 	return dbmanager.New(&PeerServerMock{}, &DbServerMock{}, dbStorage)
 }

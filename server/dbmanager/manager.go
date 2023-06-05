@@ -11,7 +11,7 @@ type Manager interface {
 	Stop() error
 }
 
-func New(peerServer dbpeerserver.Interface, dbServer dbserver.Interface, dbStorage dbstorage.Manager) Manager {
+func New(peerServer dbpeerserver.Interface, dbServer dbserver.Interface, dbStorage dbstorage.Repository) Manager {
 	return &manager{
 		peerServer: peerServer,
 		dbServer:   dbServer,
@@ -22,5 +22,5 @@ func New(peerServer dbpeerserver.Interface, dbServer dbserver.Interface, dbStora
 type manager struct {
 	peerServer dbpeerserver.Interface
 	dbServer   dbserver.Interface
-	dbStorage  dbstorage.Manager
+	dbStorage  dbstorage.Repository
 }
