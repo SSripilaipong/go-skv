@@ -9,6 +9,16 @@ import (
 	"testing"
 )
 
+func Test_should_send_get_record_message(t *testing.T) {
+	ch := make(chan any, 1)
+	interactor := storageinteractor.New(ch)
+
+	_ = interactor.GetRecord("", func(storagerecord.DbRecord) {})
+
+	raw := goutil.ReceiveWithTimeoutOrPanic(ch, defaultTimeout)
+	assert.True(t, goutil.CanCast[storagerepository.GetRecordMessage](raw))
+}
+
 func Test_should_send_get_record_message_with_key_to_repository(t *testing.T) {
 	ch := make(chan any, 1)
 	interactor := storageinteractor.New(ch)
