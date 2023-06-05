@@ -14,7 +14,8 @@ type interactor struct {
 
 func (i interactor) GetRecord(key string, success storagerepository.GetRecordSuccessCallback) error {
 	i.ch <- storagerepository.GetRecordMessage{
-		Key: key,
+		Key:     key,
+		Success: success,
 	}
 	return nil
 }
