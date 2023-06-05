@@ -14,9 +14,13 @@ type interactor struct {
 }
 
 func (i interactor) GetRecord(key string, callback storagerepository.GetRecordSuccessCallback, timeout time.Duration) error {
-	i.ch <- storagerepository.GetRecordMessage{
+	select {
+	case i.ch <- storagerepository.GetRecordMessage{
 		Key:     key,
 		Success: callback,
+	}:
+	case <-time.After(timeout):
+		return TimeoutError{}
 	}
-	return TimeoutError{}
+	return nil
 }
