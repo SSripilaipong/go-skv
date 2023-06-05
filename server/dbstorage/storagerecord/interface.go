@@ -20,7 +20,7 @@ type recordInteractor struct {
 }
 
 func NewRecordInteractor(ctx context.Context, ctxCancel context.CancelFunc, ch chan any, stopped chan struct{}) DbRecord {
-	return &recordInteractor{
+	return recordInteractor{
 		ctx:       ctx,
 		ctxCancel: ctxCancel,
 		ch:        ch,
@@ -29,7 +29,7 @@ func NewRecordInteractor(ctx context.Context, ctxCancel context.CancelFunc, ch c
 	}
 }
 
-func (r *recordInteractor) SetValue(message SetValueMessage) error {
+func (r recordInteractor) SetValue(message SetValueMessage) error {
 	if r.isContextEnded() {
 		return RecordDestroyedError{}
 	}
@@ -37,7 +37,7 @@ func (r *recordInteractor) SetValue(message SetValueMessage) error {
 	return nil
 }
 
-func (r *recordInteractor) GetValue(message GetValueMessage) error {
+func (r recordInteractor) GetValue(message GetValueMessage) error {
 	if r.isContextEnded() {
 		return RecordDestroyedError{}
 	}
@@ -45,13 +45,13 @@ func (r *recordInteractor) GetValue(message GetValueMessage) error {
 	return nil
 }
 
-func (r *recordInteractor) Destroy() error {
+func (r recordInteractor) Destroy() error {
 	r.ctxCancel()
 	<-r.stopped
 	return nil
 }
 
-func (r *recordInteractor) isContextEnded() bool {
+func (r recordInteractor) isContextEnded() bool {
 	_, isEnded := goutil.ReceiveNoBlock(r.ctx.Done())
 	return isEnded
 }

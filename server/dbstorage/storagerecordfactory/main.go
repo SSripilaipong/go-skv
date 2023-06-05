@@ -6,7 +6,7 @@ import (
 )
 
 func NewFactory(channelBufferSize int) Interface {
-	return &recordFactory{
+	return recordFactory{
 		chBufferSize: channelBufferSize,
 	}
 }
@@ -15,7 +15,7 @@ type recordFactory struct {
 	chBufferSize int
 }
 
-func (r *recordFactory) New(ctx context.Context) storagerecord.DbRecord {
+func (r recordFactory) New(ctx context.Context) storagerecord.DbRecord {
 	recordCtx, ctxCancel := context.WithCancel(ctx)
 	ch := make(chan any, r.chBufferSize)
 	stopped := make(chan struct{})
