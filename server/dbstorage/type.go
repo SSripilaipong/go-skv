@@ -2,10 +2,10 @@ package dbstorage
 
 import (
 	"go-skv/server/dbstorage/storagerecord"
-	"go-skv/server/dbstorage/storagerepository/repositoryroutine"
+	"go-skv/server/dbstorage/storagerepository"
 )
 
-type Repository = repositoryroutine.Interface
+type Repository = storagerepository.Routine
 type Record = storagerecord.DbRecord
 type GetValueResponse = storagerecord.GetValueResponse
 type SetValueResponse = storagerecord.SetValueResponse
