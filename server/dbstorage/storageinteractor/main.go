@@ -27,7 +27,8 @@ func (i interactor) GetRecord(key string, success storagerepository.GetRecordSuc
 
 func (i interactor) GetOrCreateRecord(key string, success storagerepository.GetOrCreateRecordSuccessCallback, timeout time.Duration) error {
 	i.ch <- storagerepository.GetOrCreateRecordMessage{
-		Key: key,
+		Key:     key,
+		Success: success,
 	}
 	return nil
 }

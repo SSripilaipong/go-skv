@@ -29,3 +29,18 @@ func Test_should_send_get_or_create_record_message_with_key_to_repository(t *tes
 	message := goutil.CastOrPanic[storagerepository.GetOrCreateRecordMessage](raw)
 	assert.Equal(t, "aaa", message.Key)
 }
+
+func Test_should_send_get_or_create_record_message_with_success_callback_to_repository(t *testing.T) {
+	ch := make(chan any, 1)
+	interactor := storageinteractor.New(ch)
+
+	var isTheSameFunction bool
+	_ = interactor.GetOrCreateRecord("", func(storagerecord.DbRecord) { isTheSameFunction = true }, 0)
+
+	raw := goutil.ReceiveWithTimeoutOrPanic(ch, defaultTimeout)
+	message := goutil.CastOrPanic[storagerepository.GetOrCreateRecordMessage](raw)
+
+	isTheSameFunction = false
+	message.Success(nil)
+	assert.True(t, isTheSameFunction)
+}
