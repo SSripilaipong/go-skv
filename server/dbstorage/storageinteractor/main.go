@@ -2,6 +2,7 @@ package storageinteractor
 
 import (
 	"go-skv/server/dbstorage/storagerepository"
+	"time"
 )
 
 func New(ch chan<- any) Interface {
@@ -12,10 +13,10 @@ type interactor struct {
 	ch chan<- any
 }
 
-func (i interactor) GetRecord(key string, success storagerepository.GetRecordSuccessCallback) error {
+func (i interactor) GetRecord(key string, callback storagerepository.GetRecordSuccessCallback, timeout time.Duration) error {
 	i.ch <- storagerepository.GetRecordMessage{
 		Key:     key,
-		Success: success,
+		Success: callback,
 	}
-	return nil
+	return TimeoutError{}
 }
