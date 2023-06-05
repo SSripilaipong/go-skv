@@ -1,4 +1,4 @@
-package storagerepository
+package repositoryroutine
 
 func (m *manager) mainLoop() {
 	for {

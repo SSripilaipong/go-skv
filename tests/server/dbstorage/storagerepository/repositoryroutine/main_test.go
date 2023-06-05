@@ -1,15 +1,15 @@
-package storagerepository
+package repositoryroutine
 
 import (
 	"github.com/stretchr/testify/assert"
-	"go-skv/tests/server/dbstorage/storagerepository/storagerepositorytest"
+	"go-skv/tests/server/dbstorage/storagerepository/repositoryroutine/repositoryroutinetest"
 	"go-skv/util/goutil"
 	"testing"
 )
 
 func Test_should_receive_message_from_channel(t *testing.T) {
 	storageChan := make(chan any)
-	storage := storagerepositorytest.NewStorageWithChannel(storageChan)
+	storage := repositoryroutinetest.NewStorageWithChannel(storageChan)
 	goutil.PanicUnhandledError(storage.Start())
 	defer goutil.WillPanicUnhandledError(storage.Stop)()
 
@@ -20,7 +20,7 @@ func Test_should_receive_message_from_channel(t *testing.T) {
 
 func Test_should_receive_multiple_messages_from_channel(t *testing.T) {
 	storageChan := make(chan any)
-	storage := storagerepositorytest.NewStorageWithChannel(storageChan)
+	storage := repositoryroutinetest.NewStorageWithChannel(storageChan)
 	goutil.PanicUnhandledError(storage.Start())
 	defer goutil.WillPanicUnhandledError(storage.Stop)()
 
@@ -32,7 +32,7 @@ func Test_should_receive_multiple_messages_from_channel(t *testing.T) {
 
 func Test_should_not_receive_message_after_closed(t *testing.T) {
 	storageChan := make(chan any)
-	storage := storagerepositorytest.NewStorageWithChannel(storageChan)
+	storage := repositoryroutinetest.NewStorageWithChannel(storageChan)
 	goutil.PanicUnhandledError(storage.Start())
 
 	goutil.PanicUnhandledError(storage.Stop())

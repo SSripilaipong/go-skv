@@ -1,4 +1,4 @@
-package storageinteractor
+package repositoryinteractor
 
 type TimeoutError struct {
 }
