@@ -74,3 +74,23 @@ func Test_should_pass_context_that_would_be_cancelled_when_stops(t *testing.T) {
 	_, isCancelled := goutil.ReceiveNoBlock(passedContext.Done())
 	assert.True(t, isCancelled)
 }
+
+func Test_should_call_success_with_the_same_record_if_key_is_the_same(t *testing.T) {
+	storageChan := make(chan any)
+	storage := repositoryroutinetest.NewStorageWithChannel(storageChan)
+	goutil.PanicUnhandledError(storage.Start())
+
+	var firstRecord dbstorage.Record
+	goutil.SendWithTimeoutOrPanic[any](storageChan, repositoryroutine.GetOrCreateRecordMessage{Key: "aaa", Success: func(record dbstorage.Record) {
+		firstRecord = record
+	}}, defaultTimeout)
+
+	var secondRecord dbstorage.Record
+	goutil.SendWithTimeoutOrPanic[any](storageChan, repositoryroutine.GetOrCreateRecordMessage{Key: "aaa", Success: func(record dbstorage.Record) {
+		secondRecord = record
+	}}, defaultTimeout)
+
+	goutil.PanicUnhandledError(storage.Stop())
+
+	assert.Equal(t, firstRecord, secondRecord)
+}
