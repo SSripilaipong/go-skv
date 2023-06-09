@@ -38,6 +38,10 @@ func (m *manager) handleSetValueMessage(message storagerecord.SetValueMessage) {
 }
 
 func (m *manager) handleGetOrCreateRecord(message GetOrCreateRecordMessage) {
-	record := m.recordFactory.New(context.Background()) // TODO: replace context
-	message.Success(record)
+	_, exists := m.records[""]
+	if !exists {
+		record := m.recordFactory.New(context.Background()) // TODO: replace context
+		m.records[""] = nil
+		message.Success(record)
+	}
 }
