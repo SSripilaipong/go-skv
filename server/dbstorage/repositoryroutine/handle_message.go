@@ -1,7 +1,6 @@
 package repositoryroutine
 
 import (
-	"context"
 	"fmt"
 	"go-skv/server/dbstorage/storagerecord"
 	"go-skv/util/goutil"
@@ -40,7 +39,7 @@ func (m *manager) handleSetValueMessage(message storagerecord.SetValueMessage) {
 func (m *manager) handleGetOrCreateRecord(message GetOrCreateRecordMessage) {
 	_, exists := m.records[""]
 	if !exists {
-		record := m.recordFactory.New(context.Background()) // TODO: replace context
+		record := m.recordFactory.New(m.ctx) // TODO: replace context
 		m.records[""] = nil
 		message.Success(record)
 	}
