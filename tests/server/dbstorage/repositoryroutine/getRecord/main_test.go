@@ -11,9 +11,7 @@ import (
 
 func Test_should_call_success_with_existing_record(t *testing.T) {
 	storageChan := make(chan any)
-	newlyCreatedRecord := &repositoryroutinetest.RecordMock{}
-	factory := &repositoryroutinetest.RecordFactoryMock{New_Return: newlyCreatedRecord}
-	storage := repositoryroutinetest.NewStorageWithChannelAndRecordFactory(storageChan, factory)
+	storage := repositoryroutinetest.NewStorageWithChannel(storageChan)
 	goutil.PanicUnhandledError(storage.Start())
 
 	var existingRecord dbstorage.Record
