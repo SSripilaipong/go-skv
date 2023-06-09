@@ -6,5 +6,6 @@ import (
 )
 
 type Repository = repositoryroutine.Interface
+type Record = storagerecord.Interface
 type GetValueResponse = storagerecord.GetValueResponse
 type SetValueResponse = storagerecord.SetValueResponse
