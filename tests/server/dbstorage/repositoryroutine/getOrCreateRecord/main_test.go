@@ -43,6 +43,23 @@ func Test_should_not_create_same_record_twice(t *testing.T) {
 	assert.False(t, factory.New_IsCalled)
 }
 
+func Test_should_create_new_record_if_the_key_is_not_duplicate_to_existing_ones(t *testing.T) {
+	storageChan := make(chan any)
+	success := func(record dbstorage.Record) {}
+	factory := &repositoryroutinetest.RecordFactoryMock{}
+	storage := repositoryroutinetest.NewStorageWithChannelAndRecordFactory(storageChan, factory)
+	goutil.PanicUnhandledError(storage.Start())
+
+	goutil.SendWithTimeoutOrPanic[any](storageChan, repositoryroutine.GetOrCreateRecordMessage{Key: "aaa", Success: success}, defaultTimeout)
+	factory.New_CaptureReset()
+
+	goutil.SendWithTimeoutOrPanic[any](storageChan, repositoryroutine.GetOrCreateRecordMessage{Key: "bbb", Success: success}, defaultTimeout)
+
+	goutil.PanicUnhandledError(storage.Stop())
+
+	assert.True(t, factory.New_IsCalled)
+}
+
 func Test_should_pass_context_that_would_be_cancelled_when_stops(t *testing.T) {
 	storageChan := make(chan any)
 	factory := &repositoryroutinetest.RecordFactoryMock{}
