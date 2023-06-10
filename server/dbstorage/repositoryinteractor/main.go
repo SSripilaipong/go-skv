@@ -13,8 +13,8 @@ type interactor struct {
 	ch chan<- any
 }
 
-func (i interactor) GetRecord(key string, success repositoryroutine.GetRecordSuccessCallback) error {
-	return i.sendMessage(context.Background(), repositoryroutine.GetRecordMessage{
+func (i interactor) GetRecord(ctx context.Context, key string, success repositoryroutine.GetRecordSuccessCallback) error {
+	return i.sendMessage(ctx, repositoryroutine.GetRecordMessage{
 		Key:     key,
 		Success: success,
 	})

@@ -46,7 +46,7 @@ func Test_should_send_get_or_create_record_message_with_success_callback_to_repo
 	assert.True(t, isTheSameFunction)
 }
 
-func Test_should_return_context_cancelled_error_when_cannot_send_message_within_timeout(t *testing.T) {
+func Test_should_return_context_cancelled_error_when_context_is_cancelled(t *testing.T) {
 	ch := make(chan any)
 	interactor := repositoryinteractor.New(ch)
 

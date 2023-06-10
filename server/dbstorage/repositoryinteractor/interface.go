@@ -6,6 +6,6 @@ import (
 )
 
 type Interface interface {
-	GetRecord(key string, success repositoryroutine.GetRecordSuccessCallback) error
+	GetRecord(ctx context.Context, key string, success repositoryroutine.GetRecordSuccessCallback) error
 	GetOrCreateRecord(ctx context.Context, key string, success repositoryroutine.GetOrCreateRecordSuccessCallback) error
 }
