@@ -12,7 +12,7 @@ func GetValueUsecaseV2(dep Dependency) GetValueFuncV2 {
 	return func(ctx context.Context, request GetValueRequest) (GetValueResponse, error) {
 		resultCh := make(chan dbstorage.GetValueResponse)
 		goutil.PanicUnhandledError(dep.repo.GetRecord(ctx, request.Key, func(record dbstorage.Record) {
-			goutil.PanicUnhandledError(record.GetValue(func(response dbstorage.GetValueResponse) {
+			goutil.PanicUnhandledError(record.GetValue(nil, func(response dbstorage.GetValueResponse) {
 				resultCh <- response
 			}))
 		}))

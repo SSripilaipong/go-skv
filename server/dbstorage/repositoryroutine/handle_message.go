@@ -26,7 +26,7 @@ func (m *manager) handleGetValueMessage(message storagerecord.GetValueMessage) {
 	if !exists {
 		panic(fmt.Errorf("unhandled error"))
 	}
-	goutil.PanicUnhandledError(record.GetValue(nil))
+	goutil.PanicUnhandledError(record.GetValue(nil, nil))
 }
 
 func (m *manager) handleSetValueMessage(message storagerecord.SetValueMessage) {

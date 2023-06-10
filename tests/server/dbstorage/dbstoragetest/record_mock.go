@@ -1,6 +1,7 @@
 package dbstoragetest
 
 import (
+	"context"
 	"go-skv/server/dbstorage/storagerecord"
 )
 
@@ -15,7 +16,7 @@ func (r *RecordMock) SetValue(value string, success func(response storagerecord.
 	return nil
 }
 
-func (r *RecordMock) GetValue(success func(response storagerecord.GetValueResponse)) error {
+func (r *RecordMock) GetValue(ctx context.Context, success func(response storagerecord.GetValueResponse)) error {
 	go success(r.GetValue_success_response)
 	return nil
 }

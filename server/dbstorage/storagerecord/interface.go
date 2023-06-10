@@ -6,7 +6,7 @@ import (
 
 type Interface interface {
 	SetValue(value string, success func(response SetValueResponse)) error
-	GetValue(success func(response GetValueResponse)) error
+	GetValue(ctx context.Context, success func(response GetValueResponse)) error
 	Destroy() error
 }
 

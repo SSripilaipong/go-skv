@@ -15,9 +15,9 @@ func Test_should_call_success_with_its_value(t *testing.T) {
 	goutil.PanicUnhandledError(record.SetValue("bbb", func(storagerecord.SetValueResponse) {}))
 
 	var successResponse storagerecord.GetValueResponse
-	goutil.PanicUnhandledError(record.GetValue(func(response storagerecord.GetValueResponse) { successResponse = response }))
+	goutil.PanicUnhandledError(doGetValueWithSuccessFunc(record, func(response storagerecord.GetValueResponse) { successResponse = response }))
 
-	time.Sleep(time.Millisecond)
+	time.Sleep(defaultTimeout)
 	goutil.PanicUnhandledError(record.Destroy())
 
 	assert.Equal(t, storagerecord.GetValueResponse{Value: goutil.Pointer("bbb")}, successResponse)
