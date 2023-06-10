@@ -1,8 +1,8 @@
 package repositoryinteractor
 
-type TimeoutError struct {
+type ContextCancelledError struct {
 }
 
-func (e TimeoutError) Error() string {
-	return "timeout error"
+func (e ContextCancelledError) Error() string {
+	return "context cancelled error"
 }

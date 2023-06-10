@@ -1,11 +1,11 @@
 package repositoryinteractor
 
 import (
+	"context"
 	"go-skv/server/dbstorage/repositoryroutine"
-	"time"
 )
 
 type Interface interface {
-	GetRecord(key string, success repositoryroutine.GetRecordSuccessCallback, timeout time.Duration) error
-	GetOrCreateRecord(key string, success repositoryroutine.GetOrCreateRecordSuccessCallback, timeout time.Duration) error
+	GetRecord(key string, success repositoryroutine.GetRecordSuccessCallback) error
+	GetOrCreateRecord(ctx context.Context, key string, success repositoryroutine.GetOrCreateRecordSuccessCallback) error
 }

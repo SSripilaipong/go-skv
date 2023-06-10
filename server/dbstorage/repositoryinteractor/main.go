@@ -1,8 +1,8 @@
 package repositoryinteractor
 
 import (
+	"context"
 	"go-skv/server/dbstorage/repositoryroutine"
-	"time"
 )
 
 func New(ch chan<- any) Interface {
@@ -13,25 +13,25 @@ type interactor struct {
 	ch chan<- any
 }
 
-func (i interactor) GetRecord(key string, success repositoryroutine.GetRecordSuccessCallback, timeout time.Duration) error {
-	return i.sendMessage(repositoryroutine.GetRecordMessage{
+func (i interactor) GetRecord(key string, success repositoryroutine.GetRecordSuccessCallback) error {
+	return i.sendMessage(context.Background(), repositoryroutine.GetRecordMessage{
 		Key:     key,
 		Success: success,
-	}, timeout)
+	})
 }
 
-func (i interactor) GetOrCreateRecord(key string, success repositoryroutine.GetOrCreateRecordSuccessCallback, timeout time.Duration) error {
-	return i.sendMessage(repositoryroutine.GetOrCreateRecordMessage{
+func (i interactor) GetOrCreateRecord(ctx context.Context, key string, success repositoryroutine.GetOrCreateRecordSuccessCallback) error {
+	return i.sendMessage(ctx, repositoryroutine.GetOrCreateRecordMessage{
 		Key:     key,
 		Success: success,
-	}, timeout)
+	})
 }
 
-func (i interactor) sendMessage(message any, timeout time.Duration) error {
+func (i interactor) sendMessage(ctx context.Context, message any) error {
 	select {
 	case i.ch <- message:
-	case <-time.After(timeout):
-		return TimeoutError{}
+	case <-ctx.Done():
+		return ContextCancelledError{}
 	}
 	return nil
 }
