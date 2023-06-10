@@ -10,6 +10,7 @@ type RecordMock struct {
 	SetValue_value            string
 	GetValue_success_response storagerecord.GetValueResponse
 	GetValue_success_willFail bool
+	GetValue_ctx              context.Context
 }
 
 func (r *RecordMock) SetValue(ctx context.Context, value string, success func(response storagerecord.SetValueResponse)) error {
@@ -18,6 +19,7 @@ func (r *RecordMock) SetValue(ctx context.Context, value string, success func(re
 }
 
 func (r *RecordMock) GetValue(ctx context.Context, success func(response storagerecord.GetValueResponse)) error {
+	r.GetValue_ctx = ctx
 	if !r.GetValue_success_willFail {
 		go success(r.GetValue_success_response)
 	}

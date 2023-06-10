@@ -11,11 +11,12 @@ type GetValueFuncV2 func(context.Context, GetValueRequest) (GetValueResponse, er
 func GetValueUsecaseV2(dep Dependency) GetValueFuncV2 {
 	return func(ctx context.Context, request GetValueRequest) (GetValueResponse, error) {
 		resultCh := make(chan dbstorage.GetValueResponse)
-		goutil.PanicUnhandledError(dep.repo.GetRecord(ctx, request.Key, func(record dbstorage.Record) {
-			goutil.PanicUnhandledError(record.GetValue(nil, func(response dbstorage.GetValueResponse) {
-				resultCh <- response
-			}))
-		}))
+		doSendResultBack := func(response dbstorage.GetValueResponse) { resultCh <- response }
+		doReadRecordThenSendResultBack := func(record dbstorage.Record) {
+			goutil.PanicUnhandledError(record.GetValue(ctx, doSendResultBack))
+		}
+
+		goutil.PanicUnhandledError(dep.repo.GetRecord(ctx, request.Key, doReadRecordThenSendResultBack))
 
 		select {
 		case result := <-resultCh:
