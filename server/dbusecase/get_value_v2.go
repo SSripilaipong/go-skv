@@ -9,7 +9,7 @@ type GetValueFuncV2 func(context.Context, GetValueRequest) (GetValueResponse, er
 
 func GetValueUsecaseV2(dep Dependency) GetValueFuncV2 {
 	return func(ctx context.Context, request GetValueRequest) (GetValueResponse, error) {
-		goutil.PanicUnhandledError(dep.repo.GetRecord(context.Background(), request.Key, nil))
+		goutil.PanicUnhandledError(dep.repo.GetRecord(ctx, request.Key, nil))
 
 		return GetValueResponse{}, nil
 	}

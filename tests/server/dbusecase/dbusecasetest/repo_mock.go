@@ -8,12 +8,14 @@ import (
 
 type RepoMock struct {
 	GetRecord_key string
+	GetRecord_ctx context.Context
 }
 
 var _ dbstorage.RepositoryInteractor = &RepoMock{}
 
 func (r *RepoMock) GetRecord(ctx context.Context, key string, success repositoryroutine.GetRecordSuccessCallback) error {
 	r.GetRecord_key = key
+	r.GetRecord_ctx = ctx
 	return nil
 }
 
