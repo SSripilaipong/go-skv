@@ -3,12 +3,11 @@ package repositoryroutine
 import (
 	"context"
 	"go-skv/server/dbstorage/storagerecord"
-	"go-skv/server/dbstorage/storagerecordfactory"
 )
 
 type manager struct {
 	ch            chan any
-	recordFactory storagerecordfactory.Interface
+	recordFactory storagerecord.Factory
 	ctx           context.Context
 	cancel        context.CancelFunc
 

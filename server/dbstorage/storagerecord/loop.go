@@ -5,7 +5,7 @@ import (
 	"go-skv/util/goutil"
 )
 
-func RecordMainLoop(ctx context.Context, ch chan any, stopped chan struct{}) {
+func runRecordMainLoop(ctx context.Context, ch chan any, stopped chan struct{}) {
 	var value string
 
 	for {

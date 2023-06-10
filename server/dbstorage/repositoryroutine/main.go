@@ -3,10 +3,9 @@ package repositoryroutine
 import (
 	"context"
 	"go-skv/server/dbstorage/storagerecord"
-	"go-skv/server/dbstorage/storagerecordfactory"
 )
 
-func New(ch chan any, recordFactory storagerecordfactory.Interface) Interface {
+func New(ch chan any, recordFactory storagerecord.Factory) Interface {
 	ctxWithCancel, cancel := context.WithCancel(context.Background())
 	return &manager{
 		ch:            ch,
