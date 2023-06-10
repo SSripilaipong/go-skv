@@ -34,11 +34,11 @@ func (r recordInteractor) SetValue(value string, success func(response SetValueR
 	return nil
 }
 
-func (r recordInteractor) GetValue(message GetValueMessage) error {
+func (r recordInteractor) GetValue(success func(response GetValueResponse)) error {
 	if r.isContextEnded() {
 		return RecordDestroyedError{}
 	}
-	r.ch <- message
+	r.ch <- getValueMessage{success: success}
 	return nil
 }
 

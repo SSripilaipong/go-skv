@@ -14,8 +14,7 @@ func (r *RecordMock) SetValue(value string, success func(response storagerecord.
 	return nil
 }
 
-func (r *RecordMock) GetValue(message storagerecord.GetValueMessage) error {
-	r.GetValue_message = message
+func (r *RecordMock) GetValue(success func(response storagerecord.GetValueResponse)) error {
 	return nil
 }
 

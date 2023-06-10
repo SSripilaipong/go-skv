@@ -11,8 +11,11 @@ type SetValueMessage interface {
 	Completed(SetValueResponse) error
 }
 
+type getValueMessage struct {
+	success func(GetValueResponse)
+}
+
 type setValueMessage struct {
-	key     string
 	value   string
 	success func(SetValueResponse)
 }
