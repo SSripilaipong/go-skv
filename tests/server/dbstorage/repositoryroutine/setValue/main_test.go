@@ -2,6 +2,7 @@ package setValue
 
 import (
 	"github.com/stretchr/testify/assert"
+	"go-skv/tests/server/dbstorage/dbstoragetest"
 	"go-skv/tests/server/dbstorage/repositoryroutine/repositoryroutinetest"
 	"go-skv/util/goutil"
 	"testing"
@@ -52,7 +53,7 @@ func Test_should_pass_context_that_would_be_cancelled_when_stops(t *testing.T) {
 
 func Test_should_set_value_to_record(t *testing.T) {
 	storageChan := make(chan any)
-	record := &repositoryroutinetest.RecordMock{}
+	record := &dbstoragetest.RecordMock{}
 	factory := &repositoryroutinetest.RecordFactoryMock{New_Return: record}
 	storage := repositoryroutinetest.NewStorageWithChannelAndRecordFactory(storageChan, factory)
 	goutil.PanicUnhandledError(storage.Start())

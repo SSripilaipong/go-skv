@@ -3,6 +3,7 @@ package repositoryroutinetest
 import (
 	"context"
 	"go-skv/server/dbstorage/storagerecord"
+	"go-skv/tests/server/dbstorage/dbstoragetest"
 	"go-skv/util/goutil"
 )
 
@@ -15,7 +16,7 @@ type RecordFactoryMock struct {
 func (f *RecordFactoryMock) New(ctx context.Context) storagerecord.Interface {
 	f.New_IsCalled = true
 	f.New_ctx = ctx
-	return goutil.Coalesce[storagerecord.Interface](f.New_Return, &RecordMock{})
+	return goutil.Coalesce[storagerecord.Interface](f.New_Return, &dbstoragetest.RecordMock{})
 }
 
 func (f *RecordFactoryMock) New_CaptureReset() {

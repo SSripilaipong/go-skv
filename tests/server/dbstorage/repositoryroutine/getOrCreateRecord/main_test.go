@@ -4,6 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go-skv/server/dbstorage"
 	"go-skv/server/dbstorage/repositoryroutine"
+	"go-skv/tests/server/dbstorage/dbstoragetest"
 	"go-skv/tests/server/dbstorage/repositoryroutine/repositoryroutinetest"
 	"go-skv/util/goutil"
 	"testing"
@@ -11,7 +12,7 @@ import (
 
 func Test_should_call_success_with_newly_created_record(t *testing.T) {
 	storageChan := make(chan any)
-	newlyCreatedRecord := &repositoryroutinetest.RecordMock{}
+	newlyCreatedRecord := &dbstoragetest.RecordMock{}
 	factory := &repositoryroutinetest.RecordFactoryMock{New_Return: newlyCreatedRecord}
 	storage := repositoryroutinetest.NewStorageWithChannelAndRecordFactory(storageChan, factory)
 	goutil.PanicUnhandledError(storage.Start())

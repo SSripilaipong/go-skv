@@ -2,6 +2,7 @@ package dbusecase
 
 import (
 	"context"
+	"go-skv/server/dbstorage"
 	"go-skv/util/goutil"
 )
 
@@ -9,8 +10,14 @@ type GetValueFuncV2 func(context.Context, GetValueRequest) (GetValueResponse, er
 
 func GetValueUsecaseV2(dep Dependency) GetValueFuncV2 {
 	return func(ctx context.Context, request GetValueRequest) (GetValueResponse, error) {
-		goutil.PanicUnhandledError(dep.repo.GetRecord(ctx, request.Key, nil))
+		resultCh := make(chan dbstorage.GetValueResponse)
+		goutil.PanicUnhandledError(dep.repo.GetRecord(ctx, request.Key, func(record dbstorage.Record) {
+			goutil.PanicUnhandledError(record.GetValue(func(response dbstorage.GetValueResponse) {
+				resultCh <- response
+			}))
+		}))
 
-		return GetValueResponse{}, nil
+		result := <-resultCh
+		return GetValueResponse{Value: result.Value}, nil
 	}
 }
