@@ -34,7 +34,7 @@ func (m *manager) handleSetValueMessage(message storagerecord.SetValueMessage) {
 	if !exists {
 		record = m.recordFactory.New(m.ctx)
 	}
-	goutil.PanicUnhandledError(record.SetValue(message.Value(), nil))
+	goutil.PanicUnhandledError(record.SetValue(nil, message.Value(), nil))
 	m.records[message.Key()] = record
 }
 

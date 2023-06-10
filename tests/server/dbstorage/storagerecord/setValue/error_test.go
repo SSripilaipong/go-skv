@@ -1,4 +1,4 @@
-package getValue
+package setValue
 
 import (
 	"github.com/stretchr/testify/assert"
@@ -14,7 +14,7 @@ func Test_should_return_error_when_record_context_is_cancelled(t *testing.T) {
 
 	cancel()
 	time.Sleep(defaultTimeout)
-	err := doGetValue(record)
+	err := doSetValue(record)
 
 	assert.Equal(t, storagerecord.RecordDestroyedError{}, err)
 }
@@ -26,7 +26,7 @@ func Test_should_return_error_when_request_context_is_cancelled(t *testing.T) {
 
 	requestCtx, requestCancel := contextWithDefaultTimeout()
 	requestCancel()
-	err := doGetValueWithContext(record, requestCtx)
+	err := doSetValueWithContext(record, requestCtx)
 
 	assert.Equal(t, storagerecord.ContextCancelledError{}, err)
 }

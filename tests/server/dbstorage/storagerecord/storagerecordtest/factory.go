@@ -7,3 +7,7 @@ import (
 func NewFactory() storagerecord.Factory {
 	return storagerecord.NewFactory(1)
 }
+
+func NewFactoryWIthChannelBufferSize(channelBufferSize int) storagerecord.Factory {
+	return storagerecord.NewFactory(channelBufferSize)
+}

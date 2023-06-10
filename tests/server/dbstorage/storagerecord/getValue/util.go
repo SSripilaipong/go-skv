@@ -10,8 +10,18 @@ func doGetValueWithSuccessFunc(record storagerecord.Interface, success func(resp
 	return record.GetValue(ctx, success)
 }
 
+func doGetValue(record storagerecord.Interface) error {
+	ctx, _ := contextWithDefaultTimeout()
+	return record.GetValue(ctx, func(storagerecord.GetValueResponse) {})
+}
+
 func doGetValueWithContext(record storagerecord.Interface, ctx context.Context) error {
 	return record.GetValue(ctx, func(storagerecord.GetValueResponse) {})
+}
+
+func doSetValueWithValue(record storagerecord.Interface, value string) error {
+	ctx, _ := contextWithDefaultTimeout()
+	return record.SetValue(ctx, value, func(storagerecord.SetValueResponse) {})
 }
 
 func contextWithDefaultTimeout() (context.Context, context.CancelFunc) {

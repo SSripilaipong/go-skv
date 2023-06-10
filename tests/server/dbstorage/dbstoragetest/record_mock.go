@@ -11,7 +11,7 @@ type RecordMock struct {
 	GetValue_success_response storagerecord.GetValueResponse
 }
 
-func (r *RecordMock) SetValue(value string, success func(response storagerecord.SetValueResponse)) error {
+func (r *RecordMock) SetValue(ctx context.Context, value string, success func(response storagerecord.SetValueResponse)) error {
 	r.SetValue_value = value
 	return nil
 }

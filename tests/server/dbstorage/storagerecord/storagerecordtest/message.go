@@ -5,5 +5,5 @@ import (
 )
 
 func SendAnyMessage(record storagerecord.Interface) error {
-	return record.SetValue("", nil)
+	return record.SetValue(nil, "", nil)
 }
