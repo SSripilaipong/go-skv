@@ -4,4 +4,6 @@ type GetValueResponse struct {
 	Value *string
 }
 
-type SetValueResponse struct{}
+type SetValueResponse struct {
+	Value *string
+}

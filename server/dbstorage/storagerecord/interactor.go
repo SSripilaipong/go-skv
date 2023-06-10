@@ -23,11 +23,14 @@ func newRecordInteractor(ctx context.Context, ctxCancel context.CancelFunc, ch c
 	}
 }
 
-func (r recordInteractor) SetValue(message SetValueMessage) error {
+func (r recordInteractor) SetValue(value string, success func(response SetValueResponse)) error {
 	if r.isContextEnded() {
 		return RecordDestroyedError{}
 	}
-	r.ch <- message
+	r.ch <- setValueMessage{
+		value:   value,
+		success: success,
+	}
 	return nil
 }
 

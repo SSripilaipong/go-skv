@@ -11,9 +11,9 @@ func runRecordMainLoop(ctx context.Context, ch chan any, stopped chan struct{}) 
 	for {
 		select {
 		case raw := <-ch:
-			if message, isSetMessage := raw.(SetValueMessage); isSetMessage {
-				value = message.Value()
-				goutil.PanicUnhandledError(message.Completed(SetValueResponse{}))
+			if message, isSetMessage := raw.(setValueMessage); isSetMessage {
+				value = message.value
+				message.success(SetValueResponse{Value: goutil.Pointer(message.value)})
 			} else if message, isGetMessage := raw.(GetValueMessage); isGetMessage {
 				goutil.PanicUnhandledError(message.Completed(GetValueResponse{Value: goutil.Pointer(value)}))
 			}

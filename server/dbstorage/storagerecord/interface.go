@@ -5,7 +5,7 @@ import (
 )
 
 type Interface interface {
-	SetValue(SetValueMessage) error
+	SetValue(value string, success func(response SetValueResponse)) error
 	GetValue(GetValueMessage) error
 	Destroy() error
 }

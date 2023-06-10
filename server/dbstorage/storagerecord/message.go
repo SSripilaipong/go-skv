@@ -10,3 +10,9 @@ type SetValueMessage interface {
 	Value() string
 	Completed(SetValueResponse) error
 }
+
+type setValueMessage struct {
+	key     string
+	value   string
+	success func(SetValueResponse)
+}

@@ -5,12 +5,12 @@ import (
 )
 
 type RecordMock struct {
-	SetValue_message storagerecord.SetValueMessage
 	GetValue_message storagerecord.GetValueMessage
+	SetValue_value   string
 }
 
-func (r *RecordMock) SetValue(message storagerecord.SetValueMessage) error {
-	r.SetValue_message = message
+func (r *RecordMock) SetValue(value string, success func(response storagerecord.SetValueResponse)) error {
+	r.SetValue_value = value
 	return nil
 }
 

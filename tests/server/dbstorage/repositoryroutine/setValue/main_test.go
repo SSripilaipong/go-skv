@@ -42,10 +42,10 @@ func Test_should_pass_context_that_would_be_cancelled_when_stops(t *testing.T) {
 	goutil.PanicUnhandledError(storage.Start())
 
 	goutil.SendWithTimeoutOrPanic(storageChan, any(&repositoryroutinetest.SetValueMessage{KeyField: "aaa"}), defaultTimeout)
-	passedContext := factory.New_ctx
 
 	goutil.PanicUnhandledError(storage.Stop())
 
+	passedContext := factory.New_ctx
 	_, isCancelled := goutil.ReceiveNoBlock(passedContext.Done())
 	assert.True(t, isCancelled)
 }
@@ -61,5 +61,5 @@ func Test_should_set_value_to_record(t *testing.T) {
 	goutil.SendWithTimeoutOrPanic(storageChan, any(m), defaultTimeout)
 	goutil.PanicUnhandledError(storage.Stop())
 
-	assert.Equal(t, record.SetValue_message, m)
+	assert.Equal(t, record.SetValue_value, "vvv")
 }
