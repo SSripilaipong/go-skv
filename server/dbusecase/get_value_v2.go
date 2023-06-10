@@ -6,9 +6,17 @@ import (
 	"go-skv/util/goutil"
 )
 
-type GetValueFuncV2 func(context.Context, GetValueRequest) (GetValueResponse, error)
+type GetValueRequest struct {
+	Key string
+}
 
-func GetValueUsecaseV2(dep Dependency) GetValueFuncV2 {
+type GetValueResponse struct {
+	Value *string
+}
+
+type GetValueFunc func(context.Context, GetValueRequest) (GetValueResponse, error)
+
+func GetValueUsecase(dep Dependency) GetValueFunc {
 	return func(ctx context.Context, request GetValueRequest) (GetValueResponse, error) {
 		resultCh := make(chan dbstorage.GetValueResponse)
 		doSendResultBack := func(response dbstorage.GetValueResponse) { resultCh <- response }

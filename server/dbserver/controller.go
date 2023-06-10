@@ -21,7 +21,7 @@ func NewController(dep Dependency) *Controller {
 }
 
 func (c *Controller) GetValue(ctx context.Context, request *dbgrpc.GetValueRequest) (*dbgrpc.GetValueResponse, error) {
-	result, err := c.getValueUsecase(ctx, &dbusecase.GetValueRequest{Key: request.Key})
+	result, err := c.getValueUsecase(ctx, dbusecase.GetValueRequest{Key: request.Key})
 	if err != nil {
 		panic(fmt.Errorf("unhandled error: %f", err))
 	}

@@ -1,6 +1,7 @@
 package repositoryroutine
 
 import (
+	"context"
 	"fmt"
 	"go-skv/server/dbstorage/storagerecord"
 	"go-skv/util/goutil"
@@ -26,7 +27,9 @@ func (m *manager) handleGetValueMessage(message storagerecord.GetValueMessage) {
 	if !exists {
 		panic(fmt.Errorf("unhandled error"))
 	}
-	goutil.PanicUnhandledError(record.GetValue(nil, nil))
+	goutil.PanicUnhandledError(record.GetValue(context.Background(), func(response storagerecord.GetValueResponse) {
+		goutil.PanicUnhandledError(message.Completed(response))
+	}))
 }
 
 func (m *manager) handleSetValueMessage(message storagerecord.SetValueMessage) {
@@ -34,7 +37,9 @@ func (m *manager) handleSetValueMessage(message storagerecord.SetValueMessage) {
 	if !exists {
 		record = m.recordFactory.New(m.ctx)
 	}
-	goutil.PanicUnhandledError(record.SetValue(nil, message.Value(), nil))
+	goutil.PanicUnhandledError(record.SetValue(context.Background(), message.Value(), func(response storagerecord.SetValueResponse) {
+		goutil.PanicUnhandledError(message.Completed(response))
+	}))
 	m.records[message.Key()] = record
 }
 
