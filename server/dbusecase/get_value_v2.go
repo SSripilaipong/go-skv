@@ -17,7 +17,11 @@ func GetValueUsecaseV2(dep Dependency) GetValueFuncV2 {
 			}))
 		}))
 
-		result := <-resultCh
-		return GetValueResponse{Value: result.Value}, nil
+		select {
+		case result := <-resultCh:
+			return GetValueResponse{Value: result.Value}, nil
+		case <-ctx.Done():
+			return GetValueResponse{}, ContextCancelledError{}
+		}
 	}
 }

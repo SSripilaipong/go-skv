@@ -39,3 +39,15 @@ func Test_should_return_value_from_record(t *testing.T) {
 
 	assert.Equal(t, dbusecase.GetValueResponse{Value: goutil.Pointer("Hello")}, response)
 }
+
+func Test_should_return_error_when_context_cancelled(t *testing.T) {
+	record := &dbstoragetest.RecordMock{GetValue_success_willFail: true}
+	repoMock := &dbusecasetest.RepoMock{GetRecord_success_record: record}
+	usecase := dbusecase.GetValueUsecaseV2(dbusecase.NewDependencyV2(nil, repoMock))
+
+	ctx, cancel := contextWithDefaultTimeout()
+	cancel()
+	_, err := usecase(ctx, dbusecase.GetValueRequest{Key: "abc"})
+
+	assert.Equal(t, dbusecase.ContextCancelledError{}, err)
+}
