@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/stretchr/testify/assert"
 	"go-skv/server/dbusecase"
+	"go-skv/tests/server/dbstorage/dbstoragetest"
 	"go-skv/tests/server/dbusecase/dbusecasetest"
 	"go-skv/util/goutil"
 	"testing"
@@ -26,4 +27,14 @@ func Test_should_pass_context_to_repo(t *testing.T) {
 	_, _ = doExecuteWithContext(usecase, ctx)
 
 	assert.Equal(t, ctx.Value("Test"), repoMock.GetOrCreateRecord_ctx.Value("Test"))
+}
+
+func Test_should_set_value_to_record(t *testing.T) {
+	record := &dbstoragetest.RecordMock{}
+	repoMock := &dbusecasetest.RepoMock{GetOrCreateRecord_success_record: record}
+	usecase := newUsecaseWithRepo(repoMock)
+
+	_, _ = doExecuteWithRequest(usecase, dbusecase.SetValueRequest{Value: "xxx"})
+
+	assert.Equal(t, "xxx", record.SetValue_value)
 }
