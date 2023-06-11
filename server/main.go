@@ -16,8 +16,8 @@ func RunCli() {
 }
 
 func startServer() error {
-	storage, storageInteractor, storageChan := dbstorage.New(16, 4)
-	usecaseDep := dbusecase.NewDependency(storageChan, storageInteractor)
+	storage, storageInteractor := dbstorage.New(16, 4)
+	usecaseDep := dbusecase.NewDependency(storageInteractor)
 	peerServer := dbpeerserver.New()
 	rpcServer := dbserver.New(5555, dbserver.Dependency{
 		GetValueUsecase: dbusecase.GetValueUsecase(usecaseDep),

@@ -5,13 +5,11 @@ import (
 )
 
 type Dependency struct {
-	storageChan chan<- any
-	repo        dbstorage.RepositoryInteractor
+	repo dbstorage.RepositoryInteractor
 }
 
-func NewDependency(storageChan chan<- any, repo dbstorage.RepositoryInteractor) Dependency {
+func NewDependency(repo dbstorage.RepositoryInteractor) Dependency {
 	return Dependency{
-		storageChan: storageChan,
-		repo:        repo,
+		repo: repo,
 	}
 }

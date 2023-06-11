@@ -8,7 +8,7 @@ import (
 )
 
 func newUsecaseWithRepo(repo dbstorage.RepositoryInteractor) dbusecase.SetValueFunc {
-	return dbusecase.SetValueUsecase(dbusecase.NewDependency(nil, repo))
+	return dbusecase.SetValueUsecase(dbusecase.NewDependency(repo))
 }
 
 func doExecuteWithRequest(usecase dbusecase.SetValueFunc, request dbusecase.SetValueRequest) (dbusecase.SetValueResponse, error) {

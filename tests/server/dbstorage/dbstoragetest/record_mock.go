@@ -6,7 +6,6 @@ import (
 )
 
 type RecordMock struct {
-	GetValue_message          storagerecord.GetValueMessage
 	GetValue_success_response storagerecord.GetValueResponse
 	GetValue_success_willFail bool
 	GetValue_ctx              context.Context
