@@ -21,9 +21,9 @@ func Test_should_return_value_when_set_value_completed(t *testing.T) {
 		_ = setValueMessage.Completed(storagerecord.SetValueResponse{})
 	}()
 
-	result, _ := execute(context.Background(), &dbusecase.SetValueRequest{})
+	result, _ := execute(context.Background(), dbusecase.SetValueRequest{})
 
-	assert.Equal(t, &dbusecase.SetValueResponse{}, result)
+	assert.Equal(t, dbusecase.SetValueResponse{}, result)
 }
 
 func Test_should_return_error_when_context_is_closed(t *testing.T) {
@@ -32,7 +32,7 @@ func Test_should_return_error_when_context_is_closed(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
-	_, err := execute(ctx, &dbusecase.SetValueRequest{Key: "Go"})
+	_, err := execute(ctx, dbusecase.SetValueRequest{Key: "Go"})
 
 	assert.Equal(t, fmt.Errorf("context closed"), err)
 }

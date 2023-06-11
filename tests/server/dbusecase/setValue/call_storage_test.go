@@ -10,7 +10,7 @@ import (
 )
 
 func Test_should_send_set_value_message_to_storage(t *testing.T) {
-	storageChan := getStorageChannelAfterExecute(context.Background(), &dbusecase.SetValueRequest{Key: "Go", Value: "Lang"})
+	storageChan := getStorageChannelAfterExecute(context.Background(), dbusecase.SetValueRequest{Key: "Go", Value: "Lang"})
 	message := goutil.ReceiveWithTimeoutOrPanic(storageChan, defaultTimeout)
 
 	_, isSetValueMessage := message.(storagerecord.SetValueMessage)
@@ -18,7 +18,7 @@ func Test_should_send_set_value_message_to_storage(t *testing.T) {
 }
 
 func Test_should_send_key_to_storage(t *testing.T) {
-	storageChan := getStorageChannelAfterExecute(context.Background(), &dbusecase.SetValueRequest{Key: "Go", Value: "Lang"})
+	storageChan := getStorageChannelAfterExecute(context.Background(), dbusecase.SetValueRequest{Key: "Go", Value: "Lang"})
 	message := goutil.ReceiveWithTimeoutOrPanic(storageChan, defaultTimeout)
 
 	parsedMessage := goutil.CastOrPanic[storagerecord.SetValueMessage](message)
@@ -26,7 +26,7 @@ func Test_should_send_key_to_storage(t *testing.T) {
 }
 
 func Test_should_send_value_to_storage(t *testing.T) {
-	storageChan := getStorageChannelAfterExecute(context.Background(), &dbusecase.SetValueRequest{Key: "Go", Value: "Lang"})
+	storageChan := getStorageChannelAfterExecute(context.Background(), dbusecase.SetValueRequest{Key: "Go", Value: "Lang"})
 	message := goutil.ReceiveWithTimeoutOrPanic(storageChan, defaultTimeout)
 
 	parsedMessage := goutil.CastOrPanic[storagerecord.SetValueMessage](message)

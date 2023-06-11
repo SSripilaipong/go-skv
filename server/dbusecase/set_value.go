@@ -15,17 +15,17 @@ type SetValueRequest struct {
 type SetValueResponse struct {
 }
 
-type SetValueFunc func(context.Context, *SetValueRequest) (*SetValueResponse, error)
+type SetValueFunc func(context.Context, SetValueRequest) (SetValueResponse, error)
 
 func SetValueUsecase(dep *Dependency) SetValueFunc {
-	return func(ctx context.Context, request *SetValueRequest) (*SetValueResponse, error) {
+	return func(ctx context.Context, request SetValueRequest) (SetValueResponse, error) {
 		resultChan := make(chan dbstorage.SetValueResponse)
 		dep.storageChan <- setValueMessage{key: request.Key, value: request.Value, resultChan: resultChan}
 		select {
 		case <-resultChan:
-			return &SetValueResponse{}, nil
+			return SetValueResponse{}, nil
 		case <-ctx.Done():
-			return nil, fmt.Errorf("context closed")
+			return SetValueResponse{}, fmt.Errorf("context closed")
 		case <-time.After(time.Second): // TODO: parameterize
 			panic(fmt.Errorf("unhandled error"))
 		}

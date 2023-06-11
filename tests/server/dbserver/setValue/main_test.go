@@ -26,7 +26,7 @@ func Test_should_call_set_value_usecase(t *testing.T) {
 	})
 	goutil.PanicUnhandledError(err)
 
-	assert.Equal(t, &dbusecase.SetValueRequest{Key: "Hello", Value: "World"}, usecase.Request)
+	assert.Equal(t, dbusecase.SetValueRequest{Key: "Hello", Value: "World"}, usecase.Request)
 }
 
 func Test_should_return_nonempty_response(t *testing.T) {
