@@ -7,13 +7,15 @@ import (
 
 type RecordMock struct {
 	GetValue_message          storagerecord.GetValueMessage
-	SetValue_value            string
 	GetValue_success_response storagerecord.GetValueResponse
 	GetValue_success_willFail bool
 	GetValue_ctx              context.Context
+	SetValue_value            string
+	SetValue_ctx              context.Context
 }
 
 func (r *RecordMock) SetValue(ctx context.Context, value string, success func(response storagerecord.SetValueResponse)) error {
+	r.SetValue_ctx = ctx
 	r.SetValue_value = value
 	return nil
 }

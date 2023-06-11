@@ -38,3 +38,14 @@ func Test_should_set_value_to_record(t *testing.T) {
 
 	assert.Equal(t, "xxx", record.SetValue_value)
 }
+
+func Test_should_pass_context_to_record(t *testing.T) {
+	record := &dbstoragetest.RecordMock{}
+	repoMock := &dbusecasetest.RepoMock{GetOrCreateRecord_success_record: record}
+	usecase := newUsecaseWithRepo(repoMock)
+
+	ctx := context.WithValue(context.Background(), "Test", goutil.RandomString(8))
+	_, _ = doExecuteWithContext(usecase, ctx)
+
+	assert.Equal(t, ctx.Value("Test"), record.SetValue_ctx.Value("Test"))
+}
