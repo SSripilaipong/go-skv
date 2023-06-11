@@ -45,8 +45,7 @@ func Test_should_return_error_when_context_cancelled(t *testing.T) {
 	repoMock := &dbusecasetest.RepoMock{GetRecord_success_record: record}
 	usecase := dbusecase.GetValueUsecase(dbusecase.NewDependency(nil, repoMock))
 
-	ctx, cancel := contextWithDefaultTimeout()
-	cancel()
+	ctx, _ := contextWithDefaultTimeout()
 	_, err := usecase(ctx, dbusecase.GetValueRequest{})
 
 	assert.Equal(t, dbusecase.ContextCancelledError{}, err)
