@@ -1,4 +1,4 @@
-package getRecord
+package getValue
 
 import (
 	"context"
@@ -9,36 +9,36 @@ import (
 	"testing"
 )
 
-func Test_should_send_get_or_create_record_message(t *testing.T) {
+func Test_should_send_get_record_message(t *testing.T) {
 	ch := make(chan any, 1)
 	interactor := storagerepository.NewInteractor(ch)
 
-	_ = interactor.GetOrCreateRecord(context.Background(), "", func(storagerecord.Interface) {})
+	_ = interactor.GetRecord(context.Background(), "", func(storagerecord.Interface) {})
 
 	raw := goutil.ReceiveWithTimeoutOrPanic(ch, defaultTimeout)
-	assert.True(t, goutil.CanCast[storagerepository.GetOrCreateRecordMessage](raw))
+	assert.True(t, goutil.CanCast[storagerepository.GetRecordMessage](raw))
 }
 
-func Test_should_send_get_or_create_record_message_with_key_to_repository(t *testing.T) {
+func Test_should_send_get_record_message_with_key_to_repository(t *testing.T) {
 	ch := make(chan any, 1)
 	interactor := storagerepository.NewInteractor(ch)
 
-	_ = interactor.GetOrCreateRecord(context.Background(), "aaa", func(storagerecord.Interface) {})
+	_ = interactor.GetRecord(context.Background(), "aaa", func(storagerecord.Interface) {})
 
 	raw := goutil.ReceiveWithTimeoutOrPanic(ch, defaultTimeout)
-	message := goutil.CastOrPanic[storagerepository.GetOrCreateRecordMessage](raw)
+	message := goutil.CastOrPanic[storagerepository.GetRecordMessage](raw)
 	assert.Equal(t, "aaa", message.Key)
 }
 
-func Test_should_send_get_or_create_record_message_with_success_callback_to_repository(t *testing.T) {
+func Test_should_send_get_record_message_with_success_callback_to_repository(t *testing.T) {
 	ch := make(chan any, 1)
 	interactor := storagerepository.NewInteractor(ch)
 
 	var isTheSameFunction bool
-	_ = interactor.GetOrCreateRecord(context.Background(), "", func(storagerecord.Interface) { isTheSameFunction = true })
+	_ = interactor.GetRecord(context.Background(), "", func(storagerecord.Interface) { isTheSameFunction = true })
 
 	raw := goutil.ReceiveWithTimeoutOrPanic(ch, defaultTimeout)
-	message := goutil.CastOrPanic[storagerepository.GetOrCreateRecordMessage](raw)
+	message := goutil.CastOrPanic[storagerepository.GetRecordMessage](raw)
 
 	isTheSameFunction = false
 	message.Success(nil)
@@ -51,7 +51,7 @@ func Test_should_return_context_cancelled_error_when_context_is_cancelled(t *tes
 
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
-	err := interactor.GetOrCreateRecord(ctx, "", func(storagerecord.Interface) {})
+	err := interactor.GetRecord(ctx, "", func(storagerecord.Interface) {})
 
 	assert.Equal(t, storagerepository.ContextCancelledError{}, err)
 }
