@@ -1,4 +1,4 @@
-package repositoryroutinetest
+package storagerepositorytest
 
 import (
 	"context"

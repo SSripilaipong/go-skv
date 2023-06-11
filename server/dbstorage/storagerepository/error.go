@@ -1,4 +1,4 @@
-package repositoryinteractor
+package storagerepository
 
 type ContextCancelledError struct {
 }

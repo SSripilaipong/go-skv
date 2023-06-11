@@ -1,4 +1,4 @@
-package repositoryroutine
+package storagerepository
 
 import "go-skv/server/dbstorage/storagerecord"
 
