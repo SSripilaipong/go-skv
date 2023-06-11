@@ -2,30 +2,23 @@ package setValue
 
 import (
 	"context"
+	"go-skv/server/dbstorage"
 	"go-skv/server/dbusecase"
+	"go-skv/util/goutil"
 )
 
-func getStorageChannelAfterExecute(ctx context.Context, request dbusecase.SetValueRequest) chan any {
-	storageChan := make(chan any, 2)
-	execute := newUsecaseWithStorageChan(storageChan)
-
-	go func() {
-		_, _ = execute(ctx, request)
-	}()
-
-	return storageChan
+func newUsecaseWithRepo(repo dbstorage.RepositoryInteractor) dbusecase.SetValueFunc {
+	return dbusecase.SetValueUsecase(dbusecase.NewDependency(nil, repo))
 }
 
-func newUsecase() dbusecase.SetValueFunc {
-	return dbusecase.SetValueUsecase(dbusecase.NewDependency(make(chan any, 1), nil))
+func doExecuteWithRequest(usecase dbusecase.SetValueFunc, request dbusecase.SetValueRequest) (dbusecase.SetValueResponse, error) {
+	return usecase(context.Background(), request)
 }
 
-func newUsecaseWithStorageChan(storageChan chan<- any) dbusecase.SetValueFunc {
-	return dbusecase.SetValueUsecase(dbusecase.NewDependency(storageChan, nil))
+func doExecuteWithContext(usecase dbusecase.SetValueFunc, ctx context.Context) (dbusecase.SetValueResponse, error) {
+	return usecase(ctx, dbusecase.SetValueRequest{})
 }
 
-func newClosedContext() context.Context {
-	ctx, cancel := context.WithCancel(context.Background())
-	cancel()
-	return ctx
+func contextWithDefaultTimeout() (context.Context, context.CancelFunc) {
+	return goutil.NewContextWithTimeout(defaultTimeout)
 }

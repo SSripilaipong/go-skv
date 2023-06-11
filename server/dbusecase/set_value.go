@@ -2,9 +2,9 @@ package dbusecase
 
 import (
 	"context"
-	"fmt"
 	"go-skv/server/dbstorage"
-	"time"
+	"go-skv/server/dbstorage/storagerecord"
+	"go-skv/util/goutil"
 )
 
 type SetValueRequest struct {
@@ -19,34 +19,19 @@ type SetValueFunc func(context.Context, SetValueRequest) (SetValueResponse, erro
 
 func SetValueUsecase(dep Dependency) SetValueFunc {
 	return func(ctx context.Context, request SetValueRequest) (SetValueResponse, error) {
-		resultChan := make(chan dbstorage.SetValueResponse)
-		dep.storageChan <- setValueMessage{key: request.Key, value: request.Value, resultChan: resultChan}
+		completed := make(chan struct{})
+		doSignalCompleted := func(storagerecord.SetValueResponse) { completed <- struct{}{} }
+		doSetValueToRecord := func(record dbstorage.Record) {
+			goutil.PanicUnhandledError(record.SetValue(ctx, request.Value, doSignalCompleted))
+		}
+
+		goutil.PanicUnhandledError(dep.repo.GetOrCreateRecord(ctx, request.Key, doSetValueToRecord))
+
 		select {
-		case <-resultChan:
+		case <-completed:
 			return SetValueResponse{}, nil
 		case <-ctx.Done():
-			return SetValueResponse{}, fmt.Errorf("context closed")
-		case <-time.After(time.Second): // TODO: parameterize
-			panic(fmt.Errorf("unhandled error"))
+			return SetValueResponse{}, ContextCancelledError{}
 		}
 	}
-}
-
-type setValueMessage struct {
-	key        string
-	value      string
-	resultChan chan dbstorage.SetValueResponse
-}
-
-func (m setValueMessage) Key() string {
-	return m.key
-}
-
-func (m setValueMessage) Value() string {
-	return m.value
-}
-
-func (m setValueMessage) Completed(result dbstorage.SetValueResponse) error {
-	m.resultChan <- result
-	return nil
 }
