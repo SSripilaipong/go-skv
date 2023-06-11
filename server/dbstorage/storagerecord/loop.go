@@ -2,7 +2,6 @@ package storagerecord
 
 import (
 	"context"
-	"go-skv/util/goutil"
 )
 
 func runRecordMainLoop(ctx context.Context, ch chan any, stopped chan struct{}) {
@@ -13,9 +12,9 @@ func runRecordMainLoop(ctx context.Context, ch chan any, stopped chan struct{}) 
 		case raw := <-ch:
 			if message, isSetMessage := raw.(setValueMessage); isSetMessage {
 				value = message.value
-				message.success(SetValueResponse{Value: goutil.Pointer(message.value)})
+				message.success(SetValueResponse{Value: message.value})
 			} else if message, isGetMessage := raw.(getValueMessage); isGetMessage {
-				message.success(GetValueResponse{Value: goutil.Pointer(value)})
+				message.success(GetValueResponse{Value: value})
 			}
 		case <-ctx.Done():
 			goto stop

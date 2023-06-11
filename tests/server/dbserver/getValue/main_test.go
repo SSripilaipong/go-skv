@@ -29,7 +29,7 @@ func Test_should_call_get_value_usecase(t *testing.T) {
 }
 
 func Test_should_return_value_from_usecase(t *testing.T) {
-	usecase := &getValueUsecaseMock{Return: dbusecase.GetValueResponse{Value: goutil.Pointer("World")}}
+	usecase := &getValueUsecaseMock{Return: dbusecase.GetValueResponse{Value: "World"}}
 
 	var result *dbgrpc.GetValueResponse
 	_ = dbserverTest.RunWithGetValueUsecase(usecase.New(), func(server dbserver.Interface) error {

@@ -3,7 +3,6 @@ package getValue
 import (
 	"context"
 	"go-skv/server/dbusecase"
-	"go-skv/util/goutil"
 )
 
 type getValueUsecaseMock struct {
@@ -13,11 +12,10 @@ type getValueUsecaseMock struct {
 }
 
 func (m *getValueUsecaseMock) New() dbusecase.GetValueFunc {
-	response := goutil.Coalesce(m.Return, dbusecase.GetValueResponse{Value: goutil.Pointer("")})
 
 	return func(ctx context.Context, request dbusecase.GetValueRequest) (dbusecase.GetValueResponse, error) {
 		m.Context = ctx
 		m.Request = request
-		return response, nil
+		return m.Return, nil
 	}
 }

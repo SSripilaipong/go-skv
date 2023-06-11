@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go-skv/server/dbserver/dbgrpc"
 	"go-skv/server/dbusecase"
+	"go-skv/util/goutil"
 )
 
 type Controller struct {
@@ -25,7 +26,7 @@ func (c *Controller) GetValue(ctx context.Context, request *dbgrpc.GetValueReque
 	if err != nil {
 		panic(fmt.Errorf("unhandled error: %f", err))
 	}
-	return &dbgrpc.GetValueResponse{Value: result.Value}, nil
+	return &dbgrpc.GetValueResponse{Value: goutil.Pointer(result.Value)}, nil
 }
 
 func (c *Controller) SetValue(ctx context.Context, request *dbgrpc.SetValueRequest) (*dbgrpc.SetValueResponse, error) {

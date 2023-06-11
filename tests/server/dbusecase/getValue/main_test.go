@@ -31,13 +31,13 @@ func Test_should_pass_context_to_repo(t *testing.T) {
 }
 
 func Test_should_return_value_from_record(t *testing.T) {
-	record := &dbstoragetest.RecordMock{GetValue_success_response: dbstorage.GetValueResponse{Value: goutil.Pointer("Hello")}}
+	record := &dbstoragetest.RecordMock{GetValue_success_response: dbstorage.GetValueResponse{Value: "Hello"}}
 	repoMock := &dbusecasetest.RepoMock{GetRecord_success_record: record}
 	usecase := dbusecase.GetValueUsecase(dbusecase.NewDependencyV2(nil, repoMock))
 
 	response, _ := usecase(context.Background(), dbusecase.GetValueRequest{})
 
-	assert.Equal(t, dbusecase.GetValueResponse{Value: goutil.Pointer("Hello")}, response)
+	assert.Equal(t, dbusecase.GetValueResponse{Value: "Hello"}, response)
 }
 
 func Test_should_return_error_when_context_cancelled(t *testing.T) {
