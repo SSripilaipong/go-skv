@@ -13,6 +13,7 @@ type RepoMock struct {
 	GetRecord_ctx            context.Context
 	GetRecord_success_record dbstorage.Record
 	GetOrCreateRecord_key    string
+	GetOrCreateRecord_ctx    context.Context
 }
 
 var _ dbstorage.RepositoryInteractor = &RepoMock{}
@@ -25,6 +26,7 @@ func (r *RepoMock) GetRecord(ctx context.Context, key string, success repository
 }
 
 func (r *RepoMock) GetOrCreateRecord(ctx context.Context, key string, success repositoryroutine.GetOrCreateRecordSuccessCallback) error {
+	r.GetOrCreateRecord_ctx = ctx
 	r.GetOrCreateRecord_key = key
 	return nil
 }
