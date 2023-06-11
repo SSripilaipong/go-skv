@@ -1,7 +1,10 @@
 package getValue
 
-import "context"
+import (
+	"context"
+	"go-skv/util/goutil"
+)
 
 func contextWithDefaultTimeout() (context.Context, context.CancelFunc) {
-	return context.WithTimeout(context.Background(), defaultTimeout)
+	return goutil.NewContextWithTimeout(defaultTimeout)
 }
