@@ -17,7 +17,7 @@ type SetValueResponse struct {
 
 type SetValueFunc func(context.Context, SetValueRequest) (SetValueResponse, error)
 
-func SetValueUsecase(dep *Dependency) SetValueFunc {
+func SetValueUsecase(dep Dependency) SetValueFunc {
 	return func(ctx context.Context, request SetValueRequest) (SetValueResponse, error) {
 		resultChan := make(chan dbstorage.SetValueResponse)
 		dep.storageChan <- setValueMessage{key: request.Key, value: request.Value, resultChan: resultChan}

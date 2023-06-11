@@ -9,13 +9,7 @@ type Dependency struct {
 	repo        dbstorage.RepositoryInteractor
 }
 
-func NewDependency(storageChan chan<- any) *Dependency {
-	return &Dependency{
-		storageChan: storageChan,
-	}
-}
-
-func NewDependencyV2(storageChan chan<- any, repo dbstorage.RepositoryInteractor) Dependency {
+func NewDependency(storageChan chan<- any, repo dbstorage.RepositoryInteractor) Dependency {
 	return Dependency{
 		storageChan: storageChan,
 		repo:        repo,

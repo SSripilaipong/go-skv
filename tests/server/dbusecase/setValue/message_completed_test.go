@@ -12,7 +12,7 @@ import (
 
 func Test_should_return_value_when_set_value_completed(t *testing.T) {
 	storageChan := make(chan any, 2)
-	execute := dbusecase.SetValueUsecase(dbusecase.NewDependency(storageChan))
+	execute := newUsecaseWithStorageChan(storageChan)
 
 	go func() {
 		message := goutil.ReceiveWithTimeoutOrPanic(storageChan, defaultTimeout)
@@ -27,10 +27,8 @@ func Test_should_return_value_when_set_value_completed(t *testing.T) {
 }
 
 func Test_should_return_error_when_context_is_closed(t *testing.T) {
-	execute := dbusecase.SetValueUsecase(dbusecase.NewDependency(make(chan any, 2)))
-
-	ctx, cancel := context.WithCancel(context.Background())
-	cancel()
+	execute := newUsecase()
+	ctx := newClosedContext()
 
 	_, err := execute(ctx, dbusecase.SetValueRequest{Key: "Go"})
 

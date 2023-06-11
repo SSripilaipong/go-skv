@@ -13,7 +13,7 @@ import (
 
 func Test_should_get_record_from_repository_with_key(t *testing.T) {
 	repoMock := &dbusecasetest.RepoMock{}
-	usecase := dbusecase.GetValueUsecase(dbusecase.NewDependencyV2(nil, repoMock))
+	usecase := dbusecase.GetValueUsecase(dbusecase.NewDependency(nil, repoMock))
 
 	_, _ = usecase(context.Background(), dbusecase.GetValueRequest{Key: "abc"})
 
@@ -22,7 +22,7 @@ func Test_should_get_record_from_repository_with_key(t *testing.T) {
 
 func Test_should_pass_context_to_repo(t *testing.T) {
 	repoMock := &dbusecasetest.RepoMock{}
-	usecase := dbusecase.GetValueUsecase(dbusecase.NewDependencyV2(nil, repoMock))
+	usecase := dbusecase.GetValueUsecase(dbusecase.NewDependency(nil, repoMock))
 
 	ctx := context.WithValue(context.Background(), "Test", goutil.RandomString(8))
 	_, _ = usecase(ctx, dbusecase.GetValueRequest{Key: "abc"})
@@ -33,7 +33,7 @@ func Test_should_pass_context_to_repo(t *testing.T) {
 func Test_should_return_value_from_record(t *testing.T) {
 	record := &dbstoragetest.RecordMock{GetValue_success_response: dbstorage.GetValueResponse{Value: "Hello"}}
 	repoMock := &dbusecasetest.RepoMock{GetRecord_success_record: record}
-	usecase := dbusecase.GetValueUsecase(dbusecase.NewDependencyV2(nil, repoMock))
+	usecase := dbusecase.GetValueUsecase(dbusecase.NewDependency(nil, repoMock))
 
 	response, _ := usecase(context.Background(), dbusecase.GetValueRequest{})
 
@@ -43,7 +43,7 @@ func Test_should_return_value_from_record(t *testing.T) {
 func Test_should_return_error_when_context_cancelled(t *testing.T) {
 	record := &dbstoragetest.RecordMock{GetValue_success_willFail: true}
 	repoMock := &dbusecasetest.RepoMock{GetRecord_success_record: record}
-	usecase := dbusecase.GetValueUsecase(dbusecase.NewDependencyV2(nil, repoMock))
+	usecase := dbusecase.GetValueUsecase(dbusecase.NewDependency(nil, repoMock))
 
 	ctx, cancel := contextWithDefaultTimeout()
 	cancel()
@@ -55,7 +55,7 @@ func Test_should_return_error_when_context_cancelled(t *testing.T) {
 func Test_should_pass_context_to_record(t *testing.T) {
 	record := &dbstoragetest.RecordMock{}
 	repoMock := &dbusecasetest.RepoMock{GetRecord_success_record: record}
-	usecase := dbusecase.GetValueUsecase(dbusecase.NewDependencyV2(nil, repoMock))
+	usecase := dbusecase.GetValueUsecase(dbusecase.NewDependency(nil, repoMock))
 
 	ctx := context.WithValue(context.Background(), "Test", goutil.RandomString(8))
 	_, _ = usecase(ctx, dbusecase.GetValueRequest{})
