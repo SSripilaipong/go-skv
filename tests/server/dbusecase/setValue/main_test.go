@@ -3,7 +3,7 @@ package setValue
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
-	"go-skv/server/dbusecase"
+	"go-skv/server/dbserver/dbusecase"
 	"go-skv/tests/server/dbstorage/dbstoragetest"
 	"go-skv/tests/server/dbusecase/dbusecasetest"
 	"go-skv/util/goutil"

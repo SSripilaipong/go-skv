@@ -1,8 +1,8 @@
-package dbservertest
+package dbservercontrollertest
 
 import (
 	"context"
-	"go-skv/server/dbusecase"
+	"go-skv/server/dbserver/dbusecase"
 )
 
 type UsecaseMock struct {

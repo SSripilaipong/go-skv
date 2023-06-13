@@ -1,8 +1,8 @@
 package dbusecasetest
 
 import (
+	"go-skv/server/dbserver/dbusecase"
 	"go-skv/server/dbstorage"
-	"go-skv/server/dbusecase"
 )
 
 func NewUsecaseWithRepo(repo dbstorage.RepositoryInteractor) dbusecase.Interface {

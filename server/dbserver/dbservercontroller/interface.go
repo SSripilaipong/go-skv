@@ -1,4 +1,4 @@
-package dbserver
+package dbservercontroller
 
 type Interface interface {
 	Start() error

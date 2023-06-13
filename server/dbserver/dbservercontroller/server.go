@@ -1,9 +1,9 @@
-package dbserver
+package dbservercontroller
 
 import (
 	"fmt"
 	"go-skv/server/dbserver/dbgrpc"
-	"go-skv/server/dbusecase"
+	"go-skv/server/dbserver/dbusecase"
 	"google.golang.org/grpc"
 	"net"
 	"strconv"
@@ -11,20 +11,20 @@ import (
 )
 
 func New(port int, usecase dbusecase.Interface) Interface {
-	return &server{
+	return &controller{
 		port:    port,
 		usecase: usecase,
 	}
 }
 
-type server struct {
+type controller struct {
 	port    int
 	usecase dbusecase.Interface
 
 	grpcServer *grpc.Server
 }
 
-func (s *server) Start() error {
+func (s *controller) Start() error {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", s.port))
 	if err != nil {
 		panic(fmt.Errorf("unhandled error: %f", err))
@@ -33,7 +33,7 @@ func (s *server) Start() error {
 	s.updatePort(lis)
 
 	s.grpcServer = grpc.NewServer()
-	dbgrpc.RegisterDbServiceServer(s.grpcServer, NewController(s.usecase))
+	dbgrpc.RegisterDbServiceServer(s.grpcServer, newGrpcImplementation(s.usecase))
 
 	go func() {
 		if err := s.grpcServer.Serve(lis); err != nil {
@@ -44,7 +44,7 @@ func (s *server) Start() error {
 	return nil
 }
 
-func (s *server) updatePort(lis net.Listener) {
+func (s *controller) updatePort(lis net.Listener) {
 	tokens := strings.Split(lis.Addr().String(), ":")
 	port, err := strconv.Atoi(tokens[len(tokens)-1])
 	if err != nil {
@@ -53,11 +53,11 @@ func (s *server) updatePort(lis net.Listener) {
 	s.port = port
 }
 
-func (s *server) Stop() error {
+func (s *controller) Stop() error {
 	s.grpcServer.GracefulStop()
 	return nil
 }
 
-func (s *server) Port() int {
+func (s *controller) Port() int {
 	return s.port
 }

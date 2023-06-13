@@ -15,7 +15,7 @@ func ReceiveNoBlock[T any](dataChan <-chan T) (T, bool) {
 	}
 }
 
-func ReceiveWithTimeout[T any](dataChan chan T, timeout time.Duration) (T, bool) {
+func ReceiveWithTimeout[T any](dataChan <-chan T, timeout time.Duration) (T, bool) {
 	var zero T
 	select {
 	case data := <-dataChan:

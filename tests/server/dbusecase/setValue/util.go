@@ -2,7 +2,7 @@ package setValue
 
 import (
 	"context"
-	"go-skv/server/dbusecase"
+	"go-skv/server/dbserver/dbusecase"
 	"go-skv/util/goutil"
 )
 
