@@ -2,19 +2,19 @@ package dbmanagertest
 
 import (
 	"go-skv/server/dbmanager"
-	"go-skv/server/dbpeerserver"
+	"go-skv/server/dbpeerconnector"
 	"go-skv/server/dbserver"
 	"go-skv/server/dbstorage"
 )
 
-func NewWithPeerServer(peerServer dbpeerserver.Interface) dbmanager.Manager {
+func NewWithPeerConnector(peerServer dbpeerconnector.Interface) dbmanager.Manager {
 	return dbmanager.New(peerServer, &DbServerMock{}, &DbStorageMock{})
 }
 
 func NewWithDbServer(dbServer dbserver.Interface) dbmanager.Manager {
-	return dbmanager.New(&PeerServerMock{}, dbServer, &DbStorageMock{})
+	return dbmanager.New(&PeerConnectorMock{}, dbServer, &DbStorageMock{})
 }
 
 func NewWithDbStorage(dbStorage dbstorage.Repository) dbmanager.Manager {
-	return dbmanager.New(&PeerServerMock{}, &DbServerMock{}, dbStorage)
+	return dbmanager.New(&PeerConnectorMock{}, &DbServerMock{}, dbStorage)
 }

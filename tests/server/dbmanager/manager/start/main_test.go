@@ -6,13 +6,13 @@ import (
 	"testing"
 )
 
-func Test_should_start_peer_server(t *testing.T) {
-	peerServer := &dbmanagertest.PeerServerMock{}
-	mgr := dbmanagertest.NewWithPeerServer(peerServer)
+func Test_should_start_peer_connector(t *testing.T) {
+	peerConnector := &dbmanagertest.PeerConnectorMock{}
+	mgr := dbmanagertest.NewWithPeerConnector(peerConnector)
 
 	_ = doStart(mgr)
 
-	assert.True(t, peerServer.Start_IsCalled)
+	assert.True(t, peerConnector.Start_IsCalled)
 }
 
 func Test_should_start_db_server(t *testing.T) {

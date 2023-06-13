@@ -1,10 +1,10 @@
 package dbmanagertest
 
-type PeerServerMock struct {
+type PeerConnectorMock struct {
 	Start_IsCalled bool
 }
 
-func (p *PeerServerMock) Start() error {
+func (p *PeerConnectorMock) Start() error {
 	p.Start_IsCalled = true
 	return nil
 }
