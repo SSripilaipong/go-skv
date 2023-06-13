@@ -3,22 +3,23 @@ package dbserver
 import (
 	"fmt"
 	"go-skv/server/dbserver/dbgrpc"
+	"go-skv/server/dbusecase"
 	"google.golang.org/grpc"
 	"net"
 	"strconv"
 	"strings"
 )
 
-func New(port int, dep Dependency) Interface {
+func New(port int, usecase dbusecase.Interface) Interface {
 	return &server{
-		port: port,
-		dep:  dep,
+		port:    port,
+		usecase: usecase,
 	}
 }
 
 type server struct {
-	port int
-	dep  Dependency
+	port    int
+	usecase dbusecase.Interface
 
 	grpcServer *grpc.Server
 }
@@ -32,7 +33,7 @@ func (s *server) Start() error {
 	s.updatePort(lis)
 
 	s.grpcServer = grpc.NewServer()
-	dbgrpc.RegisterDbServiceServer(s.grpcServer, NewController(s.dep))
+	dbgrpc.RegisterDbServiceServer(s.grpcServer, NewController(s.usecase))
 
 	go func() {
 		if err := s.grpcServer.Serve(lis); err != nil {

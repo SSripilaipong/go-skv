@@ -1,4 +1,4 @@
-package dbserverTest
+package dbservertest
 
 import (
 	"go-skv/server/dbserver/dbgrpc"

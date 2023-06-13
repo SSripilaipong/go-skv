@@ -10,19 +10,17 @@ import (
 
 type Controller struct {
 	dbgrpc.UnimplementedDbServiceServer
-	getValueUsecase dbusecase.GetValueFunc
-	setValueUsecase dbusecase.SetValueFunc
+	usecase dbusecase.Interface
 }
 
-func NewController(dep Dependency) *Controller {
+func NewController(usecase dbusecase.Interface) *Controller {
 	return &Controller{
-		getValueUsecase: dep.GetValueUsecase,
-		setValueUsecase: dep.SetValueUsecase,
+		usecase: usecase,
 	}
 }
 
 func (c *Controller) GetValue(ctx context.Context, request *dbgrpc.GetValueRequest) (*dbgrpc.GetValueResponse, error) {
-	result, err := c.getValueUsecase(ctx, dbusecase.GetValueRequest{Key: request.Key})
+	result, err := c.usecase.GetValue(ctx, dbusecase.GetValueRequest{Key: request.Key})
 	if err != nil {
 		panic(fmt.Errorf("unhandled error: %f", err))
 	}
@@ -30,7 +28,7 @@ func (c *Controller) GetValue(ctx context.Context, request *dbgrpc.GetValueReque
 }
 
 func (c *Controller) SetValue(ctx context.Context, request *dbgrpc.SetValueRequest) (*dbgrpc.SetValueResponse, error) {
-	_, err := c.setValueUsecase(ctx, dbusecase.SetValueRequest{Key: request.Key, Value: request.Value})
+	_, err := c.usecase.SetValue(ctx, dbusecase.SetValueRequest{Key: request.Key, Value: request.Value})
 	if err != nil {
 		panic(fmt.Errorf("unhandled error: %f", err))
 	}

@@ -17,12 +17,8 @@ func RunCli() {
 
 func startServer() error {
 	storage, storageInteractor := dbstorage.New(16, 4)
-	usecaseDep := dbusecase.NewDependency(storageInteractor)
 	peerConnector := dbpeerconnector.New()
-	rpcServer := dbserver.New(5555, dbserver.Dependency{
-		GetValueUsecase: dbusecase.GetValueUsecase(usecaseDep),
-		SetValueUsecase: dbusecase.SetValueUsecase(usecaseDep),
-	})
+	rpcServer := dbserver.New(5555, dbusecase.New(storageInteractor))
 
 	manager := dbmanager.New(peerConnector, rpcServer, storage)
 	goutil.PanicUnhandledError(manager.Start())

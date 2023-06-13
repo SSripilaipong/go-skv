@@ -2,21 +2,16 @@ package setValue
 
 import (
 	"context"
-	"go-skv/server/dbstorage"
 	"go-skv/server/dbusecase"
 	"go-skv/util/goutil"
 )
 
-func newUsecaseWithRepo(repo dbstorage.RepositoryInteractor) dbusecase.SetValueFunc {
-	return dbusecase.SetValueUsecase(dbusecase.NewDependency(repo))
+func doExecuteWithRequest(usecase dbusecase.Interface, request dbusecase.SetValueRequest) (dbusecase.SetValueResponse, error) {
+	return usecase.SetValue(context.Background(), request)
 }
 
-func doExecuteWithRequest(usecase dbusecase.SetValueFunc, request dbusecase.SetValueRequest) (dbusecase.SetValueResponse, error) {
-	return usecase(context.Background(), request)
-}
-
-func doExecuteWithContext(usecase dbusecase.SetValueFunc, ctx context.Context) (dbusecase.SetValueResponse, error) {
-	return usecase(ctx, dbusecase.SetValueRequest{})
+func doExecuteWithContext(usecase dbusecase.Interface, ctx context.Context) (dbusecase.SetValueResponse, error) {
+	return usecase.SetValue(ctx, dbusecase.SetValueRequest{})
 }
 
 func contextWithDefaultTimeout() (context.Context, context.CancelFunc) {
