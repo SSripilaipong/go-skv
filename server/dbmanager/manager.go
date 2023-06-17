@@ -13,14 +13,14 @@ type Manager interface {
 
 func New(peerServer dbpeerconnector.Interface, dbServer dbserver.Interface, dbStorage dbstorage.Repository) Manager {
 	return &manager{
-		peerServer: peerServer,
-		dbServer:   dbServer,
-		dbStorage:  dbStorage,
+		peerConnector: peerServer,
+		dbServer:      dbServer,
+		dbStorage:     dbStorage,
 	}
 }
 
 type manager struct {
-	peerServer dbpeerconnector.Interface
-	dbServer   dbserver.Interface
-	dbStorage  dbstorage.Repository
+	peerConnector dbpeerconnector.Interface
+	dbServer      dbserver.Interface
+	dbStorage     dbstorage.Repository
 }

@@ -1,16 +1,12 @@
 package dbmanager
 
-import "fmt"
+import (
+	"go-skv/util/goutil"
+)
 
 func (m *manager) Start() error {
-	if err := m.dbStorage.Start(); err != nil {
-		panic(fmt.Errorf("unhandled error"))
-	}
-	if err := m.peerServer.Start(); err != nil {
-		panic(fmt.Errorf("unhandled error"))
-	}
-	if err := m.dbServer.Start(); err != nil {
-		panic(fmt.Errorf("unhandled error"))
-	}
+	goutil.PanicUnhandledError(m.dbStorage.Start())
+	goutil.PanicUnhandledError(m.peerConnector.Start())
+	goutil.PanicUnhandledError(m.dbServer.Start())
 	return nil
 }

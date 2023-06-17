@@ -15,6 +15,15 @@ func Test_should_stop_db_server(t *testing.T) {
 	assert.True(t, dbServer.Stop_IsCalled)
 }
 
+func Test_should_stop_peer_connector(t *testing.T) {
+	peerConnector := &dbmanagertest.PeerConnectorMock{}
+	mgr := dbmanagertest.NewWithPeerConnector(peerConnector)
+
+	_ = doStop(mgr)
+
+	assert.True(t, peerConnector.Stop_IsCalled)
+}
+
 func Test_should_stop_db_storage(t *testing.T) {
 	dbStorage := &dbmanagertest.DbStorageMock{}
 	mgr := dbmanagertest.NewWithDbStorage(dbStorage)
