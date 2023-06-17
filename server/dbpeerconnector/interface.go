@@ -1,6 +1,5 @@
 package dbpeerconnector
 
-type Interface interface {
-	Start() error
-	Stop() error
-}
+import "go-skv/server/dbpeerconnector/peerconnector"
+
+type Interface = peerconnector.Interface

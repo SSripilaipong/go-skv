@@ -1,17 +1,7 @@
 package dbpeerconnector
 
+import "go-skv/server/dbpeerconnector/peerconnector"
+
 func New() Interface {
-	return &connector{}
+	return peerconnector.New()
 }
-
-type connector struct{}
-
-func (p *connector) Start() error {
-	return nil
-}
-
-func (p *connector) Stop() error {
-	return nil
-}
-
-var _ Interface = &connector{}
