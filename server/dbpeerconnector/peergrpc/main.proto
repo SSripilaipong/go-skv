@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option go_package = "server/dbpeerconnector/peergrpc";
+
+service PeerService {
+  rpc Greeting(GreetingRequest) returns (GreetingResponse) {}
+}
+
+message GreetingRequest {
+  string advertisedAddress = 1;
+}
+
+message GreetingResponse {}
