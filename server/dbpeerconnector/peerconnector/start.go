@@ -7,16 +7,17 @@ import (
 	"go-skv/util/goutil"
 )
 
-func (p connector) Start() error {
-	_ = p.connectToExistingPeer()
+func (c connector) Start() error {
+	peer := c.connectToExistingPeer()
+	goutil.PanicUnhandledError(peer.SubscribeUpdates(c.listener))
 	return nil
 }
 
-func (p connector) connectToExistingPeer() peerconnectorcontract.Peer {
+func (c connector) connectToExistingPeer() peerconnectorcontract.Peer {
 	var peer peerconnectorcontract.Peer
 	var err error
-	for _, addr := range p.existingPeerAddresses {
-		peer, err = p.client.ConnectToPeer(addr)
+	for _, addr := range c.existingPeerAddresses {
+		peer, err = c.client.ConnectToPeer(addr)
 		if err == nil {
 			break
 		}

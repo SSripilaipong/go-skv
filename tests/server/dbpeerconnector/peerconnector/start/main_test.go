@@ -3,7 +3,6 @@ package start
 import (
 	"github.com/stretchr/testify/assert"
 	"go-skv/server/dbpeerconnector/peerclient/peerclientcontract"
-	"go-skv/server/dbpeerconnector/peerconnector"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 	"go-skv/tests/server/dbpeerconnector/peerconnector/peerconnectortest"
 	"go-skv/util/goutil"
@@ -14,7 +13,7 @@ func Test_should_try_to_connect_to_an_existing_peer(t *testing.T) {
 	client := &peerconnectortest.PeerClientMock{
 		ConnectToPeer_Return_array: []peerconnectorcontract.Peer{&peerconnectortest.PeerMock{}},
 	}
-	connector := peerconnector.New([]string{"1.1.1.1:1111"}, client)
+	connector := peerconnectortest.NewWithAddressesAndClient([]string{"1.1.1.1:1111"}, client)
 
 	goutil.PanicUnhandledError(connector.Start())
 
@@ -27,7 +26,7 @@ func Test_should_connect_to_next_peer_if_the_first_peer_cannot_be_connected(t *t
 		ConnectToPeer_Return_array: []peerconnectorcontract.Peer{nil, &peerconnectortest.PeerMock{}},
 		ConnectToPeer_Error_array:  []error{peerclientcontract.ConnectionError{}, nil},
 	}
-	connector := peerconnector.New([]string{"1.1.1.1:1111", "2.2.2.2:2222"}, client)
+	connector := peerconnectortest.NewWithAddressesAndClient([]string{"1.1.1.1:1111", "2.2.2.2:2222"}, client)
 
 	goutil.PanicUnhandledError(connector.Start())
 
@@ -39,10 +38,24 @@ func Test_should_not_connect_to_next_peer_if_the_first_peer_can_be_connected(t *
 	client := &peerconnectortest.PeerClientMock{
 		ConnectToPeer_Return_array: []peerconnectorcontract.Peer{&peerconnectortest.PeerMock{}},
 	}
-	connector := peerconnector.New([]string{"1.1.1.1:1111", "2.2.2.2:2222"}, client)
+	connector := peerconnectortest.NewWithAddressesAndClient([]string{"1.1.1.1:1111", "2.2.2.2:2222"}, client)
 
 	goutil.PanicUnhandledError(connector.Start())
 
 	goutil.PanicUnhandledError(connector.Stop())
 	assert.Equal(t, []string{"1.1.1.1:1111"}, client.ConnectToPeer_address_array)
+}
+
+func Test_should_register_replica_with_the_connected_peer(t *testing.T) {
+	listener := &peerconnectortest.UpdateListenerMock{}
+	peer := &peerconnectortest.PeerMock{}
+	client := &peerconnectortest.PeerClientMock{
+		ConnectToPeer_Return_array: []peerconnectorcontract.Peer{peer},
+	}
+	connector := peerconnectortest.NewWithClientAndUpdateListener(client, listener)
+
+	goutil.PanicUnhandledError(connector.Start())
+
+	goutil.PanicUnhandledError(connector.Stop())
+	assert.Equal(t, listener, peer.SubscribeUpdates_listener)
 }

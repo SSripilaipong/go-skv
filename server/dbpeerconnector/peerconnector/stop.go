@@ -1,5 +1,5 @@
 package peerconnector
 
-func (p connector) Stop() error {
+func (c connector) Stop() error {
 	return nil
 }

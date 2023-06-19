@@ -6,5 +6,5 @@ import (
 )
 
 func New() peerconnectorcontract.Connector {
-	return peerconnector.New(nil)
+	return peerconnector.New(nil, nil, nil)
 }
