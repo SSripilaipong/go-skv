@@ -52,10 +52,18 @@ func Test_should_register_replica_with_the_connected_peer(t *testing.T) {
 	client := &peerconnectortest.PeerClientMock{
 		ConnectToPeer_Return_array: []peerconnectorcontract.Peer{peer},
 	}
-	connector := peerconnectortest.NewWithClientAndUpdateListener(client, listener)
+	connector := peerconnectortest.NewWithAddressesAndClientAndUpdateListener([]string{"0.0.0.0:9999"}, client, listener)
 
 	goutil.PanicUnhandledError(connector.Start())
 
 	goutil.PanicUnhandledError(connector.Stop())
 	assert.Equal(t, listener, peer.SubscribeUpdates_listener)
+}
+
+func Test_should_not_panic_when_no_available_peer(t *testing.T) {
+	connector := peerconnectortest.New()
+
+	defer goutil.WillPanicUnhandledError(connector.Stop)
+
+	assert.NotPanics(t, goutil.WillPanicUnhandledError(connector.Start))
 }

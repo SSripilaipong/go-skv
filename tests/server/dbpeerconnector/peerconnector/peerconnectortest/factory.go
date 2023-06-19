@@ -10,6 +10,10 @@ func NewWithAddressesAndClient(addresses []string, client peerclientcontract.Cli
 	return peerconnector.New(addresses, client, &UpdateListenerMock{})
 }
 
-func NewWithClientAndUpdateListener(client peerclientcontract.Client, listener peerconnectorcontract.UpdateListener) peerconnectorcontract.Connector {
-	return peerconnector.New([]string{"0.0.0.0:9999"}, client, listener)
+func NewWithAddressesAndClientAndUpdateListener(addresses []string, client peerclientcontract.Client, listener peerconnectorcontract.UpdateListener) peerconnectorcontract.Connector {
+	return peerconnector.New(addresses, client, listener)
+}
+
+func New() peerconnectorcontract.Connector {
+	return peerconnector.New(nil, &PeerClientMock{}, &UpdateListenerMock{})
 }

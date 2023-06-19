@@ -9,7 +9,9 @@ import (
 
 func (c connector) Start() error {
 	peer := c.connectToExistingPeer()
-	goutil.PanicUnhandledError(peer.SubscribeUpdates(c.listener))
+	if peer != nil {
+		goutil.PanicUnhandledError(peer.SubscribeUpdates(c.listener))
+	}
 	return nil
 }
 
