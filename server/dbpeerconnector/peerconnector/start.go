@@ -1,9 +1,17 @@
 package peerconnector
 
-import "go-skv/util/goutil"
+import (
+	"errors"
+	"go-skv/server/dbpeerconnector/peerclient/peerclientcontract"
+	"go-skv/util/goutil"
+)
 
 func (p connector) Start() error {
-	_, err := p.client.ConnectToPeer(p.existingPeerAddresses[0])
-	goutil.PanicUnhandledError(err)
+	for _, addr := range p.existingPeerAddresses {
+		_, err := p.client.ConnectToPeer(addr)
+		if !errors.Is(err, peerclientcontract.ConnectionError{}) {
+			goutil.PanicUnhandledError(err)
+		}
+	}
 	return nil
 }
