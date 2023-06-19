@@ -1,7 +1,7 @@
 package dbmanager
 
 import (
-	"go-skv/server/dbpeerconnector"
+	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 	"go-skv/server/dbserver"
 	"go-skv/server/dbstorage"
 )
@@ -11,7 +11,7 @@ type Manager interface {
 	Stop() error
 }
 
-func New(peerServer dbpeerconnector.Interface, dbServer dbserver.Interface, dbStorage dbstorage.Repository) Manager {
+func New(peerServer peerconnectorcontract.Connector, dbServer dbserver.Interface, dbStorage dbstorage.Repository) Manager {
 	return &manager{
 		peerConnector: peerServer,
 		dbServer:      dbServer,
@@ -20,7 +20,7 @@ func New(peerServer dbpeerconnector.Interface, dbServer dbserver.Interface, dbSt
 }
 
 type manager struct {
-	peerConnector dbpeerconnector.Interface
+	peerConnector peerconnectorcontract.Connector
 	dbServer      dbserver.Interface
 	dbStorage     dbstorage.Repository
 }
