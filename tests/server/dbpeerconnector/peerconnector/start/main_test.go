@@ -46,20 +46,6 @@ func Test_should_not_connect_to_next_peer_if_the_first_peer_can_be_connected(t *
 	assert.Equal(t, []string{"1.1.1.1:1111"}, client.ConnectToPeer_address_array)
 }
 
-func Test_should_register_replica_with_the_connected_peer(t *testing.T) {
-	listener := &peerconnectortest.UpdateListenerMock{}
-	peer := &peerconnectortest.PeerMock{}
-	client := &peerconnectortest.PeerClientMock{
-		ConnectToPeer_Return_array: []peerconnectorcontract.Peer{peer},
-	}
-	connector := peerconnectortest.NewWithAddressesAndClientAndUpdateListener([]string{"0.0.0.0:9999"}, client, listener)
-
-	goutil.PanicUnhandledError(connector.Start())
-
-	goutil.PanicUnhandledError(connector.Stop())
-	assert.Equal(t, listener, peer.SubscribeUpdates_listener)
-}
-
 func Test_should_not_panic_when_no_available_peer(t *testing.T) {
 	connector := peerconnectortest.New()
 

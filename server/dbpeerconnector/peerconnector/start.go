@@ -8,10 +8,7 @@ import (
 )
 
 func (c connector) Start() error {
-	peer := c.connectToExistingPeer()
-	if peer != nil {
-		goutil.PanicUnhandledError(peer.SubscribeUpdates(c.listener))
-	}
+	_ = c.connectToExistingPeer()
 	return nil
 }
 
