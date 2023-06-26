@@ -8,15 +8,16 @@ import (
 )
 
 func (c connector) Start() error {
-	peer := c.connectToExistingPeer()
-	goutil.PanicUnhandledError(c.peerRepo.Save(nil, "", peer))
+	addr, peer := c.connectToExistingPeer()
+	goutil.PanicUnhandledError(c.peerRepo.Save(nil, addr, peer))
 	return nil
 }
 
-func (c connector) connectToExistingPeer() peerconnectorcontract.Peer {
+func (c connector) connectToExistingPeer() (string, peerconnectorcontract.Peer) {
 	var peer peerconnectorcontract.Peer
 	var err error
-	for _, addr := range c.existingPeerAddresses {
+	var addr string
+	for _, addr = range c.existingPeerAddresses {
 		peer, err = c.client.ConnectToPeer(addr)
 		if err == nil {
 			break
@@ -25,5 +26,5 @@ func (c connector) connectToExistingPeer() peerconnectorcontract.Peer {
 			goutil.PanicUnhandledError(err)
 		}
 	}
-	return peer
+	return addr, peer
 }

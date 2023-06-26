@@ -66,3 +66,15 @@ func Test_should_save_connected_peer_to_repository(t *testing.T) {
 	goutil.PanicUnhandledError(connector.Stop())
 	assert.Equal(t, connectedPeer, peerRepo.Save_peer)
 }
+func Test_should_save_connected_peer_to_repository_with_its_address_as_its_name(t *testing.T) {
+	connectedPeer := &peerconnectortest.PeerMock{}
+	peerRepo := &peerconnectortest.PeerRepositoryMock{}
+	connector := peerconnectortest.NewWithAddressesAndClientAndPeerRepo([]string{"1.1.1.1:1111"}, &peerconnectortest.PeerClientMock{
+		ConnectToPeer_Return_array: []peerconnectorcontract.Peer{connectedPeer},
+	}, peerRepo)
+
+	goutil.PanicUnhandledError(connector.Start())
+
+	goutil.PanicUnhandledError(connector.Stop())
+	assert.Equal(t, "1.1.1.1:1111", peerRepo.Save_name)
+}
