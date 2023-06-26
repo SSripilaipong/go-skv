@@ -1,6 +1,7 @@
 package start
 
 import (
+	"context"
 	"github.com/stretchr/testify/assert"
 	"go-skv/server/dbpeerconnector/peerclient/peerclientcontract"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
@@ -13,7 +14,10 @@ func Test_should_try_to_connect_to_an_existing_peer(t *testing.T) {
 	client := &peerconnectortest.PeerClientMock{
 		ConnectToPeer_Return_array: []peerconnectorcontract.Peer{&peerconnectortest.PeerMock{}},
 	}
-	connector := peerconnectortest.NewWithAddressesAndClient([]string{"1.1.1.1:1111"}, client)
+	connector := peerconnectortest.New(
+		peerconnectortest.WithAddresses([]string{"1.1.1.1:1111"}),
+		peerconnectortest.WithClient(client),
+	)
 
 	goutil.PanicUnhandledError(connector.Start())
 
@@ -26,7 +30,10 @@ func Test_should_connect_to_next_peer_if_the_first_peer_cannot_be_connected(t *t
 		ConnectToPeer_Return_array: []peerconnectorcontract.Peer{nil, &peerconnectortest.PeerMock{}},
 		ConnectToPeer_Error_array:  []error{peerclientcontract.ConnectionError{}, nil},
 	}
-	connector := peerconnectortest.NewWithAddressesAndClient([]string{"1.1.1.1:1111", "2.2.2.2:2222"}, client)
+	connector := peerconnectortest.New(
+		peerconnectortest.WithAddresses([]string{"1.1.1.1:1111", "2.2.2.2:2222"}),
+		peerconnectortest.WithClient(client),
+	)
 
 	goutil.PanicUnhandledError(connector.Start())
 
@@ -38,7 +45,10 @@ func Test_should_not_connect_to_next_peer_if_the_first_peer_can_be_connected(t *
 	client := &peerconnectortest.PeerClientMock{
 		ConnectToPeer_Return_array: []peerconnectorcontract.Peer{&peerconnectortest.PeerMock{}},
 	}
-	connector := peerconnectortest.NewWithAddressesAndClient([]string{"1.1.1.1:1111", "2.2.2.2:2222"}, client)
+	connector := peerconnectortest.New(
+		peerconnectortest.WithAddresses([]string{"1.1.1.1:1111", "2.2.2.2:2222"}),
+		peerconnectortest.WithClient(client),
+	)
 
 	goutil.PanicUnhandledError(connector.Start())
 
@@ -57,24 +67,50 @@ func Test_should_not_panic_when_no_available_peer(t *testing.T) {
 func Test_should_save_connected_peer_to_repository(t *testing.T) {
 	connectedPeer := &peerconnectortest.PeerMock{}
 	peerRepo := &peerconnectortest.PeerRepositoryMock{}
-	connector := peerconnectortest.NewWithAddressesAndClientAndPeerRepo([]string{"1.1.1.1:1111"}, &peerconnectortest.PeerClientMock{
-		ConnectToPeer_Return_array: []peerconnectorcontract.Peer{connectedPeer},
-	}, peerRepo)
+	connector := peerconnectortest.New(
+		peerconnectortest.WithNonEmptyAddresses(),
+		peerconnectortest.WithClient(&peerconnectortest.PeerClientMock{
+			ConnectToPeer_Return_array: []peerconnectorcontract.Peer{connectedPeer},
+		}),
+		peerconnectortest.WithPeerRepo(peerRepo),
+	)
 
 	goutil.PanicUnhandledError(connector.Start())
 
 	goutil.PanicUnhandledError(connector.Stop())
 	assert.Equal(t, connectedPeer, peerRepo.Save_peer)
 }
+
 func Test_should_save_connected_peer_to_repository_with_its_address_as_its_name(t *testing.T) {
-	connectedPeer := &peerconnectortest.PeerMock{}
 	peerRepo := &peerconnectortest.PeerRepositoryMock{}
-	connector := peerconnectortest.NewWithAddressesAndClientAndPeerRepo([]string{"1.1.1.1:1111"}, &peerconnectortest.PeerClientMock{
-		ConnectToPeer_Return_array: []peerconnectorcontract.Peer{connectedPeer},
-	}, peerRepo)
+	connector := peerconnectortest.New(
+		peerconnectortest.WithAddresses([]string{"1.1.1.1:1111"}),
+		peerconnectortest.WithClient(&peerconnectortest.PeerClientMock{
+			ConnectToPeer_Return_array: []peerconnectorcontract.Peer{&peerconnectortest.PeerMock{}},
+		}),
+		peerconnectortest.WithPeerRepo(peerRepo),
+	)
 
 	goutil.PanicUnhandledError(connector.Start())
 
 	goutil.PanicUnhandledError(connector.Stop())
 	assert.Equal(t, "1.1.1.1:1111", peerRepo.Save_name)
+}
+
+func Test_should_use_global_context_to_save(t *testing.T) {
+	peerRepo := &peerconnectortest.PeerRepositoryMock{}
+	ctx := context.WithValue(context.Background(), "test", "this is the expected context")
+	connector := peerconnectortest.New(
+		peerconnectortest.WithContext(ctx),
+		peerconnectortest.WithNonEmptyAddresses(),
+		peerconnectortest.WithClient(&peerconnectortest.PeerClientMock{
+			ConnectToPeer_Return_array: []peerconnectorcontract.Peer{&peerconnectortest.PeerMock{}},
+		}),
+		peerconnectortest.WithPeerRepo(peerRepo),
+	)
+
+	goutil.PanicUnhandledError(connector.Start())
+
+	goutil.PanicUnhandledError(connector.Stop())
+	assert.Equal(t, "this is the expected context", peerRepo.Save_ctx.Value("test"))
 }
