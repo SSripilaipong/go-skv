@@ -9,7 +9,9 @@ import (
 
 func (c connector) Start() error {
 	addr, peer := c.connectToExistingPeer()
-	goutil.PanicUnhandledError(c.peerRepo.Save(c.ctx, addr, peer))
+	if peer != nil {
+		goutil.PanicUnhandledError(c.peerRepo.Save(c.ctx, addr, peer))
+	}
 	return nil
 }
 

@@ -114,3 +114,15 @@ func Test_should_use_global_context_to_save(t *testing.T) {
 	goutil.PanicUnhandledError(connector.Stop())
 	assert.Equal(t, "this is the expected context", peerRepo.Save_ctx.Value("test"))
 }
+
+func Test_should_not_save_to_repository_when_cannot_to_connect_to_peer(t *testing.T) {
+	peerRepo := &peerconnectortest.PeerRepositoryMock{}
+	connector := peerconnectortest.New(
+		peerconnectortest.WithPeerRepo(peerRepo),
+	)
+
+	goutil.PanicUnhandledError(connector.Start())
+
+	goutil.PanicUnhandledError(connector.Stop())
+	assert.False(t, peerRepo.Save_IsCalled)
+}
