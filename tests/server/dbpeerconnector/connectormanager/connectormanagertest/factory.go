@@ -1,9 +1,9 @@
-package peerconnectortest
+package connectormanagertest
 
 import (
 	"context"
+	"go-skv/server/dbpeerconnector/connectormanager"
 	"go-skv/server/dbpeerconnector/peerclient/peerclientcontract"
-	"go-skv/server/dbpeerconnector/peerconnector"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 	"go-skv/server/dbpeerconnector/peerrepository/peerrepositorycontract"
 )
@@ -29,7 +29,7 @@ func New(options ...func(deps *Dependencies)) peerconnectorcontract.Connector {
 		option(&deps)
 	}
 
-	return peerconnector.New(deps.ctx, deps.addresses, deps.client, deps.peerRepo)
+	return connectormanager.New(deps.ctx, deps.addresses, deps.client, deps.peerRepo)
 }
 
 func WithContext(ctx context.Context) func(*Dependencies) {

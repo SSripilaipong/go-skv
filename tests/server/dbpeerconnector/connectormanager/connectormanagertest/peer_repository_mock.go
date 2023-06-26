@@ -1,4 +1,4 @@
-package peerconnectortest
+package connectormanagertest
 
 import (
 	"context"

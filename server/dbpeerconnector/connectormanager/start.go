@@ -1,4 +1,4 @@
-package peerconnector
+package connectormanager
 
 import (
 	"errors"
@@ -7,7 +7,7 @@ import (
 	"go-skv/util/goutil"
 )
 
-func (c connector) Start() error {
+func (c manager) Start() error {
 	addr, peer := c.connectToExistingPeer()
 	if peer != nil {
 		goutil.PanicUnhandledError(c.peerRepo.Save(c.ctx, addr, peer))
@@ -15,7 +15,7 @@ func (c connector) Start() error {
 	return nil
 }
 
-func (c connector) connectToExistingPeer() (string, peerconnectorcontract.Peer) {
+func (c manager) connectToExistingPeer() (string, peerconnectorcontract.Peer) {
 	var peer peerconnectorcontract.Peer
 	var err error
 	var addr string

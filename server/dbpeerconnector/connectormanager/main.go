@@ -1,4 +1,4 @@
-package peerconnector
+package connectormanager
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 )
 
 func New(ctx context.Context, existingPeerAddresses []string, client peerclientcontract.Client, peerRepo peerrepositorycontract.Repository) peerconnectorcontract.Connector {
-	return connector{
+	return manager{
 		ctx:                   ctx,
 		existingPeerAddresses: existingPeerAddresses,
 		client:                client,
@@ -16,11 +16,11 @@ func New(ctx context.Context, existingPeerAddresses []string, client peerclientc
 	}
 }
 
-type connector struct {
+type manager struct {
 	ctx                   context.Context
 	existingPeerAddresses []string
 	client                peerclientcontract.Client
 	peerRepo              peerrepositorycontract.Repository
 }
 
-var _ peerconnectorcontract.Connector = connector{}
+var _ peerconnectorcontract.Connector = manager{}

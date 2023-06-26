@@ -1,4 +1,4 @@
-package peerconnectortest
+package connectormanagertest
 
 import "go-skv/server/dbpeerconnector/peerconnectorcontract"
 
