@@ -4,16 +4,17 @@ import (
 	"go-skv/server/dbpeerconnector/peerclient/peerclientcontract"
 	"go-skv/server/dbpeerconnector/peerconnector"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
+	"go-skv/server/dbpeerconnector/peerrepository/peerrepositorycontract"
 )
 
 func NewWithAddressesAndClient(addresses []string, client peerclientcontract.Client) peerconnectorcontract.Connector {
-	return peerconnector.New(addresses, client, &UpdateListenerMock{})
+	return peerconnector.New(addresses, client, &PeerRepositoryMock{})
 }
 
-func NewWithAddressesAndClientAndUpdateListener(addresses []string, client peerclientcontract.Client, listener peerconnectorcontract.UpdateListener) peerconnectorcontract.Connector {
-	return peerconnector.New(addresses, client, listener)
+func NewWithAddressesAndClientAndPeerRepo(addresses []string, client peerclientcontract.Client, peerRepo peerrepositorycontract.Repository) peerconnectorcontract.Connector {
+	return peerconnector.New(addresses, client, peerRepo)
 }
 
 func New() peerconnectorcontract.Connector {
-	return peerconnector.New(nil, &PeerClientMock{}, &UpdateListenerMock{})
+	return peerconnector.New(nil, &PeerClientMock{}, &PeerRepositoryMock{})
 }

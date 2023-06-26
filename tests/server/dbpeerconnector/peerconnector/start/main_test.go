@@ -53,3 +53,16 @@ func Test_should_not_panic_when_no_available_peer(t *testing.T) {
 
 	assert.NotPanics(t, goutil.WillPanicUnhandledError(connector.Start))
 }
+
+func Test_should_save_connected_peer_to_repository(t *testing.T) {
+	connectedPeer := &peerconnectortest.PeerMock{}
+	peerRepo := &peerconnectortest.PeerRepositoryMock{}
+	connector := peerconnectortest.NewWithAddressesAndClientAndPeerRepo([]string{"1.1.1.1:1111"}, &peerconnectortest.PeerClientMock{
+		ConnectToPeer_Return_array: []peerconnectorcontract.Peer{connectedPeer},
+	}, peerRepo)
+
+	goutil.PanicUnhandledError(connector.Start())
+
+	goutil.PanicUnhandledError(connector.Stop())
+	assert.Equal(t, connectedPeer, peerRepo.Save_peer)
+}

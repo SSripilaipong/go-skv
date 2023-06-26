@@ -3,20 +3,21 @@ package peerconnector
 import (
 	"go-skv/server/dbpeerconnector/peerclient/peerclientcontract"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
+	"go-skv/server/dbpeerconnector/peerrepository/peerrepositorycontract"
 )
 
-func New(existingPeerAddresses []string, client peerclientcontract.Client, listener peerconnectorcontract.UpdateListener) peerconnectorcontract.Connector {
+func New(existingPeerAddresses []string, client peerclientcontract.Client, peerRepo peerrepositorycontract.Repository) peerconnectorcontract.Connector {
 	return connector{
 		existingPeerAddresses: existingPeerAddresses,
 		client:                client,
-		listener:              listener,
+		peerRepo:              peerRepo,
 	}
 }
 
 type connector struct {
 	existingPeerAddresses []string
 	client                peerclientcontract.Client
-	listener              peerconnectorcontract.UpdateListener
+	peerRepo              peerrepositorycontract.Repository
 }
 
 var _ peerconnectorcontract.Connector = connector{}

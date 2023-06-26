@@ -8,7 +8,8 @@ import (
 )
 
 func (c connector) Start() error {
-	_ = c.connectToExistingPeer()
+	peer := c.connectToExistingPeer()
+	goutil.PanicUnhandledError(c.peerRepo.Save(nil, "", peer))
 	return nil
 }
 
