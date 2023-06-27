@@ -20,6 +20,7 @@ func defaultDependencies() Dependencies {
 		addresses: []string{},
 		client:    &PeerClientMock{},
 		peerRepo:  &PeerRepositoryMock{},
+		ctx:       context.Background(),
 	}
 }
 
