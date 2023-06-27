@@ -1,26 +1,27 @@
 package connectormanager
 
 import (
+	"context"
 	"errors"
 	"go-skv/server/dbpeerconnector/peerclient/peerclientcontract"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 	"go-skv/util/goutil"
 )
 
-func (m manager) Start() error {
-	addr, peer := m.connectToExistingPeer()
+func (m manager) Start(ctx context.Context) error {
+	addr, peer := m.connectToExistingPeer(ctx)
 	if peer != nil {
-		goutil.PanicUnhandledError(m.peerRepo.Save(m.ctx, addr, peer))
+		goutil.PanicUnhandledError(m.peerRepo.Save(ctx, addr, peer))
 	}
 	return nil
 }
 
-func (m manager) connectToExistingPeer() (string, peerconnectorcontract.Peer) {
+func (m manager) connectToExistingPeer(ctx context.Context) (string, peerconnectorcontract.Peer) {
 	var peer peerconnectorcontract.Peer
 	var err error
 	var addr string
 	for _, addr = range m.existingPeerAddresses {
-		peer, err = m.client.ConnectToPeer(m.subCtx, addr)
+		peer, err = m.client.ConnectToPeer(ctx, addr)
 		if err == nil {
 			break
 		}

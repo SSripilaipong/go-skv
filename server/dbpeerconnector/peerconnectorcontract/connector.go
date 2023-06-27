@@ -1,6 +1,8 @@
 package peerconnectorcontract
 
+import "context"
+
 type Connector interface {
-	Start() error
+	Start(ctx context.Context) error
 	Stop() error
 }

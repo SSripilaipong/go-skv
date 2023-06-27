@@ -6,7 +6,7 @@ import (
 
 func (m *manager) Start() error {
 	goutil.PanicUnhandledError(m.dbStorage.Start())
-	goutil.PanicUnhandledError(m.peerConnector.Start())
+	goutil.PanicUnhandledError(m.peerConnector.Start(nil))
 	goutil.PanicUnhandledError(m.dbServer.Start())
 	return nil
 }

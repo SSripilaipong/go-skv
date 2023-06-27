@@ -30,7 +30,7 @@ func New(options ...func(deps *Dependencies)) peerconnectorcontract.Connector {
 		option(&deps)
 	}
 
-	return connectormanager.New(deps.ctx, deps.addresses, deps.client, deps.peerRepo)
+	return connectormanager.New(deps.addresses, deps.client, deps.peerRepo)
 }
 
 func WithContext(ctx context.Context) func(*Dependencies) {
