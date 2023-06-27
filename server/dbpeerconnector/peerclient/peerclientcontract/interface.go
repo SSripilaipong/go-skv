@@ -7,4 +7,5 @@ import (
 
 type Client interface {
 	ConnectToPeer(ctx context.Context, address string) (peerconnectorcontract.Peer, error)
+	WaitForAllToBeDisconnected() error
 }

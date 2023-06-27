@@ -13,6 +13,8 @@ type PeerClientMock struct {
 	ConnectToPeer_Return_array  []peerconnectorcontract.Peer
 	ConnectToPeer_Error_array   []error
 	ConnectToPeer_Call_index    int
+
+	WaitForAllToBeDisconnected_IsCalled bool
 }
 
 func (c *PeerClientMock) ConnectToPeer(ctx context.Context, address string) (peerconnectorcontract.Peer, error) {
@@ -24,6 +26,11 @@ func (c *PeerClientMock) ConnectToPeer(ctx context.Context, address string) (pee
 
 	c.ConnectToPeer_Call_index += 1
 	return r, e
+}
+
+func (c *PeerClientMock) WaitForAllToBeDisconnected() error {
+	c.WaitForAllToBeDisconnected_IsCalled = true
+	return nil
 }
 
 var _ peerclientcontract.Client = &PeerClientMock{}
