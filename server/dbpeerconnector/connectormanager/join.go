@@ -1,5 +1,5 @@
 package connectormanager
 
-func (m manager) Stop() error {
+func (m manager) Join() error {
 	return nil
 }
