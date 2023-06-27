@@ -1,7 +1,6 @@
 package connectormanagertest
 
 import (
-	"context"
 	"go-skv/server/dbpeerconnector/connectormanager"
 	"go-skv/server/dbpeerconnector/peerclient/peerclientcontract"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
@@ -12,7 +11,6 @@ type Dependencies struct {
 	addresses []string
 	client    peerclientcontract.Client
 	peerRepo  peerrepositorycontract.Repository
-	ctx       context.Context
 }
 
 func defaultDependencies() Dependencies {
@@ -20,7 +18,6 @@ func defaultDependencies() Dependencies {
 		addresses: []string{},
 		client:    &PeerClientMock{},
 		peerRepo:  &PeerRepositoryMock{},
-		ctx:       context.Background(),
 	}
 }
 
@@ -31,12 +28,6 @@ func New(options ...func(deps *Dependencies)) peerconnectorcontract.Connector {
 	}
 
 	return connectormanager.New(deps.addresses, deps.client, deps.peerRepo)
-}
-
-func WithContext(ctx context.Context) func(*Dependencies) {
-	return func(deps *Dependencies) {
-		deps.ctx = ctx
-	}
 }
 
 func WithNonEmptyAddresses() func(*Dependencies) {
