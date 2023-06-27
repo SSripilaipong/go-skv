@@ -20,7 +20,7 @@ func (c manager) connectToExistingPeer() (string, peerconnectorcontract.Peer) {
 	var err error
 	var addr string
 	for _, addr = range c.existingPeerAddresses {
-		peer, err = c.client.ConnectToPeer(addr)
+		peer, err = c.client.ConnectToPeer(c.ctx, addr)
 		if err == nil {
 			break
 		}

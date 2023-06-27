@@ -19,10 +19,29 @@ func Test_should_try_to_connect_to_an_existing_peer(t *testing.T) {
 		connectormanagertest.WithClient(client),
 	)
 
+	defer goutil.WillPanicUnhandledError(connector.Stop)
 	goutil.PanicUnhandledError(connector.Start())
 
-	goutil.PanicUnhandledError(connector.Stop())
 	assert.Equal(t, []string{"1.1.1.1:1111"}, client.ConnectToPeer_address_array)
+}
+
+func Test_should_connect_to_peer_with_global_context(t *testing.T) {
+	ctx := context.WithValue(context.Background(), "test", "this is my context")
+	client := &connectormanagertest.PeerClientMock{
+		ConnectToPeer_Return_array: []peerconnectorcontract.Peer{&connectormanagertest.PeerMock{}},
+	}
+	connector := connectormanagertest.New(
+		connectormanagertest.WithNonEmptyAddresses(),
+		connectormanagertest.WithContext(ctx),
+		connectormanagertest.WithClient(client),
+	)
+
+	defer goutil.WillPanicUnhandledError(connector.Stop)
+	goutil.PanicUnhandledError(connector.Start())
+
+	assert.Equal(t, []string{"this is my context"}, goutil.Map(client.ConnectToPeer_ctx_array, func(c context.Context) string {
+		return goutil.May(c, func(t context.Context) string { return c.Value("test").(string) })
+	}))
 }
 
 func Test_should_connect_to_next_peer_if_the_first_peer_cannot_be_connected(t *testing.T) {
@@ -35,9 +54,9 @@ func Test_should_connect_to_next_peer_if_the_first_peer_cannot_be_connected(t *t
 		connectormanagertest.WithClient(client),
 	)
 
+	defer goutil.WillPanicUnhandledError(connector.Stop)
 	goutil.PanicUnhandledError(connector.Start())
 
-	goutil.PanicUnhandledError(connector.Stop())
 	assert.Equal(t, []string{"1.1.1.1:1111", "2.2.2.2:2222"}, client.ConnectToPeer_address_array)
 }
 
@@ -50,9 +69,9 @@ func Test_should_not_connect_to_next_peer_if_the_first_peer_can_be_connected(t *
 		connectormanagertest.WithClient(client),
 	)
 
+	defer goutil.WillPanicUnhandledError(connector.Stop)
 	goutil.PanicUnhandledError(connector.Start())
 
-	goutil.PanicUnhandledError(connector.Stop())
 	assert.Equal(t, []string{"1.1.1.1:1111"}, client.ConnectToPeer_address_array)
 }
 
@@ -75,9 +94,9 @@ func Test_should_save_connected_peer_to_repository(t *testing.T) {
 		connectormanagertest.WithPeerRepo(peerRepo),
 	)
 
+	defer goutil.WillPanicUnhandledError(connector.Stop)
 	goutil.PanicUnhandledError(connector.Start())
 
-	goutil.PanicUnhandledError(connector.Stop())
 	assert.Equal(t, connectedPeer, peerRepo.Save_peer)
 }
 
@@ -91,9 +110,9 @@ func Test_should_save_connected_peer_to_repository_with_its_address_as_its_name(
 		connectormanagertest.WithPeerRepo(peerRepo),
 	)
 
+	defer goutil.WillPanicUnhandledError(connector.Stop)
 	goutil.PanicUnhandledError(connector.Start())
 
-	goutil.PanicUnhandledError(connector.Stop())
 	assert.Equal(t, "1.1.1.1:1111", peerRepo.Save_name)
 }
 
@@ -109,9 +128,9 @@ func Test_should_use_global_context_to_save(t *testing.T) {
 		connectormanagertest.WithPeerRepo(peerRepo),
 	)
 
+	defer goutil.WillPanicUnhandledError(connector.Stop)
 	goutil.PanicUnhandledError(connector.Start())
 
-	goutil.PanicUnhandledError(connector.Stop())
 	assert.Equal(t, "this is the expected context", peerRepo.Save_ctx.Value("test"))
 }
 
@@ -121,8 +140,8 @@ func Test_should_not_save_to_repository_when_cannot_to_connect_to_peer(t *testin
 		connectormanagertest.WithPeerRepo(peerRepo),
 	)
 
+	defer goutil.WillPanicUnhandledError(connector.Stop)
 	goutil.PanicUnhandledError(connector.Start())
 
-	goutil.PanicUnhandledError(connector.Stop())
 	assert.False(t, peerRepo.Save_IsCalled)
 }

@@ -9,3 +9,11 @@ func ElementAt[T any](array []T, index int) (T, error) {
 	}
 	return array[index], nil
 }
+
+func Map[T, R any](array []T, f func(T) R) []R {
+	result := make([]R, len(array))
+	for i, x := range array {
+		result[i] = f(x)
+	}
+	return result
+}

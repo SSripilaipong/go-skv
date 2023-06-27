@@ -16,3 +16,11 @@ func CanCast[T any](v any) bool {
 	_, ok := v.(T)
 	return ok
 }
+
+func May[T comparable, R any](t T, f func(T) R) (zeroResult R) {
+	var zero T
+	if t == zero {
+		return zeroResult
+	}
+	return f(t)
+}
