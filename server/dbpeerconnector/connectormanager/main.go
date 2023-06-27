@@ -9,14 +9,14 @@ import (
 
 func New(ctx context.Context, existingPeerAddresses []string, client peerclientcontract.Client, peerRepo peerrepositorycontract.Repository) peerconnectorcontract.Connector {
 	subCtx, cancelSubCtx := context.WithCancel(ctx)
-	cancelSubCtx()
 	return manager{
 		ctx:                   ctx,
 		existingPeerAddresses: existingPeerAddresses,
 		client:                client,
 		peerRepo:              peerRepo,
 
-		subCtx: subCtx,
+		subCtx:       subCtx,
+		cancelSubCtx: cancelSubCtx,
 	}
 }
 
@@ -26,7 +26,8 @@ type manager struct {
 	client                peerclientcontract.Client
 	peerRepo              peerrepositorycontract.Repository
 
-	subCtx context.Context
+	subCtx       context.Context
+	cancelSubCtx context.CancelFunc
 }
 
 var _ peerconnectorcontract.Connector = manager{}

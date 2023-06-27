@@ -1,5 +1,6 @@
 package connectormanager
 
-func (c manager) Stop() error {
+func (m manager) Stop() error {
+	m.cancelSubCtx()
 	return nil
 }

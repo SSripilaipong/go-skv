@@ -7,20 +7,20 @@ import (
 	"go-skv/util/goutil"
 )
 
-func (c manager) Start() error {
-	addr, peer := c.connectToExistingPeer()
+func (m manager) Start() error {
+	addr, peer := m.connectToExistingPeer()
 	if peer != nil {
-		goutil.PanicUnhandledError(c.peerRepo.Save(c.ctx, addr, peer))
+		goutil.PanicUnhandledError(m.peerRepo.Save(m.ctx, addr, peer))
 	}
 	return nil
 }
 
-func (c manager) connectToExistingPeer() (string, peerconnectorcontract.Peer) {
+func (m manager) connectToExistingPeer() (string, peerconnectorcontract.Peer) {
 	var peer peerconnectorcontract.Peer
 	var err error
 	var addr string
-	for _, addr = range c.existingPeerAddresses {
-		peer, err = c.client.ConnectToPeer(c.subCtx, addr)
+	for _, addr = range m.existingPeerAddresses {
+		peer, err = m.client.ConnectToPeer(m.subCtx, addr)
 		if err == nil {
 			break
 		}
