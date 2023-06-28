@@ -14,12 +14,13 @@ type Manager interface {
 
 func New(peerServer peerconnectorcontract.Connector, dbServer dbserver.Interface, dbStorage dbstorage.Repository) Manager {
 	ctx, cancelCtx := context.WithCancel(context.Background())
-	cancelCtx()
 	return manager{
-		ctx:           ctx,
 		peerConnector: peerServer,
 		dbServer:      dbServer,
 		dbStorage:     dbStorage,
+
+		ctx:       ctx,
+		cancelCtx: cancelCtx,
 	}
 }
 
@@ -27,5 +28,7 @@ type manager struct {
 	peerConnector peerconnectorcontract.Connector
 	dbServer      dbserver.Interface
 	dbStorage     dbstorage.Repository
-	ctx           context.Context
+
+	ctx       context.Context
+	cancelCtx context.CancelFunc
 }
