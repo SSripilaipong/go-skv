@@ -9,6 +9,7 @@ import (
 )
 
 func (m manager) Start(ctx context.Context) error {
+	goutil.PanicUnhandledError(m.server.Start(ctx))
 	addr, peer := m.connectToExistingPeer(ctx)
 	if peer != nil {
 		goutil.PanicUnhandledError(m.peerRepo.Save(ctx, addr, peer))

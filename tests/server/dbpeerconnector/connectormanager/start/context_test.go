@@ -46,3 +46,16 @@ func Test_should_use_global_context_to_save(t *testing.T) {
 
 	assert.Equal(t, "this is the expected context", peerRepo.Save_ctx.Value("test"))
 }
+
+func Test_should_start_server_with_global_context(t *testing.T) {
+	server := &connectormanagertest.PeerServerMock{}
+	connector := connectormanagertest.New(
+		connectormanagertest.WithServer(server),
+	)
+
+	tests.ContextScope(func(ctx context.Context) {
+		ctx = context.WithValue(ctx, "test", "my context")
+		goutil.PanicUnhandledError(connector.Start(ctx))
+		assert.Equal(t, "my context", goutil.May(server.Start_ctx, func(ctx context.Context) string { return ctx.Value("test").(string) }))
+	})
+}
