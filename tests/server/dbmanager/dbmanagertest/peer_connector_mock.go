@@ -6,12 +6,12 @@ import (
 )
 
 type PeerConnectorMock struct {
-	Start_IsCalled bool
-	Join_IsCalled  bool
+	Start_ctx     context.Context
+	Join_IsCalled bool
 }
 
-func (p *PeerConnectorMock) Start(context.Context) error {
-	p.Start_IsCalled = true
+func (p *PeerConnectorMock) Start(ctx context.Context) error {
+	p.Start_ctx = ctx
 	return nil
 }
 
