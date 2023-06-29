@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PeerServiceClient interface {
-	Greeting(ctx context.Context, in *GreetingRequest, opts ...grpc.CallOption) (*GreetingResponse, error)
+	SubscribeReplica(ctx context.Context, in *SubscribeReplicaRequest, opts ...grpc.CallOption) (PeerService_SubscribeReplicaClient, error)
 }
 
 type peerServiceClient struct {
@@ -33,20 +33,43 @@ func NewPeerServiceClient(cc grpc.ClientConnInterface) PeerServiceClient {
 	return &peerServiceClient{cc}
 }
 
-func (c *peerServiceClient) Greeting(ctx context.Context, in *GreetingRequest, opts ...grpc.CallOption) (*GreetingResponse, error) {
-	out := new(GreetingResponse)
-	err := c.cc.Invoke(ctx, "/PeerService/Greeting", in, out, opts...)
+func (c *peerServiceClient) SubscribeReplica(ctx context.Context, in *SubscribeReplicaRequest, opts ...grpc.CallOption) (PeerService_SubscribeReplicaClient, error) {
+	stream, err := c.cc.NewStream(ctx, &PeerService_ServiceDesc.Streams[0], "/PeerService/SubscribeReplica", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &peerServiceSubscribeReplicaClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type PeerService_SubscribeReplicaClient interface {
+	Recv() (*ReplicaUpdate, error)
+	grpc.ClientStream
+}
+
+type peerServiceSubscribeReplicaClient struct {
+	grpc.ClientStream
+}
+
+func (x *peerServiceSubscribeReplicaClient) Recv() (*ReplicaUpdate, error) {
+	m := new(ReplicaUpdate)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 // PeerServiceServer is the server API for PeerService service.
 // All implementations must embed UnimplementedPeerServiceServer
 // for forward compatibility
 type PeerServiceServer interface {
-	Greeting(context.Context, *GreetingRequest) (*GreetingResponse, error)
+	SubscribeReplica(*SubscribeReplicaRequest, PeerService_SubscribeReplicaServer) error
 	mustEmbedUnimplementedPeerServiceServer()
 }
 
@@ -54,8 +77,8 @@ type PeerServiceServer interface {
 type UnimplementedPeerServiceServer struct {
 }
 
-func (UnimplementedPeerServiceServer) Greeting(context.Context, *GreetingRequest) (*GreetingResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Greeting not implemented")
+func (UnimplementedPeerServiceServer) SubscribeReplica(*SubscribeReplicaRequest, PeerService_SubscribeReplicaServer) error {
+	return status.Errorf(codes.Unimplemented, "method SubscribeReplica not implemented")
 }
 func (UnimplementedPeerServiceServer) mustEmbedUnimplementedPeerServiceServer() {}
 
@@ -70,22 +93,25 @@ func RegisterPeerServiceServer(s grpc.ServiceRegistrar, srv PeerServiceServer) {
 	s.RegisterService(&PeerService_ServiceDesc, srv)
 }
 
-func _PeerService_Greeting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GreetingRequest)
-	if err := dec(in); err != nil {
-		return nil, err
+func _PeerService_SubscribeReplica_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(SubscribeReplicaRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(PeerServiceServer).Greeting(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/PeerService/Greeting",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PeerServiceServer).Greeting(ctx, req.(*GreetingRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(PeerServiceServer).SubscribeReplica(m, &peerServiceSubscribeReplicaServer{stream})
+}
+
+type PeerService_SubscribeReplicaServer interface {
+	Send(*ReplicaUpdate) error
+	grpc.ServerStream
+}
+
+type peerServiceSubscribeReplicaServer struct {
+	grpc.ServerStream
+}
+
+func (x *peerServiceSubscribeReplicaServer) Send(m *ReplicaUpdate) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 // PeerService_ServiceDesc is the grpc.ServiceDesc for PeerService service.
@@ -94,12 +120,13 @@ func _PeerService_Greeting_Handler(srv interface{}, ctx context.Context, dec fun
 var PeerService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "PeerService",
 	HandlerType: (*PeerServiceServer)(nil),
-	Methods: []grpc.MethodDesc{
+	Methods:     []grpc.MethodDesc{},
+	Streams: []grpc.StreamDesc{
 		{
-			MethodName: "Greeting",
-			Handler:    _PeerService_Greeting_Handler,
+			StreamName:    "SubscribeReplica",
+			Handler:       _PeerService_SubscribeReplica_Handler,
+			ServerStreams: true,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
 	Metadata: "server/dbpeerconnector/peergrpc/main.proto",
 }

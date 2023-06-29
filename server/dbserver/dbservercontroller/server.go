@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"go-skv/server/dbserver/dbgrpc"
 	"go-skv/server/dbserver/dbusecase"
+	"go-skv/util/goutil"
+	"go-skv/util/grpcutil"
 	"google.golang.org/grpc"
 	"net"
-	"strconv"
-	"strings"
 )
 
 func New(port int, usecase dbusecase.Interface) Interface {
@@ -45,10 +45,9 @@ func (s *controller) Start() error {
 }
 
 func (s *controller) updatePort(lis net.Listener) {
-	tokens := strings.Split(lis.Addr().String(), ":")
-	port, err := strconv.Atoi(tokens[len(tokens)-1])
+	port, err := grpcutil.GetPortFromAddress(lis.Addr())
 	if err != nil {
-		panic(fmt.Errorf("unhandled error: %f", err))
+		goutil.PanicUnhandledError(err)
 	}
 	s.port = port
 }

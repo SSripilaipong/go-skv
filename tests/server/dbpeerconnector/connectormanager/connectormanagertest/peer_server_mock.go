@@ -16,4 +16,11 @@ func (s *PeerServerMock) Start(ctx context.Context) error {
 	return nil
 }
 
+func (s *PeerServerMock) Port() int {
+	return 0
+}
+
+func (s *PeerServerMock) Join() {
+}
+
 var _ peerservercontract.Server = &PeerServerMock{}

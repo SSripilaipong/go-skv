@@ -3,11 +3,14 @@ syntax = "proto3";
 option go_package = "server/dbpeerconnector/peergrpc";
 
 service PeerService {
-  rpc Greeting(GreetingRequest) returns (GreetingResponse) {}
+  rpc SubscribeReplica(SubscribeReplicaRequest) returns (stream ReplicaUpdate) {}
 }
 
-message GreetingRequest {
+message SubscribeReplicaRequest {
   string advertisedAddress = 1;
 }
 
-message GreetingResponse {}
+message ReplicaUpdate {
+  string key = 1;
+  string value = 2;
+}

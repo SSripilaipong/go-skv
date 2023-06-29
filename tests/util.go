@@ -12,10 +12,14 @@ func ExecuteWithTimeout(duration time.Duration, execute func(ctx context.Context
 	return execute(ctx)
 }
 
-func ContextScope(f func(ctx context.Context)) {
-	ctx, cancel := context.WithCancel(context.Background())
+func SubContextScope(parent context.Context, f func(ctx context.Context)) {
+	ctx, cancel := context.WithCancel(parent)
 	defer cancel()
 	f(ctx)
+}
+
+func ContextScope(f func(ctx context.Context)) {
+	SubContextScope(context.Background(), f)
 }
 
 func WaitScope(f func(wd *sync.WaitGroup)) {
