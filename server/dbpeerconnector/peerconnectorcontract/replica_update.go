@@ -1,3 +1,6 @@
 package peerconnectorcontract
 
-type ReplicaUpdate struct{}
+type ReplicaUpdate struct {
+	Key   string
+	Value string
+}

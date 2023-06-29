@@ -3,6 +3,7 @@ package peergrpcgateway
 import (
 	"context"
 	"go-skv/server/dbpeerconnector/peerclient/peergrpcgateway/peergrpcgatewaycontract"
+	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 	"go-skv/server/dbpeerconnector/peergrpc"
 	"go-skv/util/goutil"
 	"google.golang.org/grpc"
@@ -13,7 +14,7 @@ type connector struct {
 	advertisedAddress string
 }
 
-func (f connector) ConnectTo(ctx context.Context, address string) (peergrpcgatewaycontract.Gateway, error) {
+func (f connector) ConnectTo(ctx context.Context, address string, peer peerconnectorcontract.Peer) (peergrpcgatewaycontract.Gateway, error) {
 	conn, err := grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	goutil.PanicUnhandledError(err)
 
@@ -26,7 +27,9 @@ func (f connector) ConnectTo(ctx context.Context, address string) (peergrpcgatew
 	}()
 	return gateway{
 		advertisedAddress: f.advertisedAddress,
-		service:           service,
+
+		service: service,
+		peer:    peer,
 	}, nil
 }
 
