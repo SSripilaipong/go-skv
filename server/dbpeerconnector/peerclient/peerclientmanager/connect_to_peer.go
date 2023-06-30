@@ -10,7 +10,7 @@ func (c client) ConnectToPeer(ctx context.Context, address string) (peerconnecto
 	_, err := c.peerFactory.New(ctx)
 	goutil.PanicUnhandledError(err)
 
-	_, err = c.gatewayConnector.ConnectTo(nil, address, nil)
+	_, err = c.gatewayConnector.ConnectTo(ctx, address, nil)
 	goutil.PanicUnhandledError(err)
 
 	return nil, nil
