@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func New(start func() error) Interface {
+func New(start func(Config) error) Interface {
 	return &serverCli{app: newCliApp(dependency{
 		Start: start,
 	})}

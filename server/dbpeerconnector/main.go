@@ -7,6 +7,11 @@ import (
 	"go-skv/server/dbpeerconnector/peerserver"
 )
 
-func New(port int) peerconnectorcontract.Connector {
-	return connectormanager.New([]string{"localhost:7777"}, peerclient.New(), nil, peerserver.New(port))
+func New(port int, advertisedAddress string, existingPeerAddresses []string) peerconnectorcontract.Connector {
+	return connectormanager.New(
+		existingPeerAddresses,
+		peerclient.New(advertisedAddress),
+		nil,
+		peerserver.New(port),
+	)
 }

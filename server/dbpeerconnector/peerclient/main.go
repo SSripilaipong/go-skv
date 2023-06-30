@@ -7,9 +7,9 @@ import (
 	"go-skv/server/dbpeerconnector/peerclient/peergrpcgateway"
 )
 
-func New() peerclientcontract.Client {
+func New(advertisedAddress string) peerclientcontract.Client {
 	return peerclientmanager.New(
 		clientsidepeer.NewFactory(),
-		peergrpcgateway.NewConnector("localhost:7777"),
+		peergrpcgateway.NewConnector(advertisedAddress),
 	)
 }

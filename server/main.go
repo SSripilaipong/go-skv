@@ -14,10 +14,10 @@ func RunCli() {
 	cli.Run()
 }
 
-func startServer() error {
+func startServer(config servercli.Config) error {
 	storage, storageInteractor := dbstorage.New(16, 4)
-	peerConnector := dbpeerconnector.New(6666)
-	controller := dbserver.New(5555, storageInteractor)
+	peerConnector := dbpeerconnector.New(config.PeeringPort, config.AdvertisedIp, config.ExistingPeerAddresses)
+	controller := dbserver.New(config.DbPort, storageInteractor)
 
 	manager := dbmanager.New(peerConnector, controller, storage)
 	goutil.PanicUnhandledError(manager.Start())

@@ -1,5 +1,5 @@
 package servercli
 
 type dependency struct {
-	Start func() error
+	Start func(config Config) error
 }
