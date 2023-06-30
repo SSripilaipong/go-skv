@@ -13,7 +13,7 @@ func (c client) ConnectToPeer(ctx context.Context, address string) (peerconnecto
 	gateway, err := c.gatewayConnector.ConnectTo(ctx, address, peer)
 	goutil.PanicUnhandledError(err)
 
-	gateway.SubscribeReplica(ctx)
+	goutil.PanicUnhandledError(gateway.SubscribeReplica(ctx))
 
 	return nil, nil
 }
