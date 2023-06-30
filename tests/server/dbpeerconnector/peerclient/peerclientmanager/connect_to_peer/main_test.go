@@ -3,6 +3,7 @@ package connect_to_peer
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
+	"go-skv/server/dbpeerconnector/peerclient/peerclientcontract"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 	"go-skv/tests"
 	"go-skv/tests/server/dbpeerconnector/dbpeerconnectortest"
@@ -112,7 +113,7 @@ func Test_should_return_connected_peer(t *testing.T) {
 
 func Test_should_not_return_peer_if_gateway_connector_fails_to_connect(t *testing.T) {
 	peerFactory := &peerclientmanagertest.PeerFactoryMock{New_Return: &dbpeerconnectortest.PeerMock{}}
-	gatewayConnector := &peerclientmanagertest.GatewayConnectorMock{ConnectTo_Error: peerconnectorcontract.CannotConnectToPeerError{}}
+	gatewayConnector := &peerclientmanagertest.GatewayConnectorMock{ConnectTo_Error: peerclientcontract.ConnectionError{}}
 	manager := peerclientmanagertest.New(
 		peerclientmanagertest.WithPeerFactory(peerFactory),
 		peerclientmanagertest.WithGatewayConnector(gatewayConnector),
@@ -127,7 +128,7 @@ func Test_should_not_return_peer_if_gateway_connector_fails_to_connect(t *testin
 
 func Test_should_return_error_if_gateway_connector_fails_to_connect(t *testing.T) {
 	peerFactory := &peerclientmanagertest.PeerFactoryMock{New_Return: &dbpeerconnectortest.PeerMock{}}
-	gatewayConnector := &peerclientmanagertest.GatewayConnectorMock{ConnectTo_Error: peerconnectorcontract.CannotConnectToPeerError{}}
+	gatewayConnector := &peerclientmanagertest.GatewayConnectorMock{ConnectTo_Error: peerclientcontract.ConnectionError{}}
 	manager := peerclientmanagertest.New(
 		peerclientmanagertest.WithPeerFactory(peerFactory),
 		peerclientmanagertest.WithGatewayConnector(gatewayConnector),
@@ -137,5 +138,5 @@ func Test_should_return_error_if_gateway_connector_fails_to_connect(t *testing.T
 		_, err = manager.ConnectToPeer(ctx, "1.2.3.4:1234")
 	})
 
-	assert.Equal(t, peerconnectorcontract.CannotConnectToPeerError{}, err)
+	assert.Equal(t, peerclientcontract.ConnectionError{}, err)
 }

@@ -2,6 +2,7 @@ package peergrpcgateway
 
 import (
 	"context"
+	"go-skv/server/dbpeerconnector/peerclient/peerclientcontract"
 	"go-skv/server/dbpeerconnector/peerclient/peergrpcgateway/peergrpcgatewaycontract"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 	"go-skv/server/dbpeerconnector/peergrpc"
@@ -26,7 +27,7 @@ func (f connector) ConnectTo(ctx context.Context, address string, peer peerconne
 		}
 	}()
 	if pong, _ := service.HealthCheck(ctx, &peergrpc.Ping{}); pong == nil {
-		return nil, peerconnectorcontract.CannotConnectToPeerError{}
+		return nil, peerclientcontract.ConnectionError{}
 	}
 
 	return gateway{

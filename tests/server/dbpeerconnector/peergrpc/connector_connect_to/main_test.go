@@ -3,7 +3,7 @@ package connector_connect_to
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
-	"go-skv/server/dbpeerconnector/peerconnectorcontract"
+	"go-skv/server/dbpeerconnector/peerclient/peerclientcontract"
 	"go-skv/tests"
 	"go-skv/tests/server/dbpeerconnector/dbpeerconnectortest"
 	"go-skv/tests/server/dbpeerconnector/peergrpc/peergrpctest"
@@ -17,5 +17,5 @@ func Test_should_return_error_for_connecting_unavailable_server(t *testing.T) {
 	tests.ContextScope(func(ctx context.Context) {
 		_, err = gatewayConnector.ConnectTo(ctx, grpcutil.LocalAddress(12345), &dbpeerconnectortest.PeerMock{})
 	})
-	assert.Equal(t, peerconnectorcontract.CannotConnectToPeerError{}, err)
+	assert.Equal(t, peerclientcontract.ConnectionError{}, err)
 }

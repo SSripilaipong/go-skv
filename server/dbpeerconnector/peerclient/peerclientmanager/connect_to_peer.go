@@ -2,6 +2,7 @@ package peerclientmanager
 
 import (
 	"context"
+	"go-skv/server/dbpeerconnector/peerclient/peerclientcontract"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 	"go-skv/util/goutil"
 )
@@ -12,8 +13,8 @@ func (c client) ConnectToPeer(ctx context.Context, address string) (peerconnecto
 
 	gateway, err := c.gatewayConnector.ConnectTo(ctx, address, peer)
 	switch err.(type) {
-	case peerconnectorcontract.CannotConnectToPeerError:
-		return nil, peerconnectorcontract.CannotConnectToPeerError{}
+	case peerclientcontract.ConnectionError:
+		return nil, peerclientcontract.ConnectionError{}
 	default:
 		goutil.PanicUnhandledError(err)
 	}
