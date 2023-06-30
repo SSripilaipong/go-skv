@@ -5,7 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 	"go-skv/tests"
-	"go-skv/tests/server/dbpeerconnector/connectormanager/connectormanagertest"
+	"go-skv/tests/server/dbpeerconnector/dbpeerconnectortest"
 	"go-skv/tests/server/dbpeerconnector/peergrpc/peergrpctest"
 	"go-skv/util/goutil"
 	"go-skv/util/grpcutil"
@@ -38,7 +38,7 @@ func Test_should_send_a_replica_update_back_to_peer_on_client_side_with_key_and_
 	usecase := &peergrpctest.ServerUsecaseMock{SubscribeReplica_ch_Do: func(ch chan<- peerconnectorcontract.ReplicaUpdate) {
 		ch <- peerconnectorcontract.ReplicaUpdate{Key: "aaa", Value: "bbb"}
 	}}
-	peer := &connectormanagertest.PeerMock{}
+	peer := &dbpeerconnectortest.PeerMock{}
 	controller := peergrpctest.NewController(
 		peergrpctest.WithServerUsecase(usecase),
 	)

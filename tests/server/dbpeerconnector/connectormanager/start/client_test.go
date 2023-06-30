@@ -7,13 +7,14 @@ import (
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 	"go-skv/tests"
 	"go-skv/tests/server/dbpeerconnector/connectormanager/connectormanagertest"
+	"go-skv/tests/server/dbpeerconnector/dbpeerconnectortest"
 	"go-skv/util/goutil"
 	"testing"
 )
 
 func Test_should_try_to_connect_to_an_existing_peer(t *testing.T) {
 	client := &connectormanagertest.PeerClientMock{
-		ConnectToPeer_Return_array: []peerconnectorcontract.Peer{&connectormanagertest.PeerMock{}},
+		ConnectToPeer_Return_array: []peerconnectorcontract.Peer{&dbpeerconnectortest.PeerMock{}},
 	}
 	connector := connectormanagertest.New(
 		connectormanagertest.WithAddresses([]string{"1.1.1.1:1111"}),
@@ -29,7 +30,7 @@ func Test_should_try_to_connect_to_an_existing_peer(t *testing.T) {
 
 func Test_should_connect_to_next_peer_if_the_first_peer_cannot_be_connected(t *testing.T) {
 	client := &connectormanagertest.PeerClientMock{
-		ConnectToPeer_Return_array: []peerconnectorcontract.Peer{nil, &connectormanagertest.PeerMock{}},
+		ConnectToPeer_Return_array: []peerconnectorcontract.Peer{nil, &dbpeerconnectortest.PeerMock{}},
 		ConnectToPeer_Error_array:  []error{peerclientcontract.ConnectionError{}, nil},
 	}
 	connector := connectormanagertest.New(
@@ -46,7 +47,7 @@ func Test_should_connect_to_next_peer_if_the_first_peer_cannot_be_connected(t *t
 
 func Test_should_not_connect_to_next_peer_if_the_first_peer_can_be_connected(t *testing.T) {
 	client := &connectormanagertest.PeerClientMock{
-		ConnectToPeer_Return_array: []peerconnectorcontract.Peer{&connectormanagertest.PeerMock{}},
+		ConnectToPeer_Return_array: []peerconnectorcontract.Peer{&dbpeerconnectortest.PeerMock{}},
 	}
 	connector := connectormanagertest.New(
 		connectormanagertest.WithAddresses([]string{"1.1.1.1:1111", "2.2.2.2:2222"}),
@@ -69,7 +70,7 @@ func Test_should_not_panic_when_no_available_peer(t *testing.T) {
 }
 
 func Test_should_save_connected_peer_to_repository(t *testing.T) {
-	connectedPeer := &connectormanagertest.PeerMock{}
+	connectedPeer := &dbpeerconnectortest.PeerMock{}
 	peerRepo := &connectormanagertest.PeerRepositoryMock{}
 	connector := connectormanagertest.New(
 		connectormanagertest.WithNonEmptyAddresses(),
@@ -91,7 +92,7 @@ func Test_should_save_connected_peer_to_repository_with_its_address_as_its_name(
 	connector := connectormanagertest.New(
 		connectormanagertest.WithAddresses([]string{"1.1.1.1:1111"}),
 		connectormanagertest.WithClient(&connectormanagertest.PeerClientMock{
-			ConnectToPeer_Return_array: []peerconnectorcontract.Peer{&connectormanagertest.PeerMock{}},
+			ConnectToPeer_Return_array: []peerconnectorcontract.Peer{&dbpeerconnectortest.PeerMock{}},
 		}),
 		connectormanagertest.WithPeerRepo(peerRepo),
 	)

@@ -6,13 +6,14 @@ import (
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 	"go-skv/tests"
 	"go-skv/tests/server/dbpeerconnector/connectormanager/connectormanagertest"
+	"go-skv/tests/server/dbpeerconnector/dbpeerconnectortest"
 	"go-skv/util/goutil"
 	"testing"
 )
 
 func Test_should_connect_to_peer_with_global_context(t *testing.T) {
 	client := &connectormanagertest.PeerClientMock{
-		ConnectToPeer_Return_array: []peerconnectorcontract.Peer{&connectormanagertest.PeerMock{}},
+		ConnectToPeer_Return_array: []peerconnectorcontract.Peer{&dbpeerconnectortest.PeerMock{}},
 	}
 	connector := connectormanagertest.New(
 		connectormanagertest.WithNonEmptyAddresses(),
@@ -34,7 +35,7 @@ func Test_should_use_global_context_to_save(t *testing.T) {
 	connector := connectormanagertest.New(
 		connectormanagertest.WithNonEmptyAddresses(),
 		connectormanagertest.WithClient(&connectormanagertest.PeerClientMock{
-			ConnectToPeer_Return_array: []peerconnectorcontract.Peer{&connectormanagertest.PeerMock{}},
+			ConnectToPeer_Return_array: []peerconnectorcontract.Peer{&dbpeerconnectortest.PeerMock{}},
 		}),
 		connectormanagertest.WithPeerRepo(peerRepo),
 	)

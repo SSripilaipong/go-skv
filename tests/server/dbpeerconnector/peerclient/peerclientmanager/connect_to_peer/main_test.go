@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/stretchr/testify/assert"
 	"go-skv/tests"
+	"go-skv/tests/server/dbpeerconnector/dbpeerconnectortest"
 	"go-skv/tests/server/dbpeerconnector/peerclient/peerclientmanager/peerclientmanagertest"
 	"go-skv/util/goutil"
 	"testing"
@@ -50,4 +51,20 @@ func Test_should_connect_via_gateway_connector_with_address(t *testing.T) {
 	})
 
 	assert.Equal(t, "1.2.3.4:1234", gatewayConnector.ConnectTo_address)
+}
+
+func Test_should_connect_via_gateway_connector_with_created_peer(t *testing.T) {
+	createdPeer := &dbpeerconnectortest.PeerMock{}
+	peerFactory := &peerclientmanagertest.PeerFactoryMock{New_Return: createdPeer}
+	gatewayConnector := &peerclientmanagertest.GatewayConnectorMock{}
+	manager := peerclientmanagertest.New(
+		peerclientmanagertest.WithPeerFactory(peerFactory),
+		peerclientmanagertest.WithGatewayConnector(gatewayConnector),
+	)
+	tests.ContextScope(func(ctx context.Context) {
+		_, err := manager.ConnectToPeer(ctx, "1.2.3.4:1234")
+		goutil.PanicUnhandledError(err)
+	})
+
+	assert.Equal(t, createdPeer, gatewayConnector.ConnectTo_peer)
 }

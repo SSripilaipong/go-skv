@@ -7,12 +7,13 @@ import (
 )
 
 type PeerFactoryMock struct {
-	New_ctx context.Context
+	New_ctx    context.Context
+	New_Return peerconnectorcontract.Peer
 }
 
 func (p *PeerFactoryMock) New(ctx context.Context) (peerconnectorcontract.Peer, error) {
 	p.New_ctx = ctx
-	return nil, nil
+	return p.New_Return, nil
 }
 
 var _ clientsidepeercontract.Factory = &PeerFactoryMock{}
