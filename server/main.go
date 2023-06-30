@@ -16,7 +16,7 @@ func RunCli() {
 
 func startServer() error {
 	storage, storageInteractor := dbstorage.New(16, 4)
-	peerConnector := dbpeerconnector.New()
+	peerConnector := dbpeerconnector.New(6666)
 	controller := dbserver.New(5555, storageInteractor)
 
 	manager := dbmanager.New(peerConnector, controller, storage)

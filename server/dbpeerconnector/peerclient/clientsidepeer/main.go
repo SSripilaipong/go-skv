@@ -1,12 +1,20 @@
 package clientsidepeer
 
 import (
+	"context"
 	"fmt"
+	"go-skv/server/dbpeerconnector/peerclient/clientsidepeer/clientsidepeercontract"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 )
 
-func New() peerconnectorcontract.Peer {
-	return tempInteractor{}
+func NewFactory() clientsidepeercontract.Factory {
+	return tempFactory{}
+}
+
+type tempFactory struct{}
+
+func (t tempFactory) New(ctx context.Context) (peerconnectorcontract.Peer, error) {
+	return tempInteractor{}, nil
 }
 
 type tempInteractor struct{}
