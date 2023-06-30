@@ -124,3 +124,18 @@ func Test_should_not_return_peer_if_gateway_connector_fails_to_connect(t *testin
 
 	assert.Nil(t, returnedPeer)
 }
+
+func Test_should_return_error_if_gateway_connector_fails_to_connect(t *testing.T) {
+	peerFactory := &peerclientmanagertest.PeerFactoryMock{New_Return: &dbpeerconnectortest.PeerMock{}}
+	gatewayConnector := &peerclientmanagertest.GatewayConnectorMock{ConnectTo_Error: peerconnectorcontract.CannotConnectToPeerError{}}
+	manager := peerclientmanagertest.New(
+		peerclientmanagertest.WithPeerFactory(peerFactory),
+		peerclientmanagertest.WithGatewayConnector(gatewayConnector),
+	)
+	var err error
+	tests.ContextScope(func(ctx context.Context) {
+		_, err = manager.ConnectToPeer(ctx, "1.2.3.4:1234")
+	})
+
+	assert.Equal(t, peerconnectorcontract.CannotConnectToPeerError{}, err)
+}
