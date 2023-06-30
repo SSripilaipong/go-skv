@@ -14,8 +14,10 @@ type dependency struct {
 
 func defaultDependency() dependency {
 	return dependency{
-		peerFactory:      &PeerFactoryMock{},
-		gatewayConnector: &GatewayConnectorMock{},
+		peerFactory: &PeerFactoryMock{},
+		gatewayConnector: &GatewayConnectorMock{
+			ConnectTo_Return: &GatewayMock{},
+		},
 	}
 }
 

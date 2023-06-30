@@ -26,7 +26,9 @@ func Test_should_create_new_client_side_peer_with_context(t *testing.T) {
 }
 
 func Test_should_connect_via_gateway_connector_with_context(t *testing.T) {
-	gatewayConnector := &peerclientmanagertest.GatewayConnectorMock{}
+	gatewayConnector := &peerclientmanagertest.GatewayConnectorMock{
+		ConnectTo_Return: &peerclientmanagertest.GatewayMock{},
+	}
 	manager := peerclientmanagertest.New(
 		peerclientmanagertest.WithGatewayConnector(gatewayConnector),
 	)
@@ -41,7 +43,9 @@ func Test_should_connect_via_gateway_connector_with_context(t *testing.T) {
 }
 
 func Test_should_connect_via_gateway_connector_with_address(t *testing.T) {
-	gatewayConnector := &peerclientmanagertest.GatewayConnectorMock{}
+	gatewayConnector := &peerclientmanagertest.GatewayConnectorMock{
+		ConnectTo_Return: &peerclientmanagertest.GatewayMock{},
+	}
 	manager := peerclientmanagertest.New(
 		peerclientmanagertest.WithGatewayConnector(gatewayConnector),
 	)
@@ -56,7 +60,9 @@ func Test_should_connect_via_gateway_connector_with_address(t *testing.T) {
 func Test_should_connect_via_gateway_connector_with_created_peer(t *testing.T) {
 	createdPeer := &dbpeerconnectortest.PeerMock{}
 	peerFactory := &peerclientmanagertest.PeerFactoryMock{New_Return: createdPeer}
-	gatewayConnector := &peerclientmanagertest.GatewayConnectorMock{}
+	gatewayConnector := &peerclientmanagertest.GatewayConnectorMock{
+		ConnectTo_Return: &peerclientmanagertest.GatewayMock{},
+	}
 	manager := peerclientmanagertest.New(
 		peerclientmanagertest.WithPeerFactory(peerFactory),
 		peerclientmanagertest.WithGatewayConnector(gatewayConnector),
@@ -67,4 +73,22 @@ func Test_should_connect_via_gateway_connector_with_created_peer(t *testing.T) {
 	})
 
 	assert.Equal(t, createdPeer, gatewayConnector.ConnectTo_peer)
+}
+
+func Test_should_make_the_connected_gateway_subscribe_replica_with_context(t *testing.T) {
+	connectedGateway := &peerclientmanagertest.GatewayMock{}
+	gatewayConnector := &peerclientmanagertest.GatewayConnectorMock{ConnectTo_Return: connectedGateway}
+	manager := peerclientmanagertest.New(
+		peerclientmanagertest.WithGatewayConnector(gatewayConnector),
+	)
+	tests.ContextScope(func(ctx context.Context) {
+		ctx = context.WithValue(ctx, "test", "IeIe")
+
+		_, err := manager.ConnectToPeer(ctx, "1.2.3.4:1234")
+		goutil.PanicUnhandledError(err)
+	})
+
+	assert.Equal(t, "IeIe", goutil.May(connectedGateway.SubscribeReplica_ctx, func(ctx context.Context) string {
+		return ctx.Value("test").(string)
+	}))
 }
