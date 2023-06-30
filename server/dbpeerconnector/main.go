@@ -6,5 +6,5 @@ import (
 )
 
 func New() peerconnectorcontract.Connector {
-	return connectormanager.New(nil, nil, nil, nil)
+	return connectormanager.New([]string{"localhost:5555"}, nil, nil, nil)
 }
