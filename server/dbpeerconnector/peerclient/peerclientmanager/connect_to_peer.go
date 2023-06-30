@@ -15,5 +15,5 @@ func (c client) ConnectToPeer(ctx context.Context, address string) (peerconnecto
 
 	goutil.PanicUnhandledError(gateway.SubscribeReplica(ctx))
 
-	return nil, nil
+	return peer, nil
 }

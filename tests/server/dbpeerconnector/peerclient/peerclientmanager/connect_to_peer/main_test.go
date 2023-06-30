@@ -3,6 +3,7 @@ package connect_to_peer
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
+	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 	"go-skv/tests"
 	"go-skv/tests/server/dbpeerconnector/dbpeerconnectortest"
 	"go-skv/tests/server/dbpeerconnector/peerclient/peerclientmanager/peerclientmanagertest"
@@ -91,4 +92,20 @@ func Test_should_make_the_connected_gateway_subscribe_replica_with_context(t *te
 	assert.Equal(t, "IeIe", goutil.May(connectedGateway.SubscribeReplica_ctx, func(ctx context.Context) string {
 		return ctx.Value("test").(string)
 	}))
+}
+
+func Test_should_return_connected_peer(t *testing.T) {
+	connectedPeer := &dbpeerconnectortest.PeerMock{}
+	peerFactory := &peerclientmanagertest.PeerFactoryMock{New_Return: connectedPeer}
+	manager := peerclientmanagertest.New(
+		peerclientmanagertest.WithPeerFactory(peerFactory),
+	)
+	var returnedPeer peerconnectorcontract.Peer
+	tests.ContextScope(func(ctx context.Context) {
+		var err error
+		returnedPeer, err = manager.ConnectToPeer(ctx, "1.2.3.4:1234")
+		goutil.PanicUnhandledError(err)
+	})
+
+	assert.Equal(t, connectedPeer, returnedPeer)
 }
