@@ -11,7 +11,12 @@ func (c client) ConnectToPeer(ctx context.Context, address string) (peerconnecto
 	goutil.PanicUnhandledError(err)
 
 	gateway, err := c.gatewayConnector.ConnectTo(ctx, address, peer)
-	goutil.PanicUnhandledError(err)
+	switch err.(type) {
+	case peerconnectorcontract.CannotConnectToPeerError:
+		return nil, nil
+	default:
+		goutil.PanicUnhandledError(err)
+	}
 
 	goutil.PanicUnhandledError(gateway.SubscribeReplica(ctx))
 
