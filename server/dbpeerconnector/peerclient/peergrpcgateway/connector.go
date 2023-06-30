@@ -25,6 +25,10 @@ func (f connector) ConnectTo(ctx context.Context, address string, peer peerconne
 			goutil.PanicUnhandledError(conn.Close())
 		}
 	}()
+	if pong, _ := service.HealthCheck(ctx, &peergrpc.Ping{}); pong == nil {
+		return nil, peerconnectorcontract.CannotConnectToPeerError{}
+	}
+
 	return gateway{
 		advertisedAddress: f.advertisedAddress,
 

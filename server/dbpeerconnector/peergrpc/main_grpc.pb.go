@@ -22,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PeerServiceClient interface {
+	HealthCheck(ctx context.Context, in *Ping, opts ...grpc.CallOption) (*Pong, error)
 	SubscribeReplica(ctx context.Context, in *SubscribeReplicaRequest, opts ...grpc.CallOption) (PeerService_SubscribeReplicaClient, error)
 }
 
@@ -31,6 +32,15 @@ type peerServiceClient struct {
 
 func NewPeerServiceClient(cc grpc.ClientConnInterface) PeerServiceClient {
 	return &peerServiceClient{cc}
+}
+
+func (c *peerServiceClient) HealthCheck(ctx context.Context, in *Ping, opts ...grpc.CallOption) (*Pong, error) {
+	out := new(Pong)
+	err := c.cc.Invoke(ctx, "/PeerService/HealthCheck", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *peerServiceClient) SubscribeReplica(ctx context.Context, in *SubscribeReplicaRequest, opts ...grpc.CallOption) (PeerService_SubscribeReplicaClient, error) {
@@ -69,6 +79,7 @@ func (x *peerServiceSubscribeReplicaClient) Recv() (*ReplicaUpdate, error) {
 // All implementations must embed UnimplementedPeerServiceServer
 // for forward compatibility
 type PeerServiceServer interface {
+	HealthCheck(context.Context, *Ping) (*Pong, error)
 	SubscribeReplica(*SubscribeReplicaRequest, PeerService_SubscribeReplicaServer) error
 	mustEmbedUnimplementedPeerServiceServer()
 }
@@ -77,6 +88,9 @@ type PeerServiceServer interface {
 type UnimplementedPeerServiceServer struct {
 }
 
+func (UnimplementedPeerServiceServer) HealthCheck(context.Context, *Ping) (*Pong, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HealthCheck not implemented")
+}
 func (UnimplementedPeerServiceServer) SubscribeReplica(*SubscribeReplicaRequest, PeerService_SubscribeReplicaServer) error {
 	return status.Errorf(codes.Unimplemented, "method SubscribeReplica not implemented")
 }
@@ -91,6 +105,24 @@ type UnsafePeerServiceServer interface {
 
 func RegisterPeerServiceServer(s grpc.ServiceRegistrar, srv PeerServiceServer) {
 	s.RegisterService(&PeerService_ServiceDesc, srv)
+}
+
+func _PeerService_HealthCheck_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Ping)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PeerServiceServer).HealthCheck(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/PeerService/HealthCheck",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PeerServiceServer).HealthCheck(ctx, req.(*Ping))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _PeerService_SubscribeReplica_Handler(srv interface{}, stream grpc.ServerStream) error {
@@ -120,7 +152,12 @@ func (x *peerServiceSubscribeReplicaServer) Send(m *ReplicaUpdate) error {
 var PeerService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "PeerService",
 	HandlerType: (*PeerServiceServer)(nil),
-	Methods:     []grpc.MethodDesc{},
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "HealthCheck",
+			Handler:    _PeerService_HealthCheck_Handler,
+		},
+	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "SubscribeReplica",

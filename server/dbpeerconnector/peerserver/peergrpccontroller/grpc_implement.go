@@ -1,6 +1,7 @@
 package peergrpccontroller
 
 import (
+	"context"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 	"go-skv/server/dbpeerconnector/peergrpc"
 	"go-skv/server/dbpeerconnector/peerserver/peerserverusecase/peerserverusecase"
@@ -16,6 +17,10 @@ func newGrpcImplementation(usecase peerserverusecase.Usecase) peergrpc.PeerServi
 type grpcImplementation struct {
 	peergrpc.UnimplementedPeerServiceServer
 	usecase peerserverusecase.Usecase
+}
+
+func (g grpcImplementation) HealthCheck(context.Context, *peergrpc.Ping) (*peergrpc.Pong, error) {
+	return &peergrpc.Pong{}, nil
 }
 
 func (g grpcImplementation) SubscribeReplica(req *peergrpc.SubscribeReplicaRequest, stream peergrpc.PeerService_SubscribeReplicaServer) error {
