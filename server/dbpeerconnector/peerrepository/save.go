@@ -19,5 +19,5 @@ type saveCommand struct {
 }
 
 func (c saveCommand) execute(s *state) {
-	s.temp = c.peer
+	s.peers[c.name] = c.peer
 }

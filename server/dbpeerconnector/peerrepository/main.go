@@ -10,8 +10,15 @@ import (
 
 func New(ctx context.Context) peerrepositorycontract.Repository {
 	ch := make(chan command)
-	go mainLoop(ctx, ch)
+	initialState := state{
+		peers: make(map[string]peerconnectorcontract.Peer),
+	}
+	go mainLoop(ctx, initialState, ch)
 	return interactor{ch: ch}
+}
+
+type state struct {
+	peers map[string]peerconnectorcontract.Peer
 }
 
 type interactor struct {
@@ -26,16 +33,11 @@ func (t interactor) sendCommand(ctx context.Context, cmd command) {
 	}
 }
 
-type state struct {
-	temp peerconnectorcontract.Peer
-}
-
 type command interface {
 	execute(s *state)
 }
 
-func mainLoop(ctx context.Context, ch <-chan command) {
-	var s state
+func mainLoop(ctx context.Context, s state, ch <-chan command) {
 	var cmd command
 	for {
 		select {
