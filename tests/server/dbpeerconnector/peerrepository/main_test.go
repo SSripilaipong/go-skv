@@ -14,8 +14,9 @@ import (
 func Test_should_save_then_get_the_same_peer_using_the_same_name(t *testing.T) {
 	savedPeer := &dbpeerconnectortest.PeerMock{}
 	var receivedPeer peerconnectorcontract.Peer
+	repo := peerrepository.New()
 	tests.ContextScope(func(ctx context.Context) {
-		repo := peerrepository.New(ctx)
+		goutil.PanicUnhandledError(repo.Start(ctx))
 
 		goutil.PanicUnhandledError(repo.Save(ctx, "xxx", savedPeer))
 
@@ -34,8 +35,9 @@ func Test_should_get_peer_1_from_name(t *testing.T) {
 	peer1 := new(dbpeerconnectortest.PeerMock)
 	peer2 := new(dbpeerconnectortest.PeerMock)
 	var receivedPeer peerconnectorcontract.Peer
+	repo := peerrepository.New()
 	tests.ContextScope(func(ctx context.Context) {
-		repo := peerrepository.New(ctx)
+		goutil.PanicUnhandledError(repo.Start(ctx))
 
 		goutil.PanicUnhandledError(repo.Save(ctx, "xxx", peer1))
 		goutil.PanicUnhandledError(repo.Save(ctx, "yyy", peer2))

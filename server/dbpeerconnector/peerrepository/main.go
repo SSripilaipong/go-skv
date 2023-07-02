@@ -8,12 +8,12 @@ import (
 	"go-skv/util/goutil"
 )
 
-func New(ctx context.Context) peerrepositorycontract.Repository {
+func New() peerrepositorycontract.Repository {
 	ch := make(chan command)
 	initialState := state{
 		peers: make(map[string]peerconnectorcontract.Peer),
 	}
-	go mainLoop(ctx, initialState, ch)
+	go routine(initialState, ch)
 	return interactor{ch: ch}
 }
 
@@ -37,7 +37,13 @@ type command interface {
 	execute(s *state)
 }
 
+func routine(initialState state, ch <-chan command) {
+	ctx := waitUntilStart(ch)
+	mainLoop(ctx, initialState, ch)
+}
+
 func mainLoop(ctx context.Context, s state, ch <-chan command) {
+
 	var cmd command
 	for {
 		select {

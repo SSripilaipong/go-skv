@@ -13,6 +13,10 @@ type PeerRepositoryMock struct {
 	Save_IsCalled bool
 }
 
+func (r *PeerRepositoryMock) Start(ctx context.Context) error {
+	return nil
+}
+
 func (r *PeerRepositoryMock) Save(ctx context.Context, name string, peer peerconnectorcontract.Peer) error {
 	r.Save_IsCalled = true
 	r.Save_ctx = ctx
@@ -22,8 +26,7 @@ func (r *PeerRepositoryMock) Save(ctx context.Context, name string, peer peercon
 }
 
 func (r *PeerRepositoryMock) Get(ctx context.Context, name string, execute func(peer peerconnectorcontract.Peer)) error {
-	//TODO implement me
-	panic("implement me")
+	return nil
 }
 
 var _ peerrepositorycontract.Repository = &PeerRepositoryMock{}
