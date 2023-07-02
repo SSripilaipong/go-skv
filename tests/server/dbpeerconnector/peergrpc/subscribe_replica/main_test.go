@@ -26,7 +26,9 @@ func Test_should_call_usecase_on_server_with_advertised_usecase(t *testing.T) {
 			gateway, err := gatewayConnector.ConnectTo(ctx, grpcutil.LocalAddress(controller.Port()), nil)
 			goutil.PanicUnhandledError(err)
 
-			goutil.PanicUnhandledError(gateway.SubscribeReplica(ctx))
+			gatewayStopped := make(chan struct{})
+			goutil.PanicUnhandledError(gateway.SubscribeReplica(ctx, func() { gatewayStopped <- struct{}{} }))
+			goutil.ReceiveWithTimeoutOrPanic(gatewayStopped, defaultTimeout)
 		})
 	})
 
@@ -49,11 +51,40 @@ func Test_should_send_a_replica_update_back_to_peer_on_client_side_with_key_and_
 			gateway, err := gatewayConnector.ConnectTo(ctx, grpcutil.LocalAddress(controller.Port()), peer)
 			goutil.PanicUnhandledError(err)
 
-			goutil.PanicUnhandledError(gateway.SubscribeReplica(ctx))
+			gatewayStopped := make(chan struct{})
+			goutil.PanicUnhandledError(gateway.SubscribeReplica(ctx, func() { gatewayStopped <- struct{}{} }))
+			goutil.ReceiveWithTimeout(gatewayStopped, defaultTimeout)
 		})
 	})
 
 	controller.Join()
 	assert.Equal(t, "aaa", peer.UpdateReplica_key)
 	assert.Equal(t, "bbb", peer.UpdateReplica_value)
+}
+
+func Test_should_wait_for_update_in_background(t *testing.T) {
+	triggerSendUpdate := make(chan struct{})
+	var waitInBackground bool
+	usecase := &peergrpctest.ServerUsecaseMock{SubscribeReplica_ch_Do: func(ch chan<- peerconnectorcontract.ReplicaUpdate) {
+		_, waitInBackground = goutil.ReceiveWithTimeout(triggerSendUpdate, defaultTimeout)
+		ch <- peerconnectorcontract.ReplicaUpdate{}
+	}}
+	peer := &dbpeerconnectortest.PeerMock{}
+	controller := peergrpctest.NewController(
+		peergrpctest.WithServerUsecase(usecase),
+	)
+	tests.ContextScope(func(ctx context.Context) {
+		goutil.PanicUnhandledError(controller.Start(ctx))
+		tests.SubContextScope(ctx, func(ctx context.Context) {
+			gatewayConnector := peergrpctest.NewConnector()
+			gateway, err := gatewayConnector.ConnectTo(ctx, grpcutil.LocalAddress(controller.Port()), peer)
+			goutil.PanicUnhandledError(err)
+
+			goutil.PanicUnhandledError(gateway.SubscribeReplica(ctx, func() {}))
+
+			triggerSendUpdate <- struct{}{}
+		})
+	})
+
+	assert.True(t, waitInBackground)
 }

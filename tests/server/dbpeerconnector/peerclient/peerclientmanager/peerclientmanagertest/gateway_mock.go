@@ -9,7 +9,7 @@ type GatewayMock struct {
 	SubscribeReplica_ctx context.Context
 }
 
-func (g *GatewayMock) SubscribeReplica(ctx context.Context) error {
+func (g *GatewayMock) SubscribeReplica(ctx context.Context, onStopped func()) error {
 	g.SubscribeReplica_ctx = ctx
 	return nil
 }

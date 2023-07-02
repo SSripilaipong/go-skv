@@ -6,6 +6,8 @@ import (
 	"go-skv/server/dbpeerconnector/peergrpc"
 	"go-skv/server/dbpeerconnector/peerserver/peerserverusecase/peerserverusecase"
 	"go-skv/util/goutil"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func newGrpcImplementation(usecase peerserverusecase.Usecase) peergrpc.PeerServiceServer {
@@ -31,6 +33,10 @@ func (g grpcImplementation) SubscribeReplica(req *peergrpc.SubscribeReplicaReque
 			Key:   update.Key,
 			Value: update.Value,
 		})
+		stt, _ := status.FromError(err)
+		if stt.Code() == codes.Unavailable {
+			return nil
+		}
 		goutil.PanicUnhandledError(err)
 	}
 	return nil

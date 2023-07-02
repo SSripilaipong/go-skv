@@ -5,6 +5,8 @@ import (
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 	"go-skv/server/dbpeerconnector/peergrpc"
 	"go-skv/util/goutil"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"io"
 )
 
@@ -14,24 +16,32 @@ type gateway struct {
 	peer              peerconnectorcontract.Peer
 }
 
-func (g gateway) SubscribeReplica(ctx context.Context) error {
+func (g gateway) SubscribeReplica(ctx context.Context, onStopped func()) error {
 	stream, err := g.service.SubscribeReplica(ctx, &peergrpc.SubscribeReplicaRequest{AdvertisedAddress: g.advertisedAddress})
 	goutil.PanicUnhandledError(err)
 
-	for {
-		select {
-		case <-ctx.Done():
-			break
-		default:
-		}
-		update, err := stream.Recv()
-		if err == io.EOF {
-			break
-		}
-		goutil.PanicUnhandledError(err)
+	go func() {
+		defer onStopped()
 
-		goutil.PanicUnhandledError(g.peer.UpdateReplica(update.Key, update.Value))
-	}
+		for {
+			select {
+			case <-ctx.Done():
+				break
+			default:
+			}
+			update, err := stream.Recv()
+			if err == io.EOF {
+				break
+			}
+			stt, _ := status.FromError(err)
+			if stt.Code() == codes.Canceled {
+				return
+			}
+			goutil.PanicUnhandledError(err)
+
+			goutil.PanicUnhandledError(g.peer.UpdateReplica(update.Key, update.Value))
+		}
+	}()
 
 	return nil
 }
