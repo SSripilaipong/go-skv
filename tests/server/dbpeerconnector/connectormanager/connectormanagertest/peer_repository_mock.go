@@ -21,4 +21,9 @@ func (r *PeerRepositoryMock) Save(ctx context.Context, name string, peer peercon
 	return nil
 }
 
+func (r *PeerRepositoryMock) Get(ctx context.Context, name string, execute func(peer peerconnectorcontract.Peer)) error {
+	//TODO implement me
+	panic("implement me")
+}
+
 var _ peerrepositorycontract.Repository = &PeerRepositoryMock{}
