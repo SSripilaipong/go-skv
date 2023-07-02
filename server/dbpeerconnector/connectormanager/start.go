@@ -3,7 +3,6 @@ package connectormanager
 import (
 	"context"
 	"errors"
-	"fmt"
 	"go-skv/server/dbpeerconnector/peerclient/peerclientcontract"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 	"go-skv/util/goutil"
@@ -12,7 +11,6 @@ import (
 func (m manager) Start(ctx context.Context) error {
 	addr, peer := m.connectToExistingPeer(ctx)
 	if peer != nil {
-		fmt.Printf("PeerRepo: %#v\n", m.peerRepo)
 		goutil.PanicUnhandledError(m.peerRepo.Save(ctx, addr, peer))
 	}
 	goutil.PanicUnhandledError(m.server.Start(ctx))
