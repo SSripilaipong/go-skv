@@ -18,7 +18,7 @@ func Test_should_call_success_with_newly_created_record(t *testing.T) {
 	goutil2.PanicUnhandledError(storage.Start())
 
 	var successRecord dbstorage.Record
-	message := storagerepository.GetOrCreateRecordMessage{Key: "", Success: func(record dbstorage.Record) { successRecord = record }}
+	message := storagerepository.GetOrCreateRecordCommand{Key: "", Success: func(record dbstorage.Record) { successRecord = record }}
 	goutil2.SendWithTimeoutOrPanic[any](storageChan, message, defaultTimeout)
 
 	goutil2.PanicUnhandledError(storage.Stop())
@@ -33,7 +33,7 @@ func Test_should_not_create_same_record_twice(t *testing.T) {
 	storage := storagerepositorytest.NewStorageWithChannelAndRecordFactory(storageChan, factory)
 	goutil2.PanicUnhandledError(storage.Start())
 
-	message := storagerepository.GetOrCreateRecordMessage{Key: "aaa", Success: success}
+	message := storagerepository.GetOrCreateRecordCommand{Key: "aaa", Success: success}
 	goutil2.SendWithTimeoutOrPanic[any](storageChan, message, defaultTimeout)
 	factory.New_CaptureReset()
 
@@ -51,10 +51,10 @@ func Test_should_create_new_record_if_the_key_is_not_duplicate_to_existing_ones(
 	storage := storagerepositorytest.NewStorageWithChannelAndRecordFactory(storageChan, factory)
 	goutil2.PanicUnhandledError(storage.Start())
 
-	goutil2.SendWithTimeoutOrPanic[any](storageChan, storagerepository.GetOrCreateRecordMessage{Key: "aaa", Success: success}, defaultTimeout)
+	goutil2.SendWithTimeoutOrPanic[any](storageChan, storagerepository.GetOrCreateRecordCommand{Key: "aaa", Success: success}, defaultTimeout)
 	factory.New_CaptureReset()
 
-	goutil2.SendWithTimeoutOrPanic[any](storageChan, storagerepository.GetOrCreateRecordMessage{Key: "bbb", Success: success}, defaultTimeout)
+	goutil2.SendWithTimeoutOrPanic[any](storageChan, storagerepository.GetOrCreateRecordCommand{Key: "bbb", Success: success}, defaultTimeout)
 
 	goutil2.PanicUnhandledError(storage.Stop())
 
@@ -67,7 +67,7 @@ func Test_should_pass_context_that_would_be_cancelled_when_stops(t *testing.T) {
 	storage := storagerepositorytest.NewStorageWithChannelAndRecordFactory(storageChan, factory)
 	goutil2.PanicUnhandledError(storage.Start())
 
-	goutil2.SendWithTimeoutOrPanic[any](storageChan, storagerepository.GetOrCreateRecordMessage{Key: "", Success: func(dbstorage.Record) {}}, defaultTimeout)
+	goutil2.SendWithTimeoutOrPanic[any](storageChan, storagerepository.GetOrCreateRecordCommand{Key: "", Success: func(dbstorage.Record) {}}, defaultTimeout)
 	passedContext := factory.New_ctx
 
 	goutil2.PanicUnhandledError(storage.Stop())
@@ -82,12 +82,12 @@ func Test_should_call_success_with_the_same_record_if_key_is_the_same(t *testing
 	goutil2.PanicUnhandledError(storage.Start())
 
 	var firstRecord dbstorage.Record
-	goutil2.SendWithTimeoutOrPanic[any](storageChan, storagerepository.GetOrCreateRecordMessage{Key: "aaa", Success: func(record dbstorage.Record) {
+	goutil2.SendWithTimeoutOrPanic[any](storageChan, storagerepository.GetOrCreateRecordCommand{Key: "aaa", Success: func(record dbstorage.Record) {
 		firstRecord = record
 	}}, defaultTimeout)
 
 	var secondRecord dbstorage.Record
-	goutil2.SendWithTimeoutOrPanic[any](storageChan, storagerepository.GetOrCreateRecordMessage{Key: "aaa", Success: func(record dbstorage.Record) {
+	goutil2.SendWithTimeoutOrPanic[any](storageChan, storagerepository.GetOrCreateRecordCommand{Key: "aaa", Success: func(record dbstorage.Record) {
 		secondRecord = record
 	}}, defaultTimeout)
 

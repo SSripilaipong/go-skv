@@ -12,11 +12,10 @@ type manager struct {
 	cancel        context.CancelFunc
 
 	stopped chan struct{}
-	records map[string]storagerecord.Interface
 }
 
 func (m *manager) Start() error {
-	go m.mainLoop()
+	go mainLoop(m.ctx, m.ch, m.stopped, m.recordFactory)
 	return nil
 }
 

@@ -9,18 +9,8 @@ type interactor struct {
 	ch chan<- any
 }
 
-func (i interactor) GetRecord(ctx context.Context, key string, success GetRecordSuccessCallback) error {
-	return i.sendMessage(ctx, GetRecordMessage{
-		Key:     key,
-		Success: success,
-	})
-}
-
-func (i interactor) GetOrCreateRecord(ctx context.Context, key string, success GetOrCreateRecordSuccessCallback) error {
-	return i.sendMessage(ctx, GetOrCreateRecordMessage{
-		Key:     key,
-		Success: success,
-	})
+type command interface {
+	execute(s *state)
 }
 
 func (i interactor) sendMessage(ctx context.Context, message any) error {

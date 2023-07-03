@@ -15,12 +15,12 @@ func Test_should_call_success_with_existing_record(t *testing.T) {
 	goutil2.PanicUnhandledError(storage.Start())
 
 	var existingRecord dbstorage.Record
-	goutil2.SendWithTimeoutOrPanic[any](storageChan, storagerepository.GetOrCreateRecordMessage{Key: "aaa", Success: func(record dbstorage.Record) {
+	goutil2.SendWithTimeoutOrPanic[any](storageChan, storagerepository.GetOrCreateRecordCommand{Key: "aaa", Success: func(record dbstorage.Record) {
 		existingRecord = record
 	}}, defaultTimeout)
 
 	var retrievedRecord dbstorage.Record
-	goutil2.SendWithTimeoutOrPanic[any](storageChan, storagerepository.GetRecordMessage{Key: "aaa", Success: func(record dbstorage.Record) {
+	goutil2.SendWithTimeoutOrPanic[any](storageChan, storagerepository.GetRecordCommand{Key: "aaa", Success: func(record dbstorage.Record) {
 		retrievedRecord = record
 	}}, defaultTimeout)
 

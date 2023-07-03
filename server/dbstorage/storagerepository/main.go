@@ -19,7 +19,6 @@ func NewRepository(ch chan any, recordFactory storagerecord.Factory) Interface {
 		cancel:        cancel,
 
 		stopped: make(chan struct{}),
-		records: make(map[string]storagerecord.Interface),
 	}
 }
 

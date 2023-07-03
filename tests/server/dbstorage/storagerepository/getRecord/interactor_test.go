@@ -17,7 +17,7 @@ func Test_should_send_get_record_message(t *testing.T) {
 	_ = interactor.GetRecord(context.Background(), "", func(storagerecord.Interface) {})
 
 	raw := goutil2.ReceiveWithTimeoutOrPanic(ch, defaultTimeout)
-	assert.True(t, goutil2.CanCast[storagerepository.GetRecordMessage](raw))
+	assert.True(t, goutil2.CanCast[storagerepository.GetRecordCommand](raw))
 }
 
 func Test_should_send_get_record_message_with_key_to_repository(t *testing.T) {
@@ -27,7 +27,7 @@ func Test_should_send_get_record_message_with_key_to_repository(t *testing.T) {
 	_ = interactor.GetRecord(context.Background(), "aaa", func(storagerecord.Interface) {})
 
 	raw := goutil2.ReceiveWithTimeoutOrPanic(ch, defaultTimeout)
-	message := goutil2.CastOrPanic[storagerepository.GetRecordMessage](raw)
+	message := goutil2.CastOrPanic[storagerepository.GetRecordCommand](raw)
 	assert.Equal(t, "aaa", message.Key)
 }
 
@@ -39,7 +39,7 @@ func Test_should_send_get_record_message_with_success_callback_to_repository(t *
 	_ = interactor.GetRecord(context.Background(), "", func(storagerecord.Interface) { isTheSameFunction = true })
 
 	raw := goutil2.ReceiveWithTimeoutOrPanic(ch, defaultTimeout)
-	message := goutil2.CastOrPanic[storagerepository.GetRecordMessage](raw)
+	message := goutil2.CastOrPanic[storagerepository.GetRecordCommand](raw)
 
 	isTheSameFunction = false
 	message.Success(nil)
