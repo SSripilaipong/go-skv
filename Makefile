@@ -17,3 +17,6 @@ server1:
 
 server2:
 	go run server.go start --db-port 6555 --peer-port 6551 --peers=localhost:5556
+
+client1:
+	go run client.go connect localhost:5555
