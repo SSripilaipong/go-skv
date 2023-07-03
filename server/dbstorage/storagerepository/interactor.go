@@ -2,6 +2,7 @@ package storagerepository
 
 import (
 	"context"
+	"go-skv/common/commoncontract"
 )
 
 type interactor struct {
@@ -26,7 +27,7 @@ func (i interactor) sendMessage(ctx context.Context, message any) error {
 	select {
 	case i.ch <- message:
 	case <-ctx.Done():
-		return ContextCancelledError{}
+		return commoncontract.ContextClosedError{}
 	}
 	return nil
 }

@@ -3,6 +3,7 @@ package getValue
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
+	"go-skv/common/commoncontract"
 	goutil2 "go-skv/common/util/goutil"
 	"go-skv/server/dbstorage/storagerecord"
 	"go-skv/server/dbstorage/storagerepository"
@@ -53,5 +54,5 @@ func Test_should_return_context_cancelled_error_when_context_is_cancelled(t *tes
 	cancel()
 	err := interactor.GetRecord(ctx, "", func(storagerecord.Interface) {})
 
-	assert.Equal(t, storagerepository.ContextCancelledError{}, err)
+	assert.Equal(t, commoncontract.ContextClosedError{}, err)
 }
