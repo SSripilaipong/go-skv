@@ -2,7 +2,7 @@ package replcontroller
 
 import (
 	"go-skv/client/clientconnection"
-	"go-skv/util/goutil"
+	goutil2 "go-skv/common/util/goutil"
 	"strings"
 )
 
@@ -22,14 +22,14 @@ type controller struct {
 
 func (c *controller) Connect(address string) (err error) {
 	c.connection, err = c.connectionFactory(address)
-	goutil.PanicUnhandledError(err)
+	goutil2.PanicUnhandledError(err)
 	return nil
 }
 
 func (c *controller) Input(s string) (string, error) {
 	tokens := strings.Split(strings.Trim(s, "\n"), " ")
-	command, err := goutil.ElementAt(tokens, 0)
-	goutil.PanicUnhandledError(err)
+	command, err := goutil2.ElementAt(tokens, 0)
+	goutil2.PanicUnhandledError(err)
 
 	params := tokens[1:]
 	handle, matches := c.commandMapper[strings.ToLower(command)]

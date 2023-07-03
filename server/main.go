@@ -1,12 +1,12 @@
 package server
 
 import (
+	goutil2 "go-skv/common/util/goutil"
 	"go-skv/server/dbmanager"
 	"go-skv/server/dbpeerconnector"
 	"go-skv/server/dbserver"
 	"go-skv/server/dbstorage"
 	"go-skv/server/servercli"
-	"go-skv/util/goutil"
 )
 
 func RunCli() {
@@ -20,10 +20,10 @@ func startServer(config servercli.Config) error {
 	controller := dbserver.New(config.DbPort, storageInteractor)
 
 	manager := dbmanager.New(peerConnector, controller, storage)
-	goutil.PanicUnhandledError(manager.Start())
+	goutil2.PanicUnhandledError(manager.Start())
 
-	goutil.WaitForInterrupt()
+	goutil2.WaitForInterrupt()
 
-	goutil.PanicUnhandledError(manager.Stop())
+	goutil2.PanicUnhandledError(manager.Stop())
 	return nil
 }

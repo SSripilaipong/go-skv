@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"go-skv/client/clientrepl/replcontroller"
-	"go-skv/util/goutil"
+	"go-skv/common/util/goutil"
 	"os"
 )
 

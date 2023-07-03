@@ -2,8 +2,8 @@ package getValue
 
 import (
 	"context"
+	"go-skv/common/util/goutil"
 	"go-skv/server/dbserver/dbusecase"
-	"go-skv/util/goutil"
 )
 
 func doExecute(usecase dbusecase.Interface) (dbusecase.GetValueResponse, error) {

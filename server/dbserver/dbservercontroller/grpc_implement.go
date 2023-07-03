@@ -3,9 +3,9 @@ package dbservercontroller
 import (
 	"context"
 	"fmt"
+	"go-skv/common/util/goutil"
 	"go-skv/server/dbserver/dbgrpc"
 	"go-skv/server/dbserver/dbusecase"
-	"go-skv/util/goutil"
 )
 
 type grpcImplementation struct {

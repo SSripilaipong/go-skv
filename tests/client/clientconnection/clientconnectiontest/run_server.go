@@ -1,8 +1,8 @@
 package clientconnectiontest
 
 import (
+	"go-skv/common/util/goutil"
 	"go-skv/server/dbserver/dbgrpc"
-	"go-skv/util/goutil"
 	"google.golang.org/grpc"
 	"net"
 )

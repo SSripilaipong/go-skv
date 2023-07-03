@@ -2,7 +2,9 @@ package storagerecord
 
 import (
 	"context"
-	"go-skv/util/goutil"
+	"go-skv/common/commoncontract"
+	"go-skv/common/util/goutil"
+	"go-skv/server/dbstorage/dbstoragecontract"
 )
 
 type recordInteractor struct {
@@ -25,24 +27,24 @@ func newRecordInteractor(ctx context.Context, ctxCancel context.CancelFunc, ch c
 
 func (r recordInteractor) SetValue(ctx context.Context, value string, success func(response SetValueResponse)) error {
 	if r.isContextEnded() {
-		return RecordDestroyedError{}
+		return dbstoragecontract.RecordDestroyedError{}
 	}
 	select {
 	case r.ch <- setValueMessage{value: value, success: success}:
 	case <-ctx.Done():
-		return ContextCancelledError{}
+		return commoncontract.ContextClosedError{}
 	}
 	return nil
 }
 
 func (r recordInteractor) GetValue(ctx context.Context, success func(response GetValueResponse)) error {
 	if r.isContextEnded() {
-		return RecordDestroyedError{}
+		return dbstoragecontract.RecordDestroyedError{}
 	}
 	select {
 	case r.ch <- getValueMessage{success: success}:
 	case <-ctx.Done():
-		return ContextCancelledError{}
+		return commoncontract.ContextClosedError{}
 	}
 	return nil
 }

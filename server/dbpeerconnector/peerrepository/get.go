@@ -3,8 +3,8 @@ package peerrepository
 import (
 	"context"
 	"errors"
+	"go-skv/common/util/goutil"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
-	"go-skv/util/goutil"
 )
 
 func (t interactor) Get(ctx context.Context, name string, execute func(peer peerconnectorcontract.Peer)) error {

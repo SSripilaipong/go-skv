@@ -3,9 +3,9 @@ package peergrpccontroller
 import (
 	"context"
 	"fmt"
+	"go-skv/common/util/goutil"
+	"go-skv/common/util/grpcutil"
 	"go-skv/server/dbpeerconnector/peergrpc"
-	"go-skv/util/goutil"
-	"go-skv/util/grpcutil"
 	"google.golang.org/grpc"
 	"net"
 )

@@ -3,9 +3,9 @@ package peerrepository
 import (
 	"context"
 	"errors"
+	"go-skv/common/util/goutil"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 	"go-skv/server/dbpeerconnector/peerrepository/peerrepositorycontract"
-	"go-skv/util/goutil"
 )
 
 func New() peerrepositorycontract.Repository {

@@ -3,12 +3,12 @@ package start
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
+	"go-skv/common/util/goutil"
 	"go-skv/server/dbpeerconnector/peerclient/peerclientcontract"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 	"go-skv/tests"
 	"go-skv/tests/server/dbpeerconnector/connectormanager/connectormanagertest"
 	"go-skv/tests/server/dbpeerconnector/dbpeerconnectortest"
-	"go-skv/util/goutil"
 	"testing"
 )
 

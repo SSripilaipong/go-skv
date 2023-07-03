@@ -2,8 +2,8 @@ package stop
 
 import (
 	"github.com/stretchr/testify/assert"
+	"go-skv/common/util/goutil"
 	"go-skv/tests/server/dbmanager/dbmanagertest"
-	"go-skv/util/goutil"
 	"testing"
 )
 

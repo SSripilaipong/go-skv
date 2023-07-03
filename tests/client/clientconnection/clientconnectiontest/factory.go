@@ -2,8 +2,8 @@ package clientconnectiontest
 
 import (
 	"context"
+	"go-skv/common/util/goutil"
 	"go-skv/server/dbserver/dbgrpc"
-	"go-skv/util/goutil"
 )
 
 type DbServiceServerMock struct {

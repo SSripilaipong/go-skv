@@ -2,7 +2,7 @@ package replcontroller
 
 import (
 	"context"
-	"go-skv/util/goutil"
+	"go-skv/common/util/goutil"
 )
 
 func (c *controller) handleSetValueCommand(params []string) (string, error) {

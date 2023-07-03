@@ -3,11 +3,11 @@ package connector_connect_to
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
+	"go-skv/common/util/grpcutil"
 	"go-skv/server/dbpeerconnector/peerclient/peerclientcontract"
 	"go-skv/tests"
 	"go-skv/tests/server/dbpeerconnector/dbpeerconnectortest"
 	"go-skv/tests/server/dbpeerconnector/peergrpc/peergrpctest"
-	"go-skv/util/grpcutil"
 	"testing"
 )
 

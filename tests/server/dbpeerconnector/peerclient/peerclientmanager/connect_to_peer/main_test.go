@@ -3,12 +3,12 @@ package connect_to_peer
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
+	goutil2 "go-skv/common/util/goutil"
 	"go-skv/server/dbpeerconnector/peerclient/peerclientcontract"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 	"go-skv/tests"
 	"go-skv/tests/server/dbpeerconnector/dbpeerconnectortest"
 	"go-skv/tests/server/dbpeerconnector/peerclient/peerclientmanager/peerclientmanagertest"
-	"go-skv/util/goutil"
 	"testing"
 )
 
@@ -21,7 +21,7 @@ func Test_should_create_new_client_side_peer_with_context(t *testing.T) {
 		ctx = context.WithValue(ctx, "test", "1234567890")
 
 		_, err := manager.ConnectToPeer(ctx, "1.1.1.1:1234")
-		goutil.PanicUnhandledError(err)
+		goutil2.PanicUnhandledError(err)
 	})
 
 	assert.Equal(t, "1234567890", peerFactory.New_ctx.Value("test"))
@@ -38,7 +38,7 @@ func Test_should_connect_via_gateway_connector_with_context(t *testing.T) {
 		ctx = context.WithValue(ctx, "test", "yee")
 
 		_, err := manager.ConnectToPeer(ctx, "1.2.3.4:1234")
-		goutil.PanicUnhandledError(err)
+		goutil2.PanicUnhandledError(err)
 	})
 
 	assert.Equal(t, "yee", gatewayConnector.ConnectTo_ctx.Value("test"))
@@ -53,7 +53,7 @@ func Test_should_connect_via_gateway_connector_with_address(t *testing.T) {
 	)
 	tests.ContextScope(func(ctx context.Context) {
 		_, err := manager.ConnectToPeer(ctx, "1.2.3.4:1234")
-		goutil.PanicUnhandledError(err)
+		goutil2.PanicUnhandledError(err)
 	})
 
 	assert.Equal(t, "1.2.3.4:1234", gatewayConnector.ConnectTo_address)
@@ -71,7 +71,7 @@ func Test_should_connect_via_gateway_connector_with_created_peer(t *testing.T) {
 	)
 	tests.ContextScope(func(ctx context.Context) {
 		_, err := manager.ConnectToPeer(ctx, "1.2.3.4:1234")
-		goutil.PanicUnhandledError(err)
+		goutil2.PanicUnhandledError(err)
 	})
 
 	assert.Equal(t, createdPeer, gatewayConnector.ConnectTo_peer)
@@ -87,10 +87,10 @@ func Test_should_make_the_connected_gateway_subscribe_replica_with_context(t *te
 		ctx = context.WithValue(ctx, "test", "IeIe")
 
 		_, err := manager.ConnectToPeer(ctx, "1.2.3.4:1234")
-		goutil.PanicUnhandledError(err)
+		goutil2.PanicUnhandledError(err)
 	})
 
-	assert.Equal(t, "IeIe", goutil.May(connectedGateway.SubscribeReplica_ctx, func(ctx context.Context) string {
+	assert.Equal(t, "IeIe", goutil2.May(connectedGateway.SubscribeReplica_ctx, func(ctx context.Context) string {
 		return ctx.Value("test").(string)
 	}))
 }
@@ -105,7 +105,7 @@ func Test_should_return_connected_peer(t *testing.T) {
 	tests.ContextScope(func(ctx context.Context) {
 		var err error
 		returnedPeer, err = manager.ConnectToPeer(ctx, "1.2.3.4:1234")
-		goutil.PanicUnhandledError(err)
+		goutil2.PanicUnhandledError(err)
 	})
 
 	assert.Equal(t, connectedPeer, returnedPeer)

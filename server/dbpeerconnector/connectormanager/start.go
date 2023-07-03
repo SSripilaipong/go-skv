@@ -3,9 +3,9 @@ package connectormanager
 import (
 	"context"
 	"errors"
+	"go-skv/common/util/goutil"
 	"go-skv/server/dbpeerconnector/peerclient/peerclientcontract"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
-	"go-skv/util/goutil"
 )
 
 func (m manager) Start(ctx context.Context) error {

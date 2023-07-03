@@ -1,7 +1,7 @@
 package dbmanager
 
 import (
-	"go-skv/util/goutil"
+	"go-skv/common/util/goutil"
 )
 
 func (m manager) Stop() error {

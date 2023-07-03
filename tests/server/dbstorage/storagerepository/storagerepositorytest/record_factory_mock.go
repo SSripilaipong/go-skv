@@ -2,9 +2,9 @@ package storagerepositorytest
 
 import (
 	"context"
+	"go-skv/common/util/goutil"
 	"go-skv/server/dbstorage/storagerecord"
 	"go-skv/tests/server/dbstorage/dbstoragetest"
-	"go-skv/util/goutil"
 )
 
 type RecordFactoryMock struct {

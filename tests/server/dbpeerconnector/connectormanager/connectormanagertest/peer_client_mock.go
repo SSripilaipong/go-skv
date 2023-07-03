@@ -2,9 +2,9 @@ package connectormanagertest
 
 import (
 	"context"
+	"go-skv/common/util/goutil"
 	"go-skv/server/dbpeerconnector/peerclient/peerclientcontract"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
-	"go-skv/util/goutil"
 )
 
 type PeerClientMock struct {

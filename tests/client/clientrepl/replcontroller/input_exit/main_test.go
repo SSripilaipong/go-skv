@@ -3,8 +3,8 @@ package input_exit
 import (
 	"github.com/stretchr/testify/assert"
 	"go-skv/client/clientrepl/replcontroller"
+	"go-skv/common/util/goutil"
 	replcontrollertest2 "go-skv/tests/client/clientrepl/replcontroller/replcontrollertest"
-	"go-skv/util/goutil"
 	"testing"
 )
 

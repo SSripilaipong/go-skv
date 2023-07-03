@@ -1,9 +1,9 @@
 package dbservercontrollertest
 
 import (
+	"go-skv/common/util/goutil"
+	"go-skv/common/util/grpcutil"
 	"go-skv/server/dbserver/dbgrpc"
-	"go-skv/util/goutil"
-	"go-skv/util/grpcutil"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/stretchr/testify/assert"
 	"go-skv/client/clientconnection"
+	"go-skv/common/util/goutil"
 	clientconnectiontest2 "go-skv/tests/client/clientconnection/clientconnectiontest"
-	"go-skv/util/goutil"
 	"net"
 	"testing"
 )

@@ -2,8 +2,8 @@ package connect
 
 import (
 	"github.com/stretchr/testify/assert"
+	"go-skv/common/util/goutil"
 	replcontrollertest2 "go-skv/tests/client/clientrepl/replcontroller/replcontrollertest"
-	"go-skv/util/goutil"
 	"testing"
 )
 

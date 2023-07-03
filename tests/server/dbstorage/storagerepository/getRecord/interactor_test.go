@@ -3,9 +3,9 @@ package getValue
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
+	goutil2 "go-skv/common/util/goutil"
 	"go-skv/server/dbstorage/storagerecord"
 	"go-skv/server/dbstorage/storagerepository"
-	"go-skv/util/goutil"
 	"testing"
 )
 
@@ -15,8 +15,8 @@ func Test_should_send_get_record_message(t *testing.T) {
 
 	_ = interactor.GetRecord(context.Background(), "", func(storagerecord.Interface) {})
 
-	raw := goutil.ReceiveWithTimeoutOrPanic(ch, defaultTimeout)
-	assert.True(t, goutil.CanCast[storagerepository.GetRecordMessage](raw))
+	raw := goutil2.ReceiveWithTimeoutOrPanic(ch, defaultTimeout)
+	assert.True(t, goutil2.CanCast[storagerepository.GetRecordMessage](raw))
 }
 
 func Test_should_send_get_record_message_with_key_to_repository(t *testing.T) {
@@ -25,8 +25,8 @@ func Test_should_send_get_record_message_with_key_to_repository(t *testing.T) {
 
 	_ = interactor.GetRecord(context.Background(), "aaa", func(storagerecord.Interface) {})
 
-	raw := goutil.ReceiveWithTimeoutOrPanic(ch, defaultTimeout)
-	message := goutil.CastOrPanic[storagerepository.GetRecordMessage](raw)
+	raw := goutil2.ReceiveWithTimeoutOrPanic(ch, defaultTimeout)
+	message := goutil2.CastOrPanic[storagerepository.GetRecordMessage](raw)
 	assert.Equal(t, "aaa", message.Key)
 }
 
@@ -37,8 +37,8 @@ func Test_should_send_get_record_message_with_success_callback_to_repository(t *
 	var isTheSameFunction bool
 	_ = interactor.GetRecord(context.Background(), "", func(storagerecord.Interface) { isTheSameFunction = true })
 
-	raw := goutil.ReceiveWithTimeoutOrPanic(ch, defaultTimeout)
-	message := goutil.CastOrPanic[storagerepository.GetRecordMessage](raw)
+	raw := goutil2.ReceiveWithTimeoutOrPanic(ch, defaultTimeout)
+	message := goutil2.CastOrPanic[storagerepository.GetRecordMessage](raw)
 
 	isTheSameFunction = false
 	message.Success(nil)

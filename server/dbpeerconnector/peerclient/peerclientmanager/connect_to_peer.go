@@ -2,9 +2,9 @@ package peerclientmanager
 
 import (
 	"context"
+	"go-skv/common/util/goutil"
 	"go-skv/server/dbpeerconnector/peerclient/peerclientcontract"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
-	"go-skv/util/goutil"
 )
 
 func (c client) ConnectToPeer(ctx context.Context, address string) (peerconnectorcontract.Peer, error) {

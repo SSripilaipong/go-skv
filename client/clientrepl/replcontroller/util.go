@@ -1,7 +1,7 @@
 package replcontroller
 
 import (
-	"go-skv/util/goutil"
+	"go-skv/common/util/goutil"
 	"strings"
 )
 

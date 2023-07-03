@@ -3,7 +3,7 @@ package replcontroller
 import (
 	"context"
 	"fmt"
-	"go-skv/util/goutil"
+	"go-skv/common/util/goutil"
 )
 
 func (c *controller) handleGetValueCommand(params []string) (string, error) {

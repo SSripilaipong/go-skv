@@ -2,11 +2,11 @@ package peergrpcgateway
 
 import (
 	"context"
+	"go-skv/common/util/goutil"
 	"go-skv/server/dbpeerconnector/peerclient/peerclientcontract"
 	"go-skv/server/dbpeerconnector/peerclient/peergrpcgateway/peergrpcgatewaycontract"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 	"go-skv/server/dbpeerconnector/peergrpc"
-	"go-skv/util/goutil"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

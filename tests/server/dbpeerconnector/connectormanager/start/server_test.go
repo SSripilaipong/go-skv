@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"github.com/stretchr/testify/assert"
+	"go-skv/common/util/goutil"
 	"go-skv/tests"
 	"go-skv/tests/server/dbpeerconnector/connectormanager/connectormanagertest"
-	"go-skv/util/goutil"
 	"testing"
 )
 

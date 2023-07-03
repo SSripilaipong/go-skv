@@ -2,9 +2,9 @@ package storagerecord
 
 import (
 	"github.com/stretchr/testify/assert"
-	"go-skv/server/dbstorage/storagerecord"
+	"go-skv/common/util/goutil"
+	"go-skv/server/dbstorage/dbstoragecontract"
 	"go-skv/tests/server/dbstorage/storagerecord/storagerecordtest"
-	"go-skv/util/goutil"
 	"testing"
 	"time"
 )
@@ -16,5 +16,5 @@ func Test_should_return_error_when_destroyed(t *testing.T) {
 	time.Sleep(time.Millisecond)
 	err := storagerecordtest.SendAnyMessage(record)
 
-	assert.Equal(t, storagerecord.RecordDestroyedError{}, err)
+	assert.Equal(t, dbstoragecontract.RecordDestroyedError{}, err)
 }
