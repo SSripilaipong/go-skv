@@ -24,7 +24,7 @@ func Test_should_call_success_with_existing_record(t *testing.T) {
 		retrievedRecord = record
 	}}, defaultTimeout)
 
-	goutil.PanicUnhandledError(storage.Stop())
+	goutil.PanicUnhandledError(storage.Join())
 
 	assert.Equal(t, existingRecord, retrievedRecord)
 }

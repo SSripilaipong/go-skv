@@ -19,7 +19,7 @@ func (m *manager) Start(context.Context) error {
 	return nil
 }
 
-func (m *manager) Stop() error {
+func (m *manager) Join() error {
 	m.cancel()
 	<-m.stopped
 	return nil

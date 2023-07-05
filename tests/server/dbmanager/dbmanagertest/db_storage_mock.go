@@ -4,7 +4,7 @@ import "context"
 
 type DbStorageMock struct {
 	Start_ctx     context.Context
-	Stop_IsCalled bool
+	Join_IsCalled bool
 }
 
 func (s *DbStorageMock) Start(ctx context.Context) error {
@@ -12,7 +12,7 @@ func (s *DbStorageMock) Start(ctx context.Context) error {
 	return nil
 }
 
-func (s *DbStorageMock) Stop() error {
-	s.Stop_IsCalled = true
+func (s *DbStorageMock) Join() error {
+	s.Join_IsCalled = true
 	return nil
 }

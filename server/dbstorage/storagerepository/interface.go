@@ -4,7 +4,7 @@ import "context"
 
 type Interface interface {
 	Start(ctx context.Context) error
-	Stop() error
+	Join() error
 }
 
 type Interactor interface {

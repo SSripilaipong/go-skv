@@ -16,13 +16,13 @@ func Test_should_stop_db_server(t *testing.T) {
 	assert.True(t, dbServer.Stop_IsCalled)
 }
 
-func Test_should_stop_db_storage(t *testing.T) {
+func Test_should_join_db_storage(t *testing.T) {
 	dbStorage := &dbmanagertest.DbStorageMock{}
 	mgr := dbmanagertest.NewWithDbStorage(dbStorage)
 
 	_ = dbmanagertest.DoStop(mgr)
 
-	assert.True(t, dbStorage.Stop_IsCalled)
+	assert.True(t, dbStorage.Join_IsCalled)
 }
 
 func Test_should_join_peer_connector(t *testing.T) {
@@ -56,10 +56,10 @@ func Test_should_not_close_context_for_peer_connector_before_stopping(t *testing
 }
 
 func Test_should_close_context_for_storage(t *testing.T) {
-	storage := &dbmanagertest.DbStorageMock{}
-	mgr := dbmanagertest.NewWithDbStorage(storage)
+	dbStorage := &dbmanagertest.DbStorageMock{}
+	mgr := dbmanagertest.NewWithDbStorage(dbStorage)
 	_ = dbmanagertest.DoStart(mgr)
-	ctx := storage.Start_ctx
+	ctx := dbStorage.Start_ctx
 
 	_ = dbmanagertest.DoStop(mgr)
 
