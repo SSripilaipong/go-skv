@@ -34,7 +34,7 @@ func Test_should_join_peer_connector(t *testing.T) {
 	assert.True(t, peerConnector.Join_IsCalled)
 }
 
-func Test_should_cancel_context_for_peer_connector(t *testing.T) {
+func Test_should_close_context_for_peer_connector(t *testing.T) {
 	peerConnector := &dbmanagertest.PeerConnectorMock{}
 	mgr := dbmanagertest.NewWithPeerConnector(peerConnector)
 	_ = dbmanagertest.DoStart(mgr)
@@ -46,11 +46,23 @@ func Test_should_cancel_context_for_peer_connector(t *testing.T) {
 	assert.True(t, isClosed)
 }
 
-func Test_should_not_cancel_context_for_peer_connector_before_stopping(t *testing.T) {
+func Test_should_not_close_context_for_peer_connector_before_stopping(t *testing.T) {
 	peerConnector := &dbmanagertest.PeerConnectorMock{}
 	mgr := dbmanagertest.NewWithPeerConnector(peerConnector)
 	_ = dbmanagertest.DoStart(mgr)
 
 	_, isClosed := goutil.ReceiveNoBlock(peerConnector.Start_ctx.Done())
 	assert.False(t, isClosed)
+}
+
+func Test_should_close_context_for_storage(t *testing.T) {
+	storage := &dbmanagertest.DbStorageMock{}
+	mgr := dbmanagertest.NewWithDbStorage(storage)
+	_ = dbmanagertest.DoStart(mgr)
+	ctx := storage.Start_ctx
+
+	_ = dbmanagertest.DoStop(mgr)
+
+	_, isClosed := goutil.ReceiveNoBlock(ctx.Done())
+	assert.True(t, isClosed)
 }
