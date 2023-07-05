@@ -3,6 +3,7 @@ package start
 import (
 	"github.com/stretchr/testify/assert"
 	"go-skv/tests/server/dbmanager/dbmanagertest"
+	"go-skv/tests/server/servertest"
 	"testing"
 )
 
@@ -25,7 +26,7 @@ func Test_should_start_db_server(t *testing.T) {
 }
 
 func Test_should_start_db_storage_with_context(t *testing.T) {
-	dbStorage := &dbmanagertest.DbStorageMock{}
+	dbStorage := &servertest.DbStorageMock{}
 	mgr := dbmanagertest.NewWithDbStorage(dbStorage)
 
 	_ = dbmanagertest.DoStart(mgr)

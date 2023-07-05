@@ -7,22 +7,22 @@ import (
 	"go-skv/server/dbstorage/storagerecord"
 )
 
-func (m *Manager) GetRecord(ctx context.Context, key string, execute func(storagerecord.Interface)) error {
-	return m.sendMessage(ctx, GetRecordCommand{
+func (m manager) GetRecord(ctx context.Context, key string, execute func(storagerecord.Interface)) error {
+	return m.sendMessage(ctx, getRecordCommand{
 		Key:     key,
 		Execute: execute,
 	})
 }
 
-type GetRecordCommand struct {
+type getRecordCommand struct {
 	Key     string
 	Execute func(storagerecord.Interface)
 }
 
-func (c GetRecordCommand) execute(s *state) {
+func (c getRecordCommand) execute(s *state) {
 	record, exists := s.records[c.Key]
 	if !exists {
-		goutil.Pointer(errors.New("record not found"))
+		goutil.PanicUnhandledError(errors.New("record not found"))
 	}
 	c.Execute(record)
 }

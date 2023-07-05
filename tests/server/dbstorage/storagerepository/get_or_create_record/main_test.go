@@ -1,97 +1,105 @@
 package getValue
 
 import (
+	"context"
 	"github.com/stretchr/testify/assert"
 	"go-skv/common/util/goutil"
 	"go-skv/server/dbstorage"
 	"go-skv/server/dbstorage/storagerepository"
+	"go-skv/tests"
 	"go-skv/tests/server/dbstorage/dbstoragetest"
 	"go-skv/tests/server/dbstorage/storagerepository/storagerepositorytest"
 	"testing"
 )
 
 func Test_should_call_success_with_newly_created_record(t *testing.T) {
-	storageChan := make(chan any)
 	newlyCreatedRecord := &dbstoragetest.RecordMock{}
 	factory := &storagerepositorytest.RecordFactoryMock{New_Return: newlyCreatedRecord}
-	storage := storagerepositorytest.NewStorageWithChannelAndRecordFactory(storageChan, factory)
-	goutil.PanicUnhandledError(storage.Start(nil))
+	storage := storagerepository.New(0, factory)
 
 	var successRecord dbstorage.Record
-	message := storagerepository.GetOrCreateRecordCommand{Key: "", Success: func(record dbstorage.Record) { successRecord = record }}
-	goutil.SendWithTimeoutOrPanic[any](storageChan, message, defaultTimeout)
+	tests.ContextScope(func(ctx context.Context) {
+		goutil.PanicUnhandledError(storage.Start(ctx))
+
+		goutil.PanicUnhandledError(storage.GetOrCreateRecord(ctx, "", func(record dbstorage.Record) { successRecord = record }))
+	})
 
 	goutil.PanicUnhandledError(storage.Join())
-
 	assert.Equal(t, newlyCreatedRecord, successRecord)
 }
 
 func Test_should_not_create_same_record_twice(t *testing.T) {
-	storageChan := make(chan any)
-	success := func(record dbstorage.Record) {}
+	done := make(chan struct{})
+	signalDone := func(record dbstorage.Record) { done <- struct{}{} }
 	factory := &storagerepositorytest.RecordFactoryMock{}
-	storage := storagerepositorytest.NewStorageWithChannelAndRecordFactory(storageChan, factory)
-	goutil.PanicUnhandledError(storage.Start(nil))
+	storage := storagerepository.New(0, factory)
 
-	message := storagerepository.GetOrCreateRecordCommand{Key: "aaa", Success: success}
-	goutil.SendWithTimeoutOrPanic[any](storageChan, message, defaultTimeout)
-	factory.New_CaptureReset()
+	tests.ContextScope(func(ctx context.Context) {
+		goutil.PanicUnhandledError(storage.Start(ctx))
+		goutil.PanicUnhandledError(storage.GetOrCreateRecord(ctx, "aaa", signalDone))
+		goutil.ReceiveWithTimeoutOrPanic(done, defaultTimeout)
+		factory.New_CaptureReset()
 
-	goutil.SendWithTimeoutOrPanic[any](storageChan, message, defaultTimeout)
+		goutil.PanicUnhandledError(storage.GetOrCreateRecord(ctx, "aaa", signalDone))
+		goutil.ReceiveWithTimeoutOrPanic(done, defaultTimeout)
 
+		assert.False(t, factory.New_IsCalled)
+	})
 	goutil.PanicUnhandledError(storage.Join())
-
-	assert.False(t, factory.New_IsCalled)
 }
 
 func Test_should_create_new_record_if_the_key_is_not_duplicate_to_existing_ones(t *testing.T) {
-	storageChan := make(chan any)
-	success := func(record dbstorage.Record) {}
+	done := make(chan struct{})
+	signalDone := func(record dbstorage.Record) { done <- struct{}{} }
 	factory := &storagerepositorytest.RecordFactoryMock{}
-	storage := storagerepositorytest.NewStorageWithChannelAndRecordFactory(storageChan, factory)
-	goutil.PanicUnhandledError(storage.Start(nil))
+	storage := storagerepository.New(0, factory)
 
-	goutil.SendWithTimeoutOrPanic[any](storageChan, storagerepository.GetOrCreateRecordCommand{Key: "aaa", Success: success}, defaultTimeout)
-	factory.New_CaptureReset()
+	tests.ContextScope(func(ctx context.Context) {
+		goutil.PanicUnhandledError(storage.Start(ctx))
+		goutil.PanicUnhandledError(storage.GetOrCreateRecord(ctx, "aaa", signalDone))
+		goutil.ReceiveWithTimeoutOrPanic(done, defaultTimeout)
+		factory.New_CaptureReset()
 
-	goutil.SendWithTimeoutOrPanic[any](storageChan, storagerepository.GetOrCreateRecordCommand{Key: "bbb", Success: success}, defaultTimeout)
+		goutil.PanicUnhandledError(storage.GetOrCreateRecord(ctx, "bbb", signalDone))
+		goutil.ReceiveWithTimeoutOrPanic(done, defaultTimeout)
 
+		assert.True(t, factory.New_IsCalled)
+	})
 	goutil.PanicUnhandledError(storage.Join())
-
-	assert.True(t, factory.New_IsCalled)
 }
 
-func Test_should_pass_context_that_would_be_cancelled_when_stops(t *testing.T) {
-	storageChan := make(chan any)
+func Test_should_pass_global_context_when_creating_new_record(t *testing.T) {
+	doNothing := func(record dbstorage.Record) {}
 	factory := &storagerepositorytest.RecordFactoryMock{}
-	storage := storagerepositorytest.NewStorageWithChannelAndRecordFactory(storageChan, factory)
-	goutil.PanicUnhandledError(storage.Start(nil))
+	storage := storagerepository.New(0, factory)
 
-	goutil.SendWithTimeoutOrPanic[any](storageChan, storagerepository.GetOrCreateRecordCommand{Key: "", Success: func(dbstorage.Record) {}}, defaultTimeout)
-	passedContext := factory.New_ctx
+	tests.ContextScope(func(ctx context.Context) {
+		globalCtx := context.WithValue(ctx, "test", "abc123")
+		goutil.PanicUnhandledError(storage.Start(globalCtx))
+
+		goutil.PanicUnhandledError(storage.GetOrCreateRecord(ctx, "", doNothing))
+	})
 
 	goutil.PanicUnhandledError(storage.Join())
-
-	_, isCancelled := goutil.ReceiveNoBlock(passedContext.Done())
-	assert.True(t, isCancelled)
+	assert.Equal(t, "abc123", factory.New_ctx.Value("test"))
 }
 
 func Test_should_call_success_with_the_same_record_if_key_is_the_same(t *testing.T) {
-	storageChan := make(chan any)
-	storage := storagerepositorytest.NewStorageWithChannel(storageChan)
-	goutil.PanicUnhandledError(storage.Start(nil))
+	factory := &storagerepositorytest.RecordFactoryMock{}
+	storage := storagerepository.New(0, factory)
 
-	var firstRecord dbstorage.Record
-	goutil.SendWithTimeoutOrPanic[any](storageChan, storagerepository.GetOrCreateRecordCommand{Key: "aaa", Success: func(record dbstorage.Record) {
-		firstRecord = record
-	}}, defaultTimeout)
+	var firstRecord, secondRecord dbstorage.Record
+	tests.ContextScope(func(ctx context.Context) {
+		goutil.PanicUnhandledError(storage.Start(ctx))
 
-	var secondRecord dbstorage.Record
-	goutil.SendWithTimeoutOrPanic[any](storageChan, storagerepository.GetOrCreateRecordCommand{Key: "aaa", Success: func(record dbstorage.Record) {
-		secondRecord = record
-	}}, defaultTimeout)
+		goutil.PanicUnhandledError(storage.GetOrCreateRecord(ctx, "aaa", func(record dbstorage.Record) {
+			firstRecord = record
+		}))
+		goutil.PanicUnhandledError(storage.GetOrCreateRecord(ctx, "aaa", func(record dbstorage.Record) {
+			secondRecord = record
+		}))
+	})
 
 	goutil.PanicUnhandledError(storage.Join())
-
 	assert.Equal(t, firstRecord, secondRecord)
 }

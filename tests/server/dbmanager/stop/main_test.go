@@ -4,6 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go-skv/common/util/goutil"
 	"go-skv/tests/server/dbmanager/dbmanagertest"
+	"go-skv/tests/server/servertest"
 	"testing"
 )
 
@@ -17,7 +18,7 @@ func Test_should_stop_db_server(t *testing.T) {
 }
 
 func Test_should_join_db_storage(t *testing.T) {
-	dbStorage := &dbmanagertest.DbStorageMock{}
+	dbStorage := &servertest.DbStorageMock{}
 	mgr := dbmanagertest.NewWithDbStorage(dbStorage)
 
 	_ = dbmanagertest.DoStop(mgr)
@@ -56,7 +57,7 @@ func Test_should_not_close_context_for_peer_connector_before_stopping(t *testing
 }
 
 func Test_should_close_context_for_storage(t *testing.T) {
-	dbStorage := &dbmanagertest.DbStorageMock{}
+	dbStorage := &servertest.DbStorageMock{}
 	mgr := dbmanagertest.NewWithDbStorage(dbStorage)
 	_ = dbmanagertest.DoStart(mgr)
 	ctx := dbStorage.Start_ctx

@@ -10,10 +10,10 @@ import (
 )
 
 func Test_should_return_context_closed_error_when_context_is_closed(t *testing.T) {
-	_, interactor := storagerepository.New(0, nil)
+	storage := storagerepository.New(0, nil)
 	closedCtx := tests.NewClosedContext()
 
-	err := interactor.GetOrCreateRecord(closedCtx, "", func(storagerecord.Interface) {})
+	err := storage.GetOrCreateRecord(closedCtx, "", func(storagerecord.Interface) {})
 
 	assert.Equal(t, commoncontract.ContextClosedError{}, err)
 }

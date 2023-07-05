@@ -7,11 +7,12 @@ import (
 	"go-skv/server/dbserver/dbusecase"
 	"go-skv/tests/server/dbstorage/dbstoragetest"
 	"go-skv/tests/server/dbusecase/dbusecasetest"
+	"go-skv/tests/server/servertest"
 	"testing"
 )
 
 func Test_should_get_record_from_repository_with_key(t *testing.T) {
-	repoMock := &dbusecasetest.RepoMock{}
+	repoMock := &servertest.DbStorageMock{}
 	usecase := dbusecasetest.NewUsecaseWithRepo(repoMock)
 
 	_, _ = doExecuteWithRequest(usecase, dbusecase.SetValueRequest{Key: "abc"})
@@ -20,7 +21,7 @@ func Test_should_get_record_from_repository_with_key(t *testing.T) {
 }
 
 func Test_should_pass_context_to_repo(t *testing.T) {
-	repoMock := &dbusecasetest.RepoMock{}
+	repoMock := &servertest.DbStorageMock{}
 	usecase := dbusecasetest.NewUsecaseWithRepo(repoMock)
 
 	ctx := context.WithValue(context.Background(), "Test", goutil.RandomString(8))
@@ -31,7 +32,7 @@ func Test_should_pass_context_to_repo(t *testing.T) {
 
 func Test_should_set_value_to_record(t *testing.T) {
 	record := &dbstoragetest.RecordMock{}
-	repoMock := &dbusecasetest.RepoMock{GetOrCreateRecord_success_record: record}
+	repoMock := &servertest.DbStorageMock{GetOrCreateRecord_success_record: record}
 	usecase := dbusecasetest.NewUsecaseWithRepo(repoMock)
 
 	_, _ = doExecuteWithRequest(usecase, dbusecase.SetValueRequest{Value: "xxx"})
@@ -41,7 +42,7 @@ func Test_should_set_value_to_record(t *testing.T) {
 
 func Test_should_return_error_when_context_cancelled(t *testing.T) {
 	record := &dbstoragetest.RecordMock{SetValue_success_willFail: true}
-	repoMock := &dbusecasetest.RepoMock{GetOrCreateRecord_success_record: record}
+	repoMock := &servertest.DbStorageMock{GetOrCreateRecord_success_record: record}
 	usecase := dbusecasetest.NewUsecaseWithRepo(repoMock)
 
 	ctx, _ := contextWithDefaultTimeout()
@@ -52,7 +53,7 @@ func Test_should_return_error_when_context_cancelled(t *testing.T) {
 
 func Test_should_pass_context_to_record(t *testing.T) {
 	record := &dbstoragetest.RecordMock{}
-	repoMock := &dbusecasetest.RepoMock{GetOrCreateRecord_success_record: record}
+	repoMock := &servertest.DbStorageMock{GetOrCreateRecord_success_record: record}
 	usecase := dbusecasetest.NewUsecaseWithRepo(repoMock)
 
 	ctx := context.WithValue(context.Background(), "Test", goutil.RandomString(8))

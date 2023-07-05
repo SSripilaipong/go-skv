@@ -12,13 +12,13 @@ import (
 )
 
 func Test_should_call_success_with_existing_record(t *testing.T) {
-	manager, storage := storagerepository.New(0, &storagerepositorytest.RecordFactoryMock{})
+	storage := storagerepository.New(0, &storagerepositorytest.RecordFactoryMock{})
 
 	var existingRecord, retrievedRecord dbstorage.Record
 
 	tests.ContextScope(func(ctx context.Context) {
 		ctx, _ = context.WithTimeout(ctx, defaultTimeout)
-		goutil.PanicUnhandledError(manager.Start(nil))
+		goutil.PanicUnhandledError(storage.Start(ctx))
 		goutil.PanicUnhandledError(storage.GetOrCreateRecord(context.Background(), "aaa", func(record dbstorage.Record) {
 			existingRecord = record
 		}))
@@ -29,6 +29,6 @@ func Test_should_call_success_with_existing_record(t *testing.T) {
 
 	})
 
-	goutil.PanicUnhandledError(manager.Join())
+	goutil.PanicUnhandledError(storage.Join())
 	assert.Equal(t, existingRecord, retrievedRecord)
 }

@@ -5,21 +5,19 @@ import (
 	"go-skv/server/dbstorage/storagerecord"
 )
 
-func (m *Manager) GetOrCreateRecord(ctx context.Context, key string, success GetOrCreateRecordSuccessCallback) error {
-	return m.sendMessage(ctx, GetOrCreateRecordCommand{
+func (m manager) GetOrCreateRecord(ctx context.Context, key string, success func(storagerecord.Interface)) error {
+	return m.sendMessage(ctx, getOrCreateRecordCommand{
 		Key:     key,
 		Success: success,
 	})
 }
 
-type GetOrCreateRecordSuccessCallback func(storagerecord.Interface)
-
-type GetOrCreateRecordCommand struct {
+type getOrCreateRecordCommand struct {
 	Key     string
-	Success GetOrCreateRecordSuccessCallback
+	Success func(storagerecord.Interface)
 }
 
-func (c GetOrCreateRecordCommand) execute(s *state) {
+func (c getOrCreateRecordCommand) execute(s *state) {
 	record, exists := s.records[c.Key]
 	if !exists {
 		record = s.recordFactory.New(s.ctx)
