@@ -2,24 +2,21 @@ package storagerepository
 
 import (
 	"context"
-	"go-skv/server/dbstorage/storagerecord"
 )
 
-type manager struct {
-	ch            chan any
-	recordFactory storagerecord.Factory
-	ctx           context.Context
-	cancel        context.CancelFunc
+type Manager struct {
+	ch     chan any
+	ctx    context.Context
+	cancel context.CancelFunc
 
 	stopped chan struct{}
 }
 
-func (m *manager) Start(context.Context) error {
-	go mainLoop(m.ctx, m.ch, m.stopped, m.recordFactory)
+func (m *Manager) Start(context.Context) error {
 	return nil
 }
 
-func (m *manager) Join() error {
+func (m *Manager) Join() error {
 	m.cancel()
 	<-m.stopped
 	return nil

@@ -5,17 +5,13 @@ import (
 	"go-skv/common/commoncontract"
 )
 
-type interactor struct {
-	ch chan<- any
-}
-
 type command interface {
 	execute(s *state)
 }
 
-func (i interactor) sendMessage(ctx context.Context, message any) error {
+func (m *Manager) sendMessage(ctx context.Context, message any) error {
 	select {
-	case i.ch <- message:
+	case m.ch <- message:
 	case <-ctx.Done():
 		return commoncontract.ContextClosedError{}
 	}

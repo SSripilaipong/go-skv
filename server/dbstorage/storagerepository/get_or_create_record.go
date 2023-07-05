@@ -5,8 +5,8 @@ import (
 	"go-skv/server/dbstorage/storagerecord"
 )
 
-func (i interactor) GetOrCreateRecord(ctx context.Context, key string, success GetOrCreateRecordSuccessCallback) error {
-	return i.sendMessage(ctx, GetOrCreateRecordCommand{
+func (m *Manager) GetOrCreateRecord(ctx context.Context, key string, success GetOrCreateRecordSuccessCallback) error {
+	return m.sendMessage(ctx, GetOrCreateRecordCommand{
 		Key:     key,
 		Success: success,
 	})

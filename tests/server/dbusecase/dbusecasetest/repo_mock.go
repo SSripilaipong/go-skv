@@ -4,6 +4,7 @@ import (
 	"context"
 	"go-skv/common/util/goutil"
 	"go-skv/server/dbstorage"
+	"go-skv/server/dbstorage/storagerecord"
 	"go-skv/server/dbstorage/storagerepository"
 	"go-skv/tests/server/dbstorage/dbstoragetest"
 )
@@ -19,7 +20,7 @@ type RepoMock struct {
 
 var _ dbstorage.RepositoryInteractor = &RepoMock{}
 
-func (r *RepoMock) GetRecord(ctx context.Context, key string, success storagerepository.GetRecordSuccessCallback) error {
+func (r *RepoMock) GetRecord(ctx context.Context, key string, success func(storagerecord.Interface)) error {
 	r.GetRecord_key = key
 	r.GetRecord_ctx = ctx
 	go success(goutil.Coalesce[dbstorage.Record](r.GetRecord_success_record, &dbstoragetest.RecordMock{}))

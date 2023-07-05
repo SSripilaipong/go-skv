@@ -1,6 +1,9 @@
 package storagerepository
 
-import "context"
+import (
+	"context"
+	"go-skv/server/dbstorage/storagerecord"
+)
 
 type Interface interface {
 	Start(ctx context.Context) error
@@ -8,6 +11,6 @@ type Interface interface {
 }
 
 type Interactor interface {
-	GetRecord(ctx context.Context, key string, success GetRecordSuccessCallback) error
+	GetRecord(ctx context.Context, key string, execute func(storagerecord.Interface)) error
 	GetOrCreateRecord(ctx context.Context, key string, success GetOrCreateRecordSuccessCallback) error
 }

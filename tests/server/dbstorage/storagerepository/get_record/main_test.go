@@ -1,0 +1,34 @@
+package getValue
+
+import (
+	"context"
+	"github.com/stretchr/testify/assert"
+	"go-skv/common/util/goutil"
+	"go-skv/server/dbstorage"
+	"go-skv/server/dbstorage/storagerepository"
+	"go-skv/tests"
+	"go-skv/tests/server/dbstorage/storagerepository/storagerepositorytest"
+	"testing"
+)
+
+func Test_should_call_success_with_existing_record(t *testing.T) {
+	manager, storage := storagerepository.New(0, &storagerepositorytest.RecordFactoryMock{})
+
+	var existingRecord, retrievedRecord dbstorage.Record
+
+	tests.ContextScope(func(ctx context.Context) {
+		ctx, _ = context.WithTimeout(ctx, defaultTimeout)
+		goutil.PanicUnhandledError(manager.Start(nil))
+		goutil.PanicUnhandledError(storage.GetOrCreateRecord(context.Background(), "aaa", func(record dbstorage.Record) {
+			existingRecord = record
+		}))
+
+		goutil.PanicUnhandledError(storage.GetRecord(context.Background(), "aaa", func(record dbstorage.Record) {
+			retrievedRecord = record
+		}))
+
+	})
+
+	goutil.PanicUnhandledError(manager.Join())
+	assert.Equal(t, existingRecord, retrievedRecord)
+}
