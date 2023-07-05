@@ -1,12 +1,14 @@
 package dbmanagertest
 
+import "context"
+
 type DbStorageMock struct {
-	Start_IsCalled bool
-	Stop_IsCalled  bool
+	Start_ctx     context.Context
+	Stop_IsCalled bool
 }
 
-func (s *DbStorageMock) Start() error {
-	s.Start_IsCalled = true
+func (s *DbStorageMock) Start(ctx context.Context) error {
+	s.Start_ctx = ctx
 	return nil
 }
 

@@ -14,7 +14,7 @@ type manager struct {
 	stopped chan struct{}
 }
 
-func (m *manager) Start() error {
+func (m *manager) Start(context.Context) error {
 	go mainLoop(m.ctx, m.ch, m.stopped, m.recordFactory)
 	return nil
 }

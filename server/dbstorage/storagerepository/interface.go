@@ -3,7 +3,7 @@ package storagerepository
 import "context"
 
 type Interface interface {
-	Start() error
+	Start(ctx context.Context) error
 	Stop() error
 }
 
