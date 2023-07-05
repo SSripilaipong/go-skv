@@ -27,3 +27,9 @@ func WaitScope(f func(wd *sync.WaitGroup)) {
 	f(&wg)
 	wg.Wait()
 }
+
+func NewClosedContext() context.Context {
+	newCtx, cancel := context.WithCancel(context.Background())
+	cancel()
+	return newCtx
+}
