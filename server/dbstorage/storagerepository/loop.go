@@ -3,27 +3,25 @@ package storagerepository
 import (
 	"context"
 	"go-skv/common/commoncontract"
-	"go-skv/server/dbstorage/storagerecord"
+	"go-skv/server/dbstorage/dbstoragecontract"
 )
 
 type state struct {
 	ctx           context.Context
-	recordFactory storagerecord.Factory
-	records       map[string]storagerecord.Interface
+	recordFactory dbstoragecontract.Factory
+	records       map[string]dbstoragecontract.Record
 }
 
-func mainLoop(ch chan any, stopped chan struct{}, recordFactory storagerecord.Factory) {
+func mainLoop(ch chan command, stopped chan struct{}, recordFactory dbstoragecontract.Factory) {
 	s := state{
 		recordFactory: recordFactory,
-		records:       make(map[string]storagerecord.Interface),
+		records:       make(map[string]dbstoragecontract.Record),
 	}
 	waitUntilStart(ch, &s)
 	for {
 		select {
-		case raw := <-ch:
-			if message, isCommand := raw.(command); isCommand {
-				message.execute(&s)
-			}
+		case cmd := <-ch:
+			cmd.execute(&s)
 		case <-s.ctx.Done():
 			goto stop
 		}
@@ -36,16 +34,16 @@ type command interface {
 	execute(s *state)
 }
 
-func (m manager) sendMessage(ctx context.Context, message any) error {
+func (m manager) sendMessage(ctx context.Context, cmd command) error {
 	select {
-	case m.ch <- message:
+	case m.ch <- cmd:
 	case <-ctx.Done():
 		return commoncontract.ContextClosedError{}
 	}
 	return nil
 }
 
-func waitUntilStart(ch chan any, s *state) {
+func waitUntilStart(ch chan command, s *state) {
 	startCmd := (<-ch).(command)
 	startCmd.execute(s)
 }

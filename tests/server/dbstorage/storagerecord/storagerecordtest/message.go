@@ -1,9 +1,9 @@
 package storagerecordtest
 
 import (
-	"go-skv/server/dbstorage/storagerecord"
+	"go-skv/server/dbstorage/dbstoragecontract"
 )
 
-func SendAnyMessage(record storagerecord.Interface) error {
+func SendAnyMessage(record dbstoragecontract.Record) error {
 	return record.SetValue(nil, "", nil)
 }

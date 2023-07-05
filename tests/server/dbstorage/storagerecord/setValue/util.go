@@ -2,21 +2,21 @@ package setValue
 
 import (
 	"context"
-	"go-skv/server/dbstorage/storagerecord"
+	"go-skv/server/dbstorage/dbstoragecontract"
 )
 
-func doSetValueWithValueAndSuccessFunc(record storagerecord.Interface, value string, success func(response storagerecord.SetValueResponse)) error {
+func doSetValueWithValueAndSuccessFunc(record dbstoragecontract.Record, value string, success func(response dbstoragecontract.RecordData)) error {
 	ctx, _ := contextWithDefaultTimeout()
 	return record.SetValue(ctx, value, success)
 }
 
-func doSetValue(record storagerecord.Interface) error {
+func doSetValue(record dbstoragecontract.Record) error {
 	ctx, _ := contextWithDefaultTimeout()
-	return record.SetValue(ctx, "", func(storagerecord.SetValueResponse) {})
+	return record.SetValue(ctx, "", func(dbstoragecontract.RecordData) {})
 }
 
-func doSetValueWithContext(record storagerecord.Interface, ctx context.Context) error {
-	return record.SetValue(ctx, "", func(storagerecord.SetValueResponse) {})
+func doSetValueWithContext(record dbstoragecontract.Record, ctx context.Context) error {
+	return record.SetValue(ctx, "", func(dbstoragecontract.RecordData) {})
 }
 
 func contextWithDefaultTimeout() (context.Context, context.CancelFunc) {

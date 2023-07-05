@@ -1,13 +1,12 @@
 package storagerepository
 
 import (
-	"go-skv/server/dbstorage/storagerecord"
+	"go-skv/server/dbstorage/dbstoragecontract"
 )
 
-func New(storageBufferSize int, recordFactory storagerecord.Factory) Interface {
-	ch := make(chan any, storageBufferSize)
+func New(storageBufferSize int, recordFactory dbstoragecontract.Factory) dbstoragecontract.Storage {
 	m := &manager{
-		ch: ch,
+		ch: make(chan command, storageBufferSize),
 
 		stopped: make(chan struct{}),
 	}

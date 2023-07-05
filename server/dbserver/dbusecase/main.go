@@ -1,11 +1,13 @@
 package dbusecase
 
-import "go-skv/server/dbstorage"
+import (
+	"go-skv/server/dbstorage/dbstoragecontract"
+)
 
-func New(repo dbstorage.RepositoryInteractor) Interface {
+func New(repo dbstoragecontract.Storage) Interface {
 	return usecase{repo: repo}
 }
 
 type usecase struct {
-	repo dbstorage.RepositoryInteractor
+	repo dbstoragecontract.Storage
 }

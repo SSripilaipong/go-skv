@@ -2,13 +2,13 @@ package storagerecordtest
 
 import (
 	"context"
-	"go-skv/server/dbstorage/storagerecord"
+	"go-skv/server/dbstorage/dbstoragecontract"
 )
 
-func DoNewRecord(factory storagerecord.Factory) storagerecord.Interface {
+func DoNewRecord(factory dbstoragecontract.Factory) dbstoragecontract.Record {
 	return factory.New(context.Background())
 }
 
-func DoNewRecordWithContext(factory storagerecord.Factory, ctx context.Context) storagerecord.Interface {
+func DoNewRecordWithContext(factory dbstoragecontract.Factory, ctx context.Context) dbstoragecontract.Record {
 	return factory.New(ctx)
 }

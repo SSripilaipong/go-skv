@@ -5,7 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go-skv/common/util/goutil"
 	"go-skv/server/dbserver/dbusecase"
-	"go-skv/server/dbstorage"
+	"go-skv/server/dbstorage/dbstoragecontract"
 	"go-skv/tests/server/dbstorage/dbstoragetest"
 	"go-skv/tests/server/dbusecase/dbusecasetest"
 	"go-skv/tests/server/servertest"
@@ -32,7 +32,7 @@ func Test_should_pass_context_to_repo(t *testing.T) {
 }
 
 func Test_should_return_value_from_record(t *testing.T) {
-	record := &dbstoragetest.RecordMock{GetValue_success_response: dbstorage.GetValueResponse{Value: "Hello"}}
+	record := &dbstoragetest.RecordMock{GetValue_success_response: dbstoragecontract.RecordData{Value: "Hello"}}
 	repoMock := &servertest.DbStorageMock{GetRecord_success_record: record}
 	usecase := dbusecasetest.NewUsecaseWithRepo(repoMock)
 

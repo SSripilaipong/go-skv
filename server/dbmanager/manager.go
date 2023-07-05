@@ -4,7 +4,7 @@ import (
 	"context"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 	"go-skv/server/dbserver"
-	"go-skv/server/dbstorage"
+	"go-skv/server/dbstorage/dbstoragecontract"
 )
 
 type Manager interface {
@@ -12,7 +12,7 @@ type Manager interface {
 	Stop() error
 }
 
-func New(peerServer peerconnectorcontract.Connector, dbServer dbserver.Interface, dbStorage dbstorage.Repository) Manager {
+func New(peerServer peerconnectorcontract.Connector, dbServer dbserver.Interface, dbStorage dbstoragecontract.Storage) Manager {
 	ctx, cancelCtx := context.WithCancel(context.Background())
 	return manager{
 		peerConnector: peerServer,
@@ -27,7 +27,7 @@ func New(peerServer peerconnectorcontract.Connector, dbServer dbserver.Interface
 type manager struct {
 	peerConnector peerconnectorcontract.Connector
 	dbServer      dbserver.Interface
-	dbStorage     dbstorage.Repository
+	dbStorage     dbstoragecontract.Storage
 
 	ctx       context.Context
 	cancelCtx context.CancelFunc

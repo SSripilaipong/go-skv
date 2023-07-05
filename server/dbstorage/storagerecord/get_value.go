@@ -2,22 +2,19 @@ package storagerecord
 
 import (
 	"context"
+	"go-skv/server/dbstorage/dbstoragecontract"
 )
 
-func (r recordInteractor) GetValue(ctx context.Context, success func(response GetValueResponse)) error {
+func (r recordInteractor) GetValue(ctx context.Context, success func(response dbstoragecontract.RecordData)) error {
 	return r.sendCommand(ctx, getValueCommand{
 		success: success,
 	})
 }
 
-type GetValueResponse struct {
-	Value string
-}
-
 type getValueCommand struct {
-	success func(GetValueResponse)
+	success func(dbstoragecontract.RecordData)
 }
 
 func (c getValueCommand) execute(s *state) {
-	c.success(GetValueResponse{Value: s.value})
+	c.success(dbstoragecontract.RecordData{Value: s.value})
 }

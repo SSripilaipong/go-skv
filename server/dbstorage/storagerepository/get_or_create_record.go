@@ -2,10 +2,10 @@ package storagerepository
 
 import (
 	"context"
-	"go-skv/server/dbstorage/storagerecord"
+	"go-skv/server/dbstorage/dbstoragecontract"
 )
 
-func (m manager) GetOrCreateRecord(ctx context.Context, key string, success func(storagerecord.Interface)) error {
+func (m manager) GetOrCreateRecord(ctx context.Context, key string, success func(dbstoragecontract.Record)) error {
 	return m.sendMessage(ctx, getOrCreateRecordCommand{
 		Key:     key,
 		Success: success,
@@ -14,7 +14,7 @@ func (m manager) GetOrCreateRecord(ctx context.Context, key string, success func
 
 type getOrCreateRecordCommand struct {
 	Key     string
-	Success func(storagerecord.Interface)
+	Success func(dbstoragecontract.Record)
 }
 
 func (c getOrCreateRecordCommand) execute(s *state) {

@@ -1,7 +1,7 @@
 package storagerepository
 
 type manager struct {
-	ch      chan any
+	ch      chan command
 	stopped chan struct{}
 }
 

@@ -3,8 +3,7 @@ package dbusecase
 import (
 	"context"
 	"go-skv/common/util/goutil"
-	"go-skv/server/dbstorage"
-	"go-skv/server/dbstorage/storagerecord"
+	"go-skv/server/dbstorage/dbstoragecontract"
 )
 
 type SetValueRequest struct {
@@ -17,8 +16,8 @@ type SetValueResponse struct {
 
 func (u usecase) SetValue(ctx context.Context, request SetValueRequest) (SetValueResponse, error) {
 	completed := make(chan struct{})
-	doSignalCompleted := func(storagerecord.SetValueResponse) { completed <- struct{}{} }
-	doSetValueToRecord := func(record dbstorage.Record) {
+	doSignalCompleted := func(dbstoragecontract.RecordData) { completed <- struct{}{} }
+	doSetValueToRecord := func(record dbstoragecontract.Record) {
 		goutil.PanicUnhandledError(record.SetValue(ctx, request.Value, doSignalCompleted))
 	}
 
