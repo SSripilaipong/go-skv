@@ -9,21 +9,29 @@ import (
 func (t interactor) UpdateReplicaFromPeer(key string, value string) error {
 	logUpdateReplicaFromPeer(key, value)
 	t.ch <- updateReplicaFromPeerCommand{
+		key:                   key,
+		value:                 value,
 		replicaUpdaterFactory: t.replicaUpdaterFactory,
 	}
 	return nil
 }
 
 type updateReplicaFromPeerCommand struct {
+	key                   string
+	value                 string
 	replicaUpdaterFactory replicaupdatercontract.Factory
 }
 
 func (c updateReplicaFromPeerCommand) execute(s *state) {
-	if s.inboundUpdater == nil {
-		updater, err := c.replicaUpdaterFactory.NewInboundUpdater(s.ctx)
+	updater := s.inboundUpdater
+	if updater == nil {
+		var err error
+		updater, err = c.replicaUpdaterFactory.NewInboundUpdater(s.ctx)
 		goutil.PanicUnhandledError(err)
 		s.inboundUpdater = updater
 	}
+
+	goutil.PanicUnhandledError(updater.Update(c.key, c.value))
 }
 
 func logUpdateReplicaFromPeer(key string, value string) {
