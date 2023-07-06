@@ -1,5 +1,6 @@
 package peerconnectorcontract
 
 type Peer interface {
-	UpdateReplica(key string, value string) error
+	UpdateReplicaFromPeer(key string, value string) error
+	Join() error
 }

@@ -39,7 +39,7 @@ func (g gateway) SubscribeReplica(ctx context.Context, onStopped func()) error {
 			}
 			goutil.PanicUnhandledError(err)
 
-			goutil.PanicUnhandledError(g.peer.UpdateReplica(update.Key, update.Value))
+			goutil.PanicUnhandledError(g.peer.UpdateReplicaFromPeer(update.Key, update.Value))
 		}
 	}()
 

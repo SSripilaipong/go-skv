@@ -2,24 +2,38 @@ package clientsidepeer
 
 import (
 	"context"
-	"fmt"
 	"go-skv/server/dbpeerconnector/peerclient/clientsidepeer/clientsidepeercontract"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
+	"go-skv/server/replicaupdater/replicaupdatercontract"
+	"sync"
 )
 
-func NewFactory() clientsidepeercontract.Factory {
-	return tempFactory{}
+func NewFactory(replicaUpdaterFactory replicaupdatercontract.Factory) clientsidepeercontract.Factory {
+	return factory{
+		replicaUpdaterFactory: replicaUpdaterFactory,
+		bufferSize:            1,
+	}
 }
 
-type tempFactory struct{}
-
-func (t tempFactory) New(ctx context.Context) (peerconnectorcontract.Peer, error) {
-	return tempInteractor{}, nil
+type factory struct {
+	replicaUpdaterFactory replicaupdatercontract.Factory
+	bufferSize            int
 }
 
-type tempInteractor struct{}
+func (f factory) New(ctx context.Context) (peerconnectorcontract.Peer, error) {
+	wg := sync.WaitGroup{}
+	ch := make(chan command, f.bufferSize)
+	wg.Add(1)
+	go mainLoop(ctx, ch, func() { wg.Done() })
+	return interactor{
+		replicaUpdaterFactory: f.replicaUpdaterFactory,
+		ch:                    ch,
+		wg:                    &wg,
+	}, nil
+}
 
-func (tempInteractor) UpdateReplica(key string, value string) error {
-	fmt.Printf("log: client receive replica (%s, %s)\n", key, value)
-	return nil
+type interactor struct {
+	replicaUpdaterFactory replicaupdatercontract.Factory
+	ch                    chan command
+	wg                    *sync.WaitGroup
 }

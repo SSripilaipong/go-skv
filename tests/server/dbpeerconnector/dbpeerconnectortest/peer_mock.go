@@ -7,9 +7,13 @@ type PeerMock struct {
 	UpdateReplica_value string
 }
 
-func (p *PeerMock) UpdateReplica(key string, value string) error {
+func (p *PeerMock) UpdateReplicaFromPeer(key string, value string) error {
 	p.UpdateReplica_key = key
 	p.UpdateReplica_value = value
+	return nil
+}
+
+func (p *PeerMock) Join() error {
 	return nil
 }
 
