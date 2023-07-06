@@ -2,7 +2,6 @@ package update_replica_from_peer
 
 import (
 	"context"
-	"fmt"
 	"github.com/stretchr/testify/assert"
 	"go-skv/common/util/goutil"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
@@ -22,6 +21,7 @@ func Test_should_have_timeout_when_sending_command(t *testing.T) {
 	}
 	factory := clientsidepeertest.NewFactory(
 		clientsidepeertest.WithBufferSize(1),
+		clientsidepeertest.WithDefaultSendingTimeout(defaultTimeout),
 		clientsidepeertest.WithReplicaUpdaterFactory(replicaUpdaterFactory),
 	)
 	var peer peerconnectorcontract.Peer
@@ -35,7 +35,6 @@ func Test_should_have_timeout_when_sending_command(t *testing.T) {
 		done := make(chan struct{})
 		go func() {
 			goutil.PanicUnhandledError(peer.UpdateReplicaFromPeer("", "")) // buffer full, cannot send
-			fmt.Println("done")
 			done <- struct{}{}
 		}()
 		_, isTimeoutApplied = goutil.ReceiveWithTimeout(done, 2*defaultTimeout)

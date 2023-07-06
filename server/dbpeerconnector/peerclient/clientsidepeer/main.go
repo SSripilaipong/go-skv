@@ -9,11 +9,11 @@ import (
 	"time"
 )
 
-func NewFactory(bufferSize int, replicaUpdaterFactory replicaupdatercontract.Factory) clientsidepeercontract.Factory {
+func NewFactory(bufferSize int, defaultSendingTimeout time.Duration, replicaUpdaterFactory replicaupdatercontract.Factory) clientsidepeercontract.Factory {
 	return factory{
 		replicaUpdaterFactory: replicaUpdaterFactory,
 		bufferSize:            bufferSize,
-		defaultSendingTimeout: 100 * time.Millisecond,
+		defaultSendingTimeout: defaultSendingTimeout,
 	}
 }
 

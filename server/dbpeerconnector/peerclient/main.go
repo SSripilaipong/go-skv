@@ -9,7 +9,7 @@ import (
 
 func New(advertisedAddress string) peerclientcontract.Client {
 	return peerclientmanager.New(
-		clientsidepeer.NewFactory(nil),
+		clientsidepeer.NewFactory(0, 0, nil),
 		peergrpcgateway.NewConnector(advertisedAddress),
 	)
 }
