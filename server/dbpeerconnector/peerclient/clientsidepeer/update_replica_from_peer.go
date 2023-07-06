@@ -18,9 +18,12 @@ type updateReplicaFromPeerCommand struct {
 	replicaUpdaterFactory replicaupdatercontract.Factory
 }
 
-func (c updateReplicaFromPeerCommand) execute(*state) {
-	_, err := c.replicaUpdaterFactory.NewInboundUpdater()
-	goutil.PanicUnhandledError(err)
+func (c updateReplicaFromPeerCommand) execute(s *state) {
+	if s.inboundUpdater == nil {
+		updater, err := c.replicaUpdaterFactory.NewInboundUpdater()
+		goutil.PanicUnhandledError(err)
+		s.inboundUpdater = updater
+	}
 }
 
 func logUpdateReplicaFromPeer(key string, value string) {

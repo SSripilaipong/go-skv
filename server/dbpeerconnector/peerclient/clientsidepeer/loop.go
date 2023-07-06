@@ -1,6 +1,9 @@
 package clientsidepeer
 
-import "context"
+import (
+	"context"
+	"go-skv/server/replicaupdater/replicaupdatercontract"
+)
 
 func mainLoop(ctx context.Context, ch <-chan command, onStopped func()) {
 	defer onStopped()
@@ -17,7 +20,9 @@ func mainLoop(ctx context.Context, ch <-chan command, onStopped func()) {
 	}
 }
 
-type state struct{}
+type state struct {
+	inboundUpdater replicaupdatercontract.InboundUpdater
+}
 
 type command interface {
 	execute(s *state)
