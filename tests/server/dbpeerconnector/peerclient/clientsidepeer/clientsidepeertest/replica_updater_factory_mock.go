@@ -2,7 +2,6 @@ package clientsidepeertest
 
 import (
 	"context"
-	"go-skv/common/util/goutil"
 	"go-skv/server/replicaupdater/replicaupdatercontract"
 )
 
@@ -18,8 +17,7 @@ func (r *ReplicaUpdaterFactoryMock) NewInboundUpdater(ctx context.Context) (repl
 	r.NewInboundUpdater_ctx = ctx
 	r.NewInboundUpdater_CallCount += 1
 
-	result := goutil.Coalesce[replicaupdatercontract.InboundUpdater](r.NewInboundUpdater_Return, &ReplicaInboundUpdaterMock{})
-	return result, nil
+	return r.NewInboundUpdater_Return, nil
 }
 
 var _ replicaupdatercontract.Factory = &ReplicaUpdaterFactoryMock{}

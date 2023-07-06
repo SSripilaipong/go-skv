@@ -8,12 +8,11 @@ import (
 
 func (t interactor) UpdateReplicaFromPeer(key string, value string) error {
 	logUpdateReplicaFromPeer(key, value)
-	t.ch <- updateReplicaFromPeerCommand{
+	return t.sendCommand(updateReplicaFromPeerCommand{
 		key:                   key,
 		value:                 value,
 		replicaUpdaterFactory: t.replicaUpdaterFactory,
-	}
-	return nil
+	})
 }
 
 type updateReplicaFromPeerCommand struct {

@@ -6,18 +6,21 @@ import (
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 	"go-skv/server/replicaupdater/replicaupdatercontract"
 	"sync"
+	"time"
 )
 
-func NewFactory(replicaUpdaterFactory replicaupdatercontract.Factory) clientsidepeercontract.Factory {
+func NewFactory(bufferSize int, replicaUpdaterFactory replicaupdatercontract.Factory) clientsidepeercontract.Factory {
 	return factory{
 		replicaUpdaterFactory: replicaUpdaterFactory,
-		bufferSize:            1,
+		bufferSize:            bufferSize,
+		defaultSendingTimeout: 100 * time.Millisecond,
 	}
 }
 
 type factory struct {
 	replicaUpdaterFactory replicaupdatercontract.Factory
 	bufferSize            int
+	defaultSendingTimeout time.Duration
 }
 
 func (f factory) New(ctx context.Context) (peerconnectorcontract.Peer, error) {
@@ -26,6 +29,7 @@ func (f factory) New(ctx context.Context) (peerconnectorcontract.Peer, error) {
 	wg.Add(1)
 	go mainLoop(ctx, ch, func() { wg.Done() })
 	return interactor{
+		defaultTimeout:        f.defaultSendingTimeout,
 		replicaUpdaterFactory: f.replicaUpdaterFactory,
 		ch:                    ch,
 		wg:                    &wg,
@@ -36,4 +40,14 @@ type interactor struct {
 	replicaUpdaterFactory replicaupdatercontract.Factory
 	ch                    chan command
 	wg                    *sync.WaitGroup
+	defaultTimeout        time.Duration
+}
+
+func (t interactor) sendCommand(cmd command) error {
+	select {
+	case t.ch <- cmd:
+	case <-time.After(t.defaultTimeout):
+		return nil
+	}
+	return nil
 }

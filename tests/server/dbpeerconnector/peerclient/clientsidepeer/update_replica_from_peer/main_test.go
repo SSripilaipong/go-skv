@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/stretchr/testify/assert"
 	"go-skv/common/util/goutil"
-	"go-skv/server/dbpeerconnector/peerclient/clientsidepeer"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 	"go-skv/tests"
 	"go-skv/tests/server/dbpeerconnector/peerclient/clientsidepeer/clientsidepeertest"
@@ -13,8 +12,12 @@ import (
 )
 
 func Test_should_create_inbound_replica_updater_if_not_exists(t *testing.T) {
-	replicaUpdaterFactory := &clientsidepeertest.ReplicaUpdaterFactoryMock{}
-	factory := clientsidepeer.NewFactory(replicaUpdaterFactory)
+	replicaUpdaterFactory := &clientsidepeertest.ReplicaUpdaterFactoryMock{
+		NewInboundUpdater_Return: &clientsidepeertest.ReplicaInboundUpdaterMock{},
+	}
+	factory := clientsidepeertest.NewFactory(
+		clientsidepeertest.WithReplicaUpdaterFactory(replicaUpdaterFactory),
+	)
 	var peer peerconnectorcontract.Peer
 	tests.ContextScope(func(ctx context.Context) {
 		var err error
@@ -33,7 +36,9 @@ func Test_should_not_create_inbound_replica_updater_if_already_exists(t *testing
 	replicaUpdaterFactory := &clientsidepeertest.ReplicaUpdaterFactoryMock{
 		NewInboundUpdater_Return: &clientsidepeertest.ReplicaInboundUpdaterMock{},
 	}
-	factory := clientsidepeer.NewFactory(replicaUpdaterFactory)
+	factory := clientsidepeertest.NewFactory(
+		clientsidepeertest.WithReplicaUpdaterFactory(replicaUpdaterFactory),
+	)
 	var peer peerconnectorcontract.Peer
 	tests.ContextScope(func(ctx context.Context) {
 		var err error
@@ -50,8 +55,12 @@ func Test_should_not_create_inbound_replica_updater_if_already_exists(t *testing
 }
 
 func Test_should_pass_global_context_when_create_inbound_replica_updater(t *testing.T) {
-	replicaUpdaterFactory := &clientsidepeertest.ReplicaUpdaterFactoryMock{}
-	factory := clientsidepeer.NewFactory(replicaUpdaterFactory)
+	replicaUpdaterFactory := &clientsidepeertest.ReplicaUpdaterFactoryMock{
+		NewInboundUpdater_Return: &clientsidepeertest.ReplicaInboundUpdaterMock{},
+	}
+	factory := clientsidepeertest.NewFactory(
+		clientsidepeertest.WithReplicaUpdaterFactory(replicaUpdaterFactory),
+	)
 	var peer peerconnectorcontract.Peer
 	tests.ContextScope(func(ctx context.Context) {
 		var err error
@@ -69,7 +78,9 @@ func Test_should_pass_global_context_when_create_inbound_replica_updater(t *test
 func Test_should_send_update_to_inbound_replica_updater_with_key_and_value(t *testing.T) {
 	updater := &clientsidepeertest.ReplicaInboundUpdaterMock{}
 	replicaUpdaterFactory := &clientsidepeertest.ReplicaUpdaterFactoryMock{NewInboundUpdater_Return: updater}
-	factory := clientsidepeer.NewFactory(replicaUpdaterFactory)
+	factory := clientsidepeertest.NewFactory(
+		clientsidepeertest.WithReplicaUpdaterFactory(replicaUpdaterFactory),
+	)
 	var peer peerconnectorcontract.Peer
 	tests.ContextScope(func(ctx context.Context) {
 		var err error
