@@ -20,7 +20,7 @@ type updateReplicaFromPeerCommand struct {
 
 func (c updateReplicaFromPeerCommand) execute(s *state) {
 	if s.inboundUpdater == nil {
-		updater, err := c.replicaUpdaterFactory.NewInboundUpdater()
+		updater, err := c.replicaUpdaterFactory.NewInboundUpdater(s.ctx)
 		goutil.PanicUnhandledError(err)
 		s.inboundUpdater = updater
 	}

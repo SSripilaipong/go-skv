@@ -1,7 +1,9 @@
 package replicaupdatercontract
 
+import "context"
+
 type Factory interface {
-	NewInboundUpdater() (InboundUpdater, error)
+	NewInboundUpdater(ctx context.Context) (InboundUpdater, error)
 }
 
 type InboundUpdater interface {

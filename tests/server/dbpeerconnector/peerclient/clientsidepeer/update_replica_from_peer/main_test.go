@@ -48,3 +48,20 @@ func Test_should_not_create_inbound_replica_updater_if_already_exists(t *testing
 	goutil.PanicUnhandledError(peer.Join())
 	assert.Equal(t, 1, replicaUpdaterFactory.NewInboundUpdater_CallCount)
 }
+
+func Test_should_pass_global_context_when_create_inbound_replica_updater(t *testing.T) {
+	replicaUpdaterFactory := &clientsidepeertest.ReplicaUpdaterFactoryMock{}
+	factory := clientsidepeer.NewFactory(replicaUpdaterFactory)
+	var peer peerconnectorcontract.Peer
+	tests.ContextScope(func(ctx context.Context) {
+		var err error
+		peer, err = factory.New(context.WithValue(ctx, "test", "abc555"))
+		goutil.PanicUnhandledError(err)
+
+		goutil.PanicUnhandledError(peer.UpdateReplicaFromPeer("", ""))
+
+		time.Sleep(defaultTimeout)
+	})
+	goutil.PanicUnhandledError(peer.Join())
+	assert.Equal(t, "abc555", replicaUpdaterFactory.NewInboundUpdater_ctx.Value("test"))
+}

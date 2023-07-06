@@ -8,7 +8,9 @@ import (
 func mainLoop(ctx context.Context, ch <-chan command, onStopped func()) {
 	defer onStopped()
 
-	s := state{}
+	s := state{
+		ctx: ctx,
+	}
 
 	for {
 		select {
@@ -21,6 +23,7 @@ func mainLoop(ctx context.Context, ch <-chan command, onStopped func()) {
 }
 
 type state struct {
+	ctx            context.Context
 	inboundUpdater replicaupdatercontract.InboundUpdater
 }
 
