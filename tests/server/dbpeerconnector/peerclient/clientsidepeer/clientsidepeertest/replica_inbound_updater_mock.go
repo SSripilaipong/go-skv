@@ -1,6 +1,8 @@
 package clientsidepeertest
 
-import "go-skv/server/replicaupdater/replicaupdatercontract"
+import (
+	"go-skv/server/replicaupdater/replicaupdatercontract"
+)
 
 type ReplicaInboundUpdaterMock struct {
 	Update_key   string
@@ -19,4 +21,7 @@ func (u *ReplicaInboundUpdaterMock) Update(key string, value string) error {
 	}
 
 	return nil
+}
+
+func (u *ReplicaInboundUpdaterMock) Join() {
 }

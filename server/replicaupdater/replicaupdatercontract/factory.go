@@ -8,4 +8,5 @@ type Factory interface {
 
 type InboundUpdater interface {
 	Update(key string, value string) error
+	Join()
 }
