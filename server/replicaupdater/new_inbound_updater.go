@@ -3,7 +3,6 @@ package replicaupdater
 import (
 	"context"
 	"go-skv/common/actormodel"
-	"go-skv/common/util/goutil"
 	"go-skv/server/dbstorage/dbstoragecontract"
 	"go-skv/server/replicaupdater/replicaupdatercontract"
 	"sync"
@@ -13,7 +12,8 @@ func (f factory) NewInboundUpdater(ctx context.Context) (replicaupdatercontract.
 	cmdCh := make(chan actormodel.Command[inboundUpdaterState], 16) // TODO: parameterize buffer size
 
 	initialState := inboundUpdaterState{
-		dbStorage: f.dbStorage,
+		dbStorage:     f.dbStorage,
+		recordService: f.recordService,
 	}
 
 	wg := sync.WaitGroup{}
@@ -28,23 +28,12 @@ func (f factory) NewInboundUpdater(ctx context.Context) (replicaupdatercontract.
 }
 
 type inboundUpdaterState struct {
-	dbStorage dbstoragecontract.Storage
+	dbStorage     dbstoragecontract.Storage
+	recordService RecordService
 }
 
 type inboundUpdaterInteractor struct {
 	actormodel.Interactor[inboundUpdaterState]
 }
 
-func (t inboundUpdaterInteractor) Update(key string, _ string) error {
-	return t.SendCommand(context.Background(), updateInboundReplicaCmd{
-		key: key,
-	})
-}
-
-type updateInboundReplicaCmd struct {
-	key string
-}
-
-func (c updateInboundReplicaCmd) Execute(state *inboundUpdaterState) {
-	goutil.PanicUnhandledError(state.dbStorage.GetRecord(context.Background(), c.key, func(dbstoragecontract.Record) {}))
-}
+var _ replicaupdatercontract.InboundUpdater = &inboundUpdaterInteractor{}

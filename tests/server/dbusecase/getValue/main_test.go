@@ -33,7 +33,7 @@ func Test_should_pass_context_to_repo(t *testing.T) {
 
 func Test_should_return_value_from_record(t *testing.T) {
 	record := &dbstoragetest.RecordMock{GetValue_success_response: dbstoragecontract.RecordData{Value: "Hello"}}
-	repoMock := &servertest.DbStorageMock{GetRecord_success_record: record}
+	repoMock := &servertest.DbStorageMock{GetRecord_execute_record: record}
 	usecase := dbusecasetest.NewUsecaseWithRepo(repoMock)
 
 	response, _ := doExecute(usecase)
@@ -43,7 +43,7 @@ func Test_should_return_value_from_record(t *testing.T) {
 
 func Test_should_return_error_when_context_cancelled(t *testing.T) {
 	record := &dbstoragetest.RecordMock{GetValue_success_willFail: true}
-	repoMock := &servertest.DbStorageMock{GetRecord_success_record: record}
+	repoMock := &servertest.DbStorageMock{GetRecord_execute_record: record}
 	usecase := dbusecasetest.NewUsecaseWithRepo(repoMock)
 
 	ctx, _ := contextWithDefaultTimeout()
@@ -54,7 +54,7 @@ func Test_should_return_error_when_context_cancelled(t *testing.T) {
 
 func Test_should_pass_context_to_record(t *testing.T) {
 	record := &dbstoragetest.RecordMock{}
-	repoMock := &servertest.DbStorageMock{GetRecord_success_record: record}
+	repoMock := &servertest.DbStorageMock{GetRecord_execute_record: record}
 	usecase := dbusecasetest.NewUsecaseWithRepo(repoMock)
 
 	ctx := context.WithValue(context.Background(), "Test", goutil.RandomString(8))
