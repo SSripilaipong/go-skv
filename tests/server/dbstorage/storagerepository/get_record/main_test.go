@@ -25,7 +25,7 @@ func Test_should_call_success_with_existing_record(t *testing.T) {
 
 		goutil.PanicUnhandledError(storage.GetRecord(context.Background(), "aaa", func(record dbstoragecontract.Record) {
 			retrievedRecord = record
-		}))
+		}, func(error) {}))
 
 	})
 

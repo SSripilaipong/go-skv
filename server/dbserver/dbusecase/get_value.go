@@ -21,7 +21,7 @@ func (u usecase) GetValue(ctx context.Context, request GetValueRequest) (GetValu
 		goutil.PanicUnhandledError(record.GetValue(ctx, doSendResultBack))
 	}
 
-	goutil.PanicUnhandledError(u.repo.GetRecord(ctx, request.Key, doReadRecordThenSendResultBack))
+	goutil.PanicUnhandledError(u.repo.GetRecord(ctx, request.Key, doReadRecordThenSendResultBack, func(error) {}))
 
 	select {
 	case result := <-resultCh:

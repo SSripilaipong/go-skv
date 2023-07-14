@@ -12,8 +12,10 @@ func (f factory) NewInboundUpdater(ctx context.Context) (replicaupdatercontract.
 	cmdCh := make(chan actormodel.Command[inboundUpdaterState], 16) // TODO: parameterize buffer size
 
 	initialState := inboundUpdaterState{
+		globalCtx:     ctx,
 		dbStorage:     f.dbStorage,
 		recordService: f.recordService,
+		recordFactory: f.recordFactory,
 	}
 
 	wg := sync.WaitGroup{}
@@ -28,8 +30,10 @@ func (f factory) NewInboundUpdater(ctx context.Context) (replicaupdatercontract.
 }
 
 type inboundUpdaterState struct {
+	globalCtx     context.Context
 	dbStorage     dbstoragecontract.Storage
 	recordService RecordService
+	recordFactory dbstoragecontract.Factory
 }
 
 type inboundUpdaterInteractor struct {

@@ -9,9 +9,10 @@ import (
 )
 
 type RecordServiceMock struct {
-	UpdateReplicaValue_record dbstoragecontract.Record
-	UpdateReplicaValue_value  string
-	UpdateReplicaValue_wg     *sync.WaitGroup
+	UpdateReplicaValue_record   dbstoragecontract.Record
+	UpdateReplicaValue_IsCalled bool
+	UpdateReplicaValue_value    string
+	UpdateReplicaValue_wg       *sync.WaitGroup
 }
 
 func (s *RecordServiceMock) UpdateReplicaValue(record dbstoragecontract.Record, value string, onFailure func(err error)) {
@@ -21,6 +22,7 @@ func (s *RecordServiceMock) UpdateReplicaValue(record dbstoragecontract.Record, 
 		}
 	}()
 
+	s.UpdateReplicaValue_IsCalled = true
 	s.UpdateReplicaValue_record = record
 	s.UpdateReplicaValue_value = value
 }

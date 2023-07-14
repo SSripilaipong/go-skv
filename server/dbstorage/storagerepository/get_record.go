@@ -7,7 +7,7 @@ import (
 	"go-skv/server/dbstorage/dbstoragecontract"
 )
 
-func (m manager) GetRecord(ctx context.Context, key string, execute func(dbstoragecontract.Record)) error {
+func (m manager) GetRecord(ctx context.Context, key string, execute func(dbstoragecontract.Record), failure func(err error)) error {
 	return m.sendMessage(ctx, getRecordCommand{
 		Key:     key,
 		Execute: execute,

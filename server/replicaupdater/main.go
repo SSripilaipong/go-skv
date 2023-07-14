@@ -5,14 +5,16 @@ import (
 	"go-skv/server/replicaupdater/replicaupdatercontract"
 )
 
-func NewFactory(dbStorage dbstoragecontract.Storage, recordService RecordService) replicaupdatercontract.Factory {
+func NewFactory(dbStorage dbstoragecontract.Storage, recordService RecordService, recordFactory dbstoragecontract.Factory) replicaupdatercontract.Factory {
 	return factory{
 		dbStorage:     dbStorage,
 		recordService: recordService,
+		recordFactory: recordFactory,
 	}
 }
 
 type factory struct {
 	dbStorage     dbstoragecontract.Storage
 	recordService RecordService
+	recordFactory dbstoragecontract.Factory
 }

@@ -13,6 +13,7 @@ type DbStorageMock struct {
 	GetRecord_key                    string
 	GetRecord_ctx                    context.Context
 	GetRecord_execute_record         dbstoragecontract.Record
+	GetRecord_failure_err            error
 	GetRecord_wg                     *sync.WaitGroup
 	GetOrCreateRecord_key            string
 	GetOrCreateRecord_ctx            context.Context
@@ -33,7 +34,7 @@ func (s *DbStorageMock) Join() error {
 	return nil
 }
 
-func (s *DbStorageMock) GetRecord(ctx context.Context, key string, execute func(dbstoragecontract.Record)) error {
+func (s *DbStorageMock) GetRecord(ctx context.Context, key string, execute func(dbstoragecontract.Record), failure func(err error)) error {
 	defer func() {
 		if s.GetRecord_wg != nil {
 			s.GetRecord_wg.Done()
@@ -42,7 +43,11 @@ func (s *DbStorageMock) GetRecord(ctx context.Context, key string, execute func(
 	s.GetRecord_key = key
 	s.GetRecord_ctx = ctx
 
-	execute(goutil.Coalesce[dbstoragecontract.Record](s.GetRecord_execute_record, &dbstoragetest.RecordMock{}))
+	if s.GetRecord_failure_err != nil {
+		failure(s.GetRecord_failure_err)
+	} else {
+		execute(goutil.Coalesce[dbstoragecontract.Record](s.GetRecord_execute_record, &dbstoragetest.RecordMock{}))
+	}
 
 	return nil
 }
