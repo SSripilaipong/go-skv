@@ -10,8 +10,8 @@ func doExecute(usecase dbusecase.Interface) (dbusecase.GetValueResponse, error) 
 	return usecase.GetValue(context.Background(), dbusecase.GetValueRequest{})
 }
 
-func doExecuteWithRequest(usecase dbusecase.Interface, request dbusecase.GetValueRequest) (dbusecase.GetValueResponse, error) {
-	return usecase.GetValue(context.Background(), request)
+func doExecuteWithContextAndRequest(usecase dbusecase.Interface, ctx context.Context, request dbusecase.GetValueRequest) (dbusecase.GetValueResponse, error) {
+	return usecase.GetValue(ctx, request)
 }
 
 func doExecuteWithContext(usecase dbusecase.Interface, ctx context.Context) (dbusecase.GetValueResponse, error) {

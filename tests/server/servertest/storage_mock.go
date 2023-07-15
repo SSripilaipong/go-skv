@@ -12,8 +12,8 @@ import (
 type DbStorageMock struct {
 	GetRecord_key                    string
 	GetRecord_ctx                    context.Context
-	GetRecord_execute_record         dbstoragecontract.Record
-	GetRecord_failure_err            error
+	GetRecord_execute                func(dbstoragecontract.Record)
+	GetRecord_failure                func(error)
 	GetRecord_wg                     *sync.WaitGroup
 	GetOrCreateRecord_key            string
 	GetOrCreateRecord_ctx            context.Context
@@ -42,12 +42,8 @@ func (s *DbStorageMock) GetRecord(ctx context.Context, key string, execute func(
 	}()
 	s.GetRecord_key = key
 	s.GetRecord_ctx = ctx
-
-	if s.GetRecord_failure_err != nil {
-		failure(s.GetRecord_failure_err)
-	} else {
-		execute(goutil.Coalesce[dbstoragecontract.Record](s.GetRecord_execute_record, &dbstoragetest.RecordMock{}))
-	}
+	s.GetRecord_execute = execute
+	s.GetRecord_failure = failure
 
 	return nil
 }

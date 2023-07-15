@@ -22,9 +22,10 @@ func Test_should_get_record_from_repo_in_the_first_time(t *testing.T) {
 	tests.ContextScope(func(ctx context.Context) {
 		updater, _ = factory.NewInboundUpdater(ctx)
 
-		storage.GetRecord_WaitUntilCalledOnce(defaultTimeout, func() {
+		doUpdate := func() {
 			_ = updater.Update("aaa", "")
-		})
+		}
+		storage.GetRecord_WaitUntilCalledOnce(defaultTimeout, doUpdate)
 	})
 	updater.Join()
 
@@ -33,7 +34,7 @@ func Test_should_get_record_from_repo_in_the_first_time(t *testing.T) {
 
 func Test_should_update_replica_record_value_using_record_service(t *testing.T) {
 	record := &dbstoragetest.RecordMock{}
-	storage := &servertest.DbStorageMock{GetRecord_execute_record: record}
+	storage := &servertest.DbStorageMock{}
 	recordService := &replicaupdatertest.RecordServiceMock{}
 	factory := replicaupdater.NewFactory(storage, recordService, nil)
 
@@ -41,8 +42,14 @@ func Test_should_update_replica_record_value_using_record_service(t *testing.T) 
 	tests.ContextScope(func(ctx context.Context) {
 		updater, _ = factory.NewInboundUpdater(ctx)
 
-		recordService.UpdateReplicaValue_WaitUntilCalledOnce(defaultTimeout, func() {
+		doUpdate := func() {
 			_ = updater.Update("", "xxx")
+		}
+
+		storage.GetRecord_WaitUntilCalledOnce(defaultTimeout, doUpdate)
+
+		recordService.UpdateReplicaValue_WaitUntilCalledOnce(defaultTimeout, func() {
+			storage.GetRecord_execute(record)
 		})
 	})
 	updater.Join()
@@ -52,7 +59,7 @@ func Test_should_update_replica_record_value_using_record_service(t *testing.T) 
 }
 
 func Test_should_create_new_replica_record_when_record_doesnt_exist(t *testing.T) {
-	storage := &servertest.DbStorageMock{GetRecord_failure_err: dbstoragecontract.RecordNotFoundError{}}
+	storage := &servertest.DbStorageMock{}
 	recordService := &replicaupdatertest.RecordServiceMock{}
 	recordFactory := &storagerepositorytest.RecordFactoryMock{}
 	factory := replicaupdater.NewFactory(storage, recordService, recordFactory)
@@ -61,9 +68,15 @@ func Test_should_create_new_replica_record_when_record_doesnt_exist(t *testing.T
 	tests.ContextScope(func(ctx context.Context) {
 		updater, _ = factory.NewInboundUpdater(context.WithValue(ctx, "test", "global context"))
 
-		recordFactory.New_WaitUntilCalledOnce(defaultTimeout, func() {
+		doUpdate := func() {
 			_ = updater.Update("", "")
-		})
+		}
+		storage.GetRecord_WaitUntilCalledOnce(defaultTimeout, doUpdate)
+
+		storageFails := func() {
+			storage.GetRecord_failure(dbstoragecontract.RecordNotFoundError{})
+		}
+		recordFactory.New_WaitUntilCalledOnce(defaultTimeout, storageFails)
 	})
 	updater.Join()
 
