@@ -66,7 +66,7 @@ func Test_should_set_initialize_replica_record_using_record_service_when_record_
 	assert.Equal(t, "xxx", recordService.InitilizeReplicaRecord_value)
 }
 
-func Test_should_save_initialized_replica_record_to_storage(t *testing.T) {
+func Test_should_add_initialized_replica_record_to_storage(t *testing.T) {
 	initializedRecord := &dbstoragetest.RecordMock{}
 	storage := &servertest.DbStorageMock{}
 	recordService := &replicaupdatertest.RecordServiceMock{}
@@ -90,11 +90,11 @@ func Test_should_save_initialized_replica_record_to_storage(t *testing.T) {
 		doRecordInitialize := func() {
 			recordService.InitilizeReplicaRecord_execute(initializedRecord)
 		}
-		storage.Save_WaitUntillCalledOnce(defaultTimeout, doRecordInitialize)
+		storage.Add_WaitUntillCalledOnce(defaultTimeout, doRecordInitialize)
 	})
 	updater.Join()
 
-	assert.NotZero(t, storage.Save_ctx)
-	assert.Equal(t, "aaa", storage.Save_key)
-	assert.True(t, initializedRecord == storage.Save_record)
+	assert.NotZero(t, storage.Add_ctx)
+	assert.Equal(t, "aaa", storage.Add_key)
+	assert.True(t, initializedRecord == storage.Add_record)
 }

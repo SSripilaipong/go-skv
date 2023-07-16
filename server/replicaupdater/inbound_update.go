@@ -31,10 +31,19 @@ func (t inboundUpdaterInteractor) updateInboundReplicaCmd(key, value string) fun
 func (t inboundUpdaterInteractor) createReplicaRecordCmd(key, value string) func(state *inboundUpdaterState) {
 	return func(state *inboundUpdaterState) {
 		record := state.recordFactory.New(state.globalCtx)
-		state.recordService.InitializeReplicaRecord(record, value, func(record dbstoragecontract.Record) {
-			goutil.PanicUnhandledError(
-				state.dbStorage.Save(context.Background(), key, record),
-			)
-		})
+
+		addInitializedRecordToStorage := func(record dbstoragecontract.Record) {
+			go t.SendCommandOrPanic(actormodel.Do(t.addRecordToStorageCmd(key, record)))
+		}
+
+		state.recordService.InitializeReplicaRecord(record, value, addInitializedRecordToStorage)
+	}
+}
+
+func (t inboundUpdaterInteractor) addRecordToStorageCmd(key string, record dbstoragecontract.Record) func(state *inboundUpdaterState) {
+	return func(state *inboundUpdaterState) {
+		goutil.PanicUnhandledError(
+			state.dbStorage.Add(context.Background(), key, record),
+		)
 	}
 }
