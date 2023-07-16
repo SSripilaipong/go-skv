@@ -4,6 +4,7 @@ import (
 	"context"
 	"go-skv/common/util/goutil"
 	"go-skv/server/dbstorage/dbstoragecontract"
+	"go-skv/tests"
 	"go-skv/tests/server/dbstorage/dbstoragetest"
 	"sync"
 	"time"
@@ -20,6 +21,10 @@ type DbStorageMock struct {
 	GetOrCreateRecord_execute_record dbstoragecontract.Record
 	Start_ctx                        context.Context
 	Join_IsCalled                    bool
+	Save_ctx                         context.Context
+	Save_key                         string
+	Save_record                      dbstoragecontract.Record
+	Save_wg                          *sync.WaitGroup
 }
 
 var _ dbstoragecontract.Storage = &DbStorageMock{}
@@ -49,15 +54,7 @@ func (s *DbStorageMock) GetRecord(ctx context.Context, key string, execute func(
 }
 
 func (s *DbStorageMock) GetRecord_WaitUntilCalledOnce(timeout time.Duration, f func()) bool {
-	defer func() {
-		s.GetRecord_wg = nil
-	}()
-	s.GetRecord_wg = &sync.WaitGroup{}
-	s.GetRecord_wg.Add(1)
-
-	f()
-
-	return goutil.WaitWithTimeout(s.GetRecord_wg, timeout)
+	return tests.MockWaitUntilCalledNthTimes(&s.GetRecord_wg, 1, timeout, f)
 }
 
 func (s *DbStorageMock) GetOrCreateRecord(ctx context.Context, key string, execute func(dbstoragecontract.Record)) error {
@@ -65,4 +62,19 @@ func (s *DbStorageMock) GetOrCreateRecord(ctx context.Context, key string, execu
 	s.GetOrCreateRecord_key = key
 	go execute(goutil.Coalesce[dbstoragecontract.Record](s.GetOrCreateRecord_execute_record, &dbstoragetest.RecordMock{}))
 	return nil
+}
+
+func (s *DbStorageMock) Save(ctx context.Context, key string, record dbstoragecontract.Record) error {
+	defer func() {
+		if s.Save_wg != nil {
+			s.Save_wg.Done()
+		}
+	}()
+	s.Save_ctx = ctx
+	s.Save_key = key
+	s.Save_record = record
+	return nil
+}
+func (s *DbStorageMock) Save_WaitUntillCalledOnce(timeout time.Duration, f func()) bool {
+	return tests.MockWaitUntilCalledNthTimes(&s.Save_wg, 1, timeout, f)
 }

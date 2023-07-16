@@ -19,7 +19,7 @@ func (t inboundUpdaterInteractor) updateInboundReplicaCmd(key, value string) fun
 		}
 
 		createNewReplicaRecordIfNotExists := func(error) {
-			go t.SendCommandOrPanic(actormodel.Do(t.createReplicaRecordCmd(value)))
+			go t.SendCommandOrPanic(actormodel.Do(t.createReplicaRecordCmd(key, value)))
 		}
 
 		goutil.PanicUnhandledError(
@@ -28,9 +28,13 @@ func (t inboundUpdaterInteractor) updateInboundReplicaCmd(key, value string) fun
 	}
 }
 
-func (t inboundUpdaterInteractor) createReplicaRecordCmd(value string) func(state *inboundUpdaterState) {
+func (t inboundUpdaterInteractor) createReplicaRecordCmd(key, value string) func(state *inboundUpdaterState) {
 	return func(state *inboundUpdaterState) {
 		record := state.recordFactory.New(state.globalCtx)
-		state.recordService.InitializeReplicaRecord(record, value, nil)
+		state.recordService.InitializeReplicaRecord(record, value, func(record dbstoragecontract.Record) {
+			goutil.PanicUnhandledError(
+				state.dbStorage.Save(context.Background(), key, record),
+			)
+		})
 	}
 }

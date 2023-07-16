@@ -9,13 +9,14 @@ import (
 )
 
 type RecordServiceMock struct {
-	UpdateReplicaValue_record     dbstoragecontract.Record
-	UpdateReplicaValue_IsCalled   bool
-	UpdateReplicaValue_value      string
-	UpdateReplicaValue_wg         *sync.WaitGroup
-	InitilizeReplicaRecord_record dbstoragecontract.Record
-	InitilizeReplicaRecord_value  string
-	InitilizeReplicaRecord_wg     *sync.WaitGroup
+	UpdateReplicaValue_record      dbstoragecontract.Record
+	UpdateReplicaValue_IsCalled    bool
+	UpdateReplicaValue_value       string
+	UpdateReplicaValue_wg          *sync.WaitGroup
+	InitilizeReplicaRecord_record  dbstoragecontract.Record
+	InitilizeReplicaRecord_value   string
+	InitilizeReplicaRecord_wg      *sync.WaitGroup
+	InitilizeReplicaRecord_execute func(record dbstoragecontract.Record)
 }
 
 func (s *RecordServiceMock) InitializeReplicaRecord(record dbstoragecontract.Record, value string, execute func(record dbstoragecontract.Record)) {
@@ -26,6 +27,7 @@ func (s *RecordServiceMock) InitializeReplicaRecord(record dbstoragecontract.Rec
 	}()
 	s.InitilizeReplicaRecord_record = record
 	s.InitilizeReplicaRecord_value = value
+	s.InitilizeReplicaRecord_execute = execute
 }
 func (s *RecordServiceMock) InitializeReplicaRecord_WaitUntilCalledOnce(timeout time.Duration, f func()) bool {
 	defer func() {

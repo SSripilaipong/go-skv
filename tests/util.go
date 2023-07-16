@@ -2,6 +2,7 @@ package tests
 
 import (
 	"context"
+	"go-skv/common/util/goutil"
 	"sync"
 	"time"
 )
@@ -32,4 +33,16 @@ func NewClosedContext() context.Context {
 	newCtx, cancel := context.WithCancel(context.Background())
 	cancel()
 	return newCtx
+}
+
+func MockWaitUntilCalledNthTimes(wgp **sync.WaitGroup, n int, timeout time.Duration, f func()) bool {
+	defer func() {
+		*wgp = nil
+	}()
+	*wgp = &sync.WaitGroup{}
+	(*wgp).Add(n)
+
+	f()
+
+	return goutil.WaitWithTimeout(*wgp, timeout)
 }

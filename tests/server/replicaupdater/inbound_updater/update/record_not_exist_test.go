@@ -63,5 +63,38 @@ func Test_should_set_initialize_replica_record_using_record_service_when_record_
 	updater.Join()
 
 	assert.True(t, recordService.InitilizeReplicaRecord_record == newlyCreatedRecord)
-	assert.Equal(t, recordService.InitilizeReplicaRecord_value, "xxx")
+	assert.Equal(t, "xxx", recordService.InitilizeReplicaRecord_value)
+}
+
+func Test_should_save_initialized_replica_record_to_storage(t *testing.T) {
+	initializedRecord := &dbstoragetest.RecordMock{}
+	storage := &servertest.DbStorageMock{}
+	recordService := &replicaupdatertest.RecordServiceMock{}
+	recordFactory := &storagerepositorytest.RecordFactoryMock{New_Return: initializedRecord}
+	factory := replicaupdater.NewFactory(storage, recordService, recordFactory)
+
+	var updater replicaupdatercontract.InboundUpdater
+	tests.ContextScope(func(ctx context.Context) {
+		updater, _ = factory.NewInboundUpdater(ctx)
+
+		doUpdate := func() {
+			_ = updater.Update("aaa", "")
+		}
+		storage.GetRecord_WaitUntilCalledOnce(defaultTimeout, doUpdate)
+
+		storageFails := func() {
+			storage.GetRecord_failure(dbstoragecontract.RecordNotFoundError{})
+		}
+		recordService.InitializeReplicaRecord_WaitUntilCalledOnce(defaultTimeout, storageFails)
+
+		doRecordInitialize := func() {
+			recordService.InitilizeReplicaRecord_execute(initializedRecord)
+		}
+		storage.Save_WaitUntillCalledOnce(defaultTimeout, doRecordInitialize)
+	})
+	updater.Join()
+
+	assert.NotZero(t, storage.Save_ctx)
+	assert.Equal(t, "aaa", storage.Save_key)
+	assert.True(t, initializedRecord == storage.Save_record)
 }
