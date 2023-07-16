@@ -8,42 +8,29 @@ import (
 )
 
 func (t inboundUpdaterInteractor) Update(key string, value string) error {
-	return t.SendCommand(context.Background(), updateInboundReplicaCmd{
-		key:         key,
-		value:       value,
-		sendCommand: t.SendCommand,
-	})
+	return t.SendCommand(context.Background(), actormodel.Do(t.updateInboundReplicaCmd(key, value)))
 }
 
-type updateInboundReplicaCmd struct {
-	key         string
-	value       string
-	sendCommand func(ctx context.Context, cmd actormodel.Command[inboundUpdaterState]) error
-}
+func (t inboundUpdaterInteractor) updateInboundReplicaCmd(key, value string) func(state *inboundUpdaterState) {
+	return func(state *inboundUpdaterState) {
 
-func (c updateInboundReplicaCmd) Execute(state *inboundUpdaterState) {
-	sendCommandToSelf := func(cmd actormodel.Command[inboundUpdaterState]) {
-		goutil.PanicUnhandledError(c.sendCommand(context.Background(), cmd))
+		tryUpdateReplicaRecord := func(record dbstoragecontract.Record) {
+			go state.recordService.UpdateReplicaValue(record, value, nil)
+		}
+
+		createNewReplicaRecordIfNotExists := func(error) {
+			go t.SendCommandOrPanic(actormodel.Do(t.createReplicaRecordCmd(value)))
+		}
+
+		goutil.PanicUnhandledError(
+			state.dbStorage.GetRecord(context.Background(), key, tryUpdateReplicaRecord, createNewReplicaRecordIfNotExists),
+		)
 	}
-
-	tryUpdateReplicaRecord := func(record dbstoragecontract.Record) {
-		go state.recordService.UpdateReplicaValue(record, c.value, nil)
-	}
-
-	createNewReplicaRecordIfNotExists := func(error) {
-		go sendCommandToSelf(createReplicaRecordCmd{value: c.value})
-	}
-
-	goutil.PanicUnhandledError(
-		state.dbStorage.GetRecord(context.Background(), c.key, tryUpdateReplicaRecord, createNewReplicaRecordIfNotExists),
-	)
 }
 
-type createReplicaRecordCmd struct {
-	value string
-}
-
-func (c createReplicaRecordCmd) Execute(state *inboundUpdaterState) {
-	record := state.recordFactory.New(state.globalCtx)
-	state.recordService.InitializeReplicaRecord(record, c.value, nil)
+func (t inboundUpdaterInteractor) createReplicaRecordCmd(value string) func(state *inboundUpdaterState) {
+	return func(state *inboundUpdaterState) {
+		record := state.recordFactory.New(state.globalCtx)
+		state.recordService.InitializeReplicaRecord(record, value, nil)
+	}
 }

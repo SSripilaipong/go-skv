@@ -27,6 +27,10 @@ func (t Interactor[S]) SendCommand(ctx context.Context, cmd Command[S]) error {
 	return nil
 }
 
+func (t Interactor[S]) SendCommandOrPanic(cmd Command[S]) {
+	t.cmdCh <- cmd
+}
+
 func (t Interactor[S]) Join() {
 	t.wg.Wait()
 }
