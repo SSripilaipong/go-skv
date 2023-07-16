@@ -24,7 +24,8 @@ type DbStorageMock struct {
 	Add_ctx                          context.Context
 	Add_key                          string
 	Add_record                       dbstoragecontract.Record
-	Save_wg                          *sync.WaitGroup
+	Add_failure                      func(err error)
+	Add_wg                           *sync.WaitGroup
 }
 
 var _ dbstoragecontract.Storage = &DbStorageMock{}
@@ -64,17 +65,18 @@ func (s *DbStorageMock) GetOrCreateRecord(ctx context.Context, key string, execu
 	return nil
 }
 
-func (s *DbStorageMock) Add(ctx context.Context, key string, record dbstoragecontract.Record) error {
+func (s *DbStorageMock) Add(ctx context.Context, key string, record dbstoragecontract.Record, failure func(err error)) error {
 	defer func() {
-		if s.Save_wg != nil {
-			s.Save_wg.Done()
+		if s.Add_wg != nil {
+			s.Add_wg.Done()
 		}
 	}()
 	s.Add_ctx = ctx
 	s.Add_key = key
 	s.Add_record = record
+	s.Add_failure = failure
 	return nil
 }
 func (s *DbStorageMock) Add_WaitUntillCalledOnce(timeout time.Duration, f func()) bool {
-	return tests.MockWaitUntilCalledNthTimes(&s.Save_wg, 1, timeout, f)
+	return tests.MockWaitUntilCalledNthTimes(&s.Add_wg, 1, timeout, f)
 }
