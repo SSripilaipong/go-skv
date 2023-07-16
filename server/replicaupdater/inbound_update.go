@@ -22,24 +22,28 @@ type updateInboundReplicaCmd struct {
 }
 
 func (c updateInboundReplicaCmd) Execute(state *inboundUpdaterState) {
+	sendCommandToSelf := func(cmd actormodel.Command[inboundUpdaterState]) {
+		goutil.PanicUnhandledError(c.sendCommand(context.Background(), cmd))
+	}
+
+	tryUpdateReplicaRecord := func(record dbstoragecontract.Record) {
+		go state.recordService.UpdateReplicaValue(record, c.value, nil)
+	}
+
+	createNewReplicaRecordIfNotExists := func(error) {
+		go sendCommandToSelf(createReplicaRecordCmd{value: c.value})
+	}
+
 	goutil.PanicUnhandledError(
-		state.dbStorage.GetRecord(context.Background(), c.key, func(record dbstoragecontract.Record) {
-			go state.recordService.UpdateReplicaValue(record, c.value, nil)
-		}, func(error) {
-			go func() {
-				goutil.PanicUnhandledError(
-					c.sendCommand(context.Background(), createReplicaRecordCmd{key: c.key, value: c.value}),
-				)
-			}()
-		}),
+		state.dbStorage.GetRecord(context.Background(), c.key, tryUpdateReplicaRecord, createNewReplicaRecordIfNotExists),
 	)
 }
 
 type createReplicaRecordCmd struct {
-	key   string
 	value string
 }
 
 func (c createReplicaRecordCmd) Execute(state *inboundUpdaterState) {
-	state.recordFactory.New(state.globalCtx)
+	record := state.recordFactory.New(state.globalCtx)
+	state.recordService.InitializeReplicaRecord(record, c.value, nil)
 }
