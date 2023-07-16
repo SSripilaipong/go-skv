@@ -36,16 +36,20 @@ func (t inboundUpdaterInteractor) createReplicaRecordCmd(key, value string) func
 			go t.SendCommandOrPanic(actormodel.Do(t.addRecordToStorageCmd(key, value, record)))
 		}
 
-		state.recordService.InitializeReplicaRecord(record, value, addInitializedRecordToStorage)
+		goutil.PanicUnhandledError(
+			state.recordService.InitializeReplicaRecord(record, value, addInitializedRecordToStorage),
+		)
 	}
 }
 
 func (t inboundUpdaterInteractor) addRecordToStorageCmd(key, value string, record dbstoragecontract.Record) func(state *inboundUpdaterState) {
 	return func(state *inboundUpdaterState) {
+		retryUpdatingAgain := func(error) {
+			go t.SendCommandOrPanic(actormodel.Do(t.updateInboundReplicaCmd(key, value)))
+		}
+
 		goutil.PanicUnhandledError(
-			state.dbStorage.Add(context.Background(), key, record, func(error) {
-				t.SendCommandOrPanic(actormodel.Do(t.updateInboundReplicaCmd(key, value)))
-			}),
+			state.dbStorage.Add(context.Background(), key, record, retryUpdatingAgain),
 		)
 	}
 }

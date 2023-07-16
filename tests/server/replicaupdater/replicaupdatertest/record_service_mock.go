@@ -19,7 +19,7 @@ type RecordServiceMock struct {
 	InitilizeReplicaRecord_execute func(record dbstoragecontract.Record)
 }
 
-func (s *RecordServiceMock) InitializeReplicaRecord(record dbstoragecontract.Record, value string, execute func(record dbstoragecontract.Record)) {
+func (s *RecordServiceMock) InitializeReplicaRecord(record dbstoragecontract.Record, value string, execute func(record dbstoragecontract.Record)) error {
 	defer func() {
 		if s.InitilizeReplicaRecord_wg != nil {
 			s.InitilizeReplicaRecord_wg.Done()
@@ -28,6 +28,7 @@ func (s *RecordServiceMock) InitializeReplicaRecord(record dbstoragecontract.Rec
 	s.InitilizeReplicaRecord_record = record
 	s.InitilizeReplicaRecord_value = value
 	s.InitilizeReplicaRecord_execute = execute
+	return nil
 }
 func (s *RecordServiceMock) InitializeReplicaRecord_WaitUntilCalledOnce(timeout time.Duration, f func()) bool {
 	defer func() {

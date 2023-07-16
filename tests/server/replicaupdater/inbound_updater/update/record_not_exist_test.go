@@ -112,7 +112,7 @@ func Test_should_try_to_update_replica_record_again_if_adding_fails(t *testing.T
 		updater, _ = factory.NewInboundUpdater(ctx)
 
 		doUpdate := func() {
-			_ = updater.Update("aaa", "")
+			_ = updater.Update("kkk", "vvv")
 		}
 		storage.GetRecord_WaitUntilCalledOnce(defaultTimeout, doUpdate)
 
@@ -140,4 +140,6 @@ func Test_should_try_to_update_replica_record_again_if_adding_fails(t *testing.T
 	updater.Join()
 
 	assert.True(t, retryUpdatingRecord)
+	assert.Equal(t, "kkk", storage.GetRecord_key)
+	assert.Equal(t, "vvv", recordService.UpdateReplicaValue_value)
 }
