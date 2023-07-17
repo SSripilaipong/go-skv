@@ -5,7 +5,7 @@ import (
 	"reflect"
 )
 
-func NewTestActor(options ...func(*spawnParams)) TestActorRef {
+func NewTestActor(options ...func(*spawnParams)) *TestActorRef {
 	params := spawnParams{
 		bufferSize: 8,
 	}
@@ -14,18 +14,18 @@ func NewTestActor(options ...func(*spawnParams)) TestActorRef {
 		option(&params)
 	}
 	ch := make(chan packet, params.bufferSize)
-	return TestActorRef{actorRef{ch: ch}}
+	return &TestActorRef{actorRef{ch: ch}}
 }
 
 type TestActorRef struct {
 	actorRef
 }
 
-func (r TestActorRef) FakeTellBlocking(ctx context.Context, receiver ActorRef, message any) error {
+func (r *TestActorRef) FakeTellBlocking(ctx context.Context, receiver ActorRef, message any) error {
 	return tellBlocking(ctx, receiver.channel(), r.channel(), message)
 }
 
-func (r TestActorRef) SeekMessage(ctx context.Context, t any) (any, bool) {
+func (r *TestActorRef) SeekMessage(ctx context.Context, t any) (any, bool) {
 	for {
 		select {
 		case pk := <-r.ch:
