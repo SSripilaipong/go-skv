@@ -46,3 +46,9 @@ func MockWaitUntilCalledNthTimes(wgp **sync.WaitGroup, n int, timeout time.Durat
 
 	return goutil.WaitWithTimeout(*wgp, timeout)
 }
+
+func ContextWithTimeout(timeout time.Duration) context.Context {
+	//goland:noinspection ALL
+	ctx, _ := context.WithTimeout(context.Background(), timeout)
+	return ctx
+}
