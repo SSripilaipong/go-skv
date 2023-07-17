@@ -3,7 +3,6 @@ package replicaupdater
 import (
 	"context"
 	"go-skv/common/actormodel"
-	"go-skv/server/dbstorage/dbstoragecontract"
 	"go-skv/server/replicaupdater/replicaupdatercontract"
 )
 
@@ -44,10 +43,6 @@ func (u *inboundUpdater) Receive(sender actormodel.ActorRef, message any) actorm
 }
 
 func (u *inboundUpdater) inboundUpdate(_ actormodel.ActorRef, msg InboundUpdate) actormodel.Actor {
-	recordUpdater := u.recordUpdaterFactory.New(nil, "", "")
-	_ = u.TellBlocking(context.Background(), u.storage, dbstoragecontract.GetRecord{
-		Key:     msg.Key,
-		ReplyTo: recordUpdater,
-	})
+	_ = u.recordUpdaterFactory.New(u.Ctx(), msg.Key, msg.Value)
 	return u
 }

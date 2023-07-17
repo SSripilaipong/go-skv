@@ -8,21 +8,27 @@ import (
 
 type Actor interface {
 	Receive(sender ActorRef, message any) Actor
-	setProps(ch chan packet, ref ActorRef)
+	setProps(ctx context.Context, ch chan packet, ref ActorRef)
 }
 
 type Embed struct {
+	ctx context.Context
 	ch  chan packet
 	ref ActorRef
 }
 
-func (t *Embed) setProps(ch chan packet, ref ActorRef) {
+func (t *Embed) setProps(ctx context.Context, ch chan packet, ref ActorRef) {
+	t.ctx = ctx
 	t.ch = ch
 	t.ref = ref
 }
 
 func (t *Embed) Ref() ActorRef {
 	return t.ref
+}
+
+func (t *Embed) Ctx() context.Context {
+	return t.ctx
 }
 
 func (t *Embed) TellBlocking(ctx context.Context, receiver ActorRef, message any) error {
@@ -61,7 +67,7 @@ func runActorLoop(ctx context.Context, ch chan packet, wg *sync.WaitGroup, actor
 	for {
 		select {
 		case pk := <-ch:
-			actor.setProps(ch, ref)
+			actor.setProps(ctx, ch, ref)
 			actor = actor.Receive(pk.sender, pk.message)
 		case <-ctx.Done():
 			return
@@ -83,3 +89,9 @@ func tellBlocking(ctx context.Context, recvCh chan packet, sendCh chan packet, m
 		return commoncontract.ContextClosedError{}
 	}
 }
+
+type assertTypeEmbedActor struct{ Embed }
+
+func (assertTypeEmbedActor) Receive(ActorRef, any) Actor { return nil }
+
+var _ Actor = &assertTypeEmbedActor{}
