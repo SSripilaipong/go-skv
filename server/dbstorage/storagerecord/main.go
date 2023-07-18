@@ -15,6 +15,11 @@ type recordFactory struct {
 	chBufferSize int
 }
 
+func (r recordFactory) NewActor(ctx context.Context) chan<- any {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (r recordFactory) New(ctx context.Context) dbstoragecontract.Record {
 	recordCtx, ctxCancel := context.WithCancel(ctx)
 	ch := make(chan command, r.chBufferSize)

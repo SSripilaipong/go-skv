@@ -12,6 +12,7 @@ type Record interface {
 
 type Factory interface {
 	New(ctx context.Context) Record
+	NewActor(ctx context.Context) chan<- any
 }
 
 type RecordData struct {

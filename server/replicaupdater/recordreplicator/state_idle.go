@@ -6,17 +6,24 @@ import (
 	"go-skv/server/dbstorage/dbstoragecontract"
 )
 
-type idleState struct {
+type idle struct {
 	actormodel.Embed
-	storage chan<- any
-	key     string
-	value   string
+	storage       chan<- any
+	recordFactory dbstoragecontract.Factory
+	key           string
+	value         string
 }
 
-func (s *idleState) Receive(message any) actormodel.Actor {
+func (s *idle) Receive(message any) actormodel.Actor {
 	if _, isStartMessage := message.(commonmessage.Start); isStartMessage {
-		s.storage <- dbstoragecontract.GetRecord{Key: s.key, ReplyTo: s.Self()}
-		return &updatingState{value: s.value}
+		s.storage <- dbstoragecontract.GetRecord{
+			Key:     s.key,
+			ReplyTo: s.Self(),
+		}
+		return &updating{
+			recordFactory: s.recordFactory,
+			value:         s.value,
+		}
 	}
 	return s
 }
