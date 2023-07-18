@@ -12,5 +12,6 @@ type RecordChannel struct {
 // record messages -> should move to a separate file
 
 type UpdateReplicaValue struct {
-	Value string
+	Value   string
+	ReplyTo chan<- any
 }

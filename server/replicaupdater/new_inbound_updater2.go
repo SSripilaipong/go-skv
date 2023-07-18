@@ -3,7 +3,7 @@ package replicaupdater
 import (
 	"context"
 	"go-skv/common/actormodel"
-	"go-skv/server/replicaupdater/recordupdater"
+	"go-skv/server/replicaupdater/recordreplicator"
 	"go-skv/server/replicaupdater/replicaupdatercontract"
 )
 
@@ -12,12 +12,12 @@ type InboundUpdate struct {
 	Value string
 }
 
-func NewFactory2(recordUpdaterFactory recordupdater.Factory) replicaupdatercontract.Factory2 {
+func NewFactory2(recordUpdaterFactory recordreplicator.Factory) replicaupdatercontract.Factory2 {
 	return factory2{recordUpdaterFactory: recordUpdaterFactory}
 }
 
 type factory2 struct {
-	recordUpdaterFactory recordupdater.Factory
+	recordUpdaterFactory recordreplicator.Factory
 }
 
 func (f factory2) NewInboundUpdater(ctx context.Context) (chan<- any, error) {
@@ -31,7 +31,7 @@ func (f factory2) NewInboundUpdater(ctx context.Context) (chan<- any, error) {
 
 type inboundUpdater struct {
 	actormodel.Embed
-	recordUpdaterFactory recordupdater.Factory
+	recordUpdaterFactory recordreplicator.Factory
 }
 
 func (u *inboundUpdater) Receive(message any) actormodel.Actor {

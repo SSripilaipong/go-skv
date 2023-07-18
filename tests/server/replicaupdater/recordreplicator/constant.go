@@ -1,4 +1,4 @@
-package recordupdater
+package recordreplicator
 
 import "time"
 

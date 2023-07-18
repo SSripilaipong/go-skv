@@ -1,4 +1,4 @@
-package recordupdater
+package recordreplicator
 
 import (
 	"go-skv/common/actormodel"
@@ -13,7 +13,7 @@ type updatingState struct {
 func (s *updatingState) Receive(message any) actormodel.Actor {
 	switch msg := message.(type) {
 	case dbstoragecontract.RecordChannel:
-		msg.Ch <- dbstoragecontract.UpdateReplicaValue{Value: s.value}
+		msg.Ch <- dbstoragecontract.UpdateReplicaValue{Value: s.value, ReplyTo: s.Self()}
 	}
 	return nil
 }
