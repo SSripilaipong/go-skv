@@ -9,6 +9,6 @@ func sendWithTimeout(actor chan<- any, message any) bool {
 	return goutil.SendWithTimeout(actor, message, defaultTimeout)
 }
 
-func waitForMessageWithTimeout[T any](actor <-chan any, t T) (T, bool) {
-	return tests.WaitForMessageWithTimeout(actor, t, defaultTimeout)
+func waitForMessageWithTimeout[T any](actor <-chan any) (T, bool) {
+	return tests.WaitForMessageWithTimeout[T](actor, defaultTimeout)
 }

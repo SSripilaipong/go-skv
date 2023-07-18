@@ -18,6 +18,7 @@ func (f factory) New(ctx context.Context, key string, value string) chan<- any {
 	updater, _ := actormodel.Spawn(ctx, &idleState{
 		storage: f.storage,
 		key:     key,
+		value:   value,
 	})
 	updater <- commonmessage.Start{}
 	return updater

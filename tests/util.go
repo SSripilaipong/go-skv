@@ -53,7 +53,7 @@ func ContextWithTimeout(timeout time.Duration) context.Context {
 	return ctx
 }
 
-func WaitForMessageWithTimeout[T any](ch <-chan any, t T, timeout time.Duration) (T, bool) {
+func WaitForMessageWithTimeout[T any](ch <-chan any, timeout time.Duration) (T, bool) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
@@ -64,7 +64,18 @@ func WaitForMessageWithTimeout[T any](ch <-chan any, t T, timeout time.Duration)
 				return expectedMessage, true
 			}
 		case <-ctx.Done():
-			return t, false
+			var zero T
+			return zero, false
+		}
+	}
+}
+
+func ClearMessages(ch <-chan any) {
+	for {
+		select {
+		case <-ch:
+		default:
+			return
 		}
 	}
 }
