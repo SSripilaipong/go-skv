@@ -16,10 +16,13 @@ type idle struct {
 
 func (s *idle) Receive(message any) actormodel.Actor {
 	if _, isStartMessage := message.(commonmessage.Start); isStartMessage {
-		s.storage <- dbstoragecontract.GetRecord{
+		if sent := s.SendIfNotDone(s.storage, dbstoragecontract.GetRecord{
 			Key:     s.key,
 			ReplyTo: s.Self(),
+		}); !sent {
+			return nil
 		}
+
 		return &updating{
 			recordFactory: s.recordFactory,
 			value:         s.value,

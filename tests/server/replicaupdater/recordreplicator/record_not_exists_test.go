@@ -17,10 +17,12 @@ func Test_should_create_new_record_if_retrieved_record_channel_is_empty(t *testi
 
 	tests.ContextScope(func(ctx context.Context) {
 		replicator, _ := factory.New(context.WithValue(ctx, "test", "the same ctx"), "", "")
-		tests.ClearMessages(storage)
+		defer close(replicator)
+
+		getRecord, _ := waitForMessageWithTimeout[dbstoragecontract.GetRecord](storage)
 
 		recordFactory.NewActor_WaitUntilCalledOnce(defaultTimeout, func() {
-			sendWithTimeout(replicator, dbstoragecontract.RecordChannel{Ch: nil})
+			sendWithTimeout(getRecord.ReplyTo, dbstoragecontract.RecordChannel{Ch: nil})
 		})
 
 		assert.Equal(t, "the same ctx", recordFactory.NewActor_ctx.Value("test"))

@@ -25,7 +25,14 @@ func (s *updating) Receive(message any) actormodel.Actor {
 
 func (s *updating) receiveResponseFromRepository(msg dbstoragecontract.RecordChannel) actormodel.Actor {
 	if msg.Ch != nil {
-		msg.Ch <- dbstoragecontract.UpdateReplicaValue{Value: s.value, ReplyTo: s.Self()}
+		defer close(msg.Ch)
+
+		if sent := s.SendIfNotDone(msg.Ch, dbstoragecontract.UpdateReplicaValue{
+			Value:   s.value,
+			ReplyTo: s.Self(),
+		}); !sent {
+			return nil
+		}
 		return s
 	}
 

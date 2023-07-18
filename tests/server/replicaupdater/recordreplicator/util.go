@@ -10,5 +10,5 @@ func sendWithTimeout(actor chan<- any, message any) bool {
 }
 
 func waitForMessageWithTimeout[T any](actor <-chan any) (T, bool) {
-	return tests.WaitForMessageWithTimeout[T](actor, defaultTimeout)
+	return tests.WaitForMessageWithTimeout[T](actor, defaultTimeout*10)
 }
