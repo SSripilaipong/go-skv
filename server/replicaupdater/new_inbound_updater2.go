@@ -43,6 +43,6 @@ func (u *inboundUpdater) Receive(message any) actormodel.Actor {
 }
 
 func (u *inboundUpdater) inboundUpdate(msg InboundUpdate) actormodel.Actor {
-	_ = u.recordUpdaterFactory.New(u.Ctx(), msg.Key, msg.Value)
+	_, _ = u.recordUpdaterFactory.New(u.Ctx(), msg.Key, msg.Value)
 	return u
 }

@@ -79,3 +79,17 @@ func ClearMessages(ch <-chan any) {
 		}
 	}
 }
+
+func CallWithTimeout(timeout time.Duration, f func()) bool {
+	done := make(chan struct{})
+	go func() {
+		f()
+		done <- struct{}{}
+	}()
+	select {
+	case <-done:
+		return true
+	case <-time.After(timeout):
+		return false
+	}
+}

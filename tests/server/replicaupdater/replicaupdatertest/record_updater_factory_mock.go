@@ -15,7 +15,7 @@ type RecordUpdaterFactoryMock struct {
 	New_wg     *sync.WaitGroup
 }
 
-func (t *RecordUpdaterFactoryMock) New(ctx context.Context, key string, value string) chan<- any {
+func (t *RecordUpdaterFactoryMock) New(ctx context.Context, key string, value string) (chan<- any, func()) {
 	defer func() {
 		if t.New_wg != nil {
 			t.New_wg.Done()
@@ -25,7 +25,7 @@ func (t *RecordUpdaterFactoryMock) New(ctx context.Context, key string, value st
 	t.New_ctx = ctx
 	t.New_key = key
 	t.New_value = value
-	return t.New_Return
+	return t.New_Return, nil
 }
 
 func (t *RecordUpdaterFactoryMock) New_WaitUntilCalledOnce(timeout time.Duration, f func()) {

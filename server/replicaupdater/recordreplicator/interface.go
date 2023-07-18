@@ -5,5 +5,5 @@ import (
 )
 
 type Factory interface {
-	New(ctx context.Context, key string, value string) chan<- any
+	New(ctx context.Context, key string, value string) (chan<- any, func())
 }
