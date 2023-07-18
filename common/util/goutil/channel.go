@@ -33,7 +33,7 @@ func ReceiveWithTimeoutOrPanic[T any](dataChan chan T, timeout time.Duration) T 
 	return message
 }
 
-func SendWithTimeout[T any](dataChan chan T, data T, timeout time.Duration) bool {
+func SendWithTimeout[T any](dataChan chan<- T, data T, timeout time.Duration) bool {
 	select {
 	case dataChan <- data:
 		return true

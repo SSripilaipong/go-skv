@@ -3,6 +3,7 @@ package replicaupdater
 import (
 	"context"
 	"go-skv/common/actormodel"
+	"go-skv/server/replicaupdater/recordupdater"
 	"go-skv/server/replicaupdater/replicaupdatercontract"
 )
 
@@ -11,38 +12,37 @@ type InboundUpdate struct {
 	Value string
 }
 
-func NewFactory2(storage actormodel.ActorRef, recordUpdaterFactory RecordUpdaterFactory) replicaupdatercontract.Factory2 {
-	return factory2{storage: storage, recordUpdaterFactory: recordUpdaterFactory}
+func NewFactory2(recordUpdaterFactory recordupdater.Factory) replicaupdatercontract.Factory2 {
+	return factory2{recordUpdaterFactory: recordUpdaterFactory}
 }
 
 type factory2 struct {
-	storage              actormodel.ActorRef
-	recordUpdaterFactory RecordUpdaterFactory
+	recordUpdaterFactory recordupdater.Factory
 }
 
-func (f factory2) NewInboundUpdater(ctx context.Context) (actormodel.ActorRef, error) {
-	return actormodel.Spawn(
+func (f factory2) NewInboundUpdater(ctx context.Context) (chan<- any, error) {
+	ch, _ := actormodel.Spawn(
 		ctx,
-		&inboundUpdater{storage: f.storage, recordUpdaterFactory: f.recordUpdaterFactory},
+		&inboundUpdater{recordUpdaterFactory: f.recordUpdaterFactory},
 		actormodel.WithBufferSize(16),
-	), nil
+	)
+	return ch, nil
 }
 
 type inboundUpdater struct {
 	actormodel.Embed
-	storage              actormodel.ActorRef
-	recordUpdaterFactory RecordUpdaterFactory
+	recordUpdaterFactory recordupdater.Factory
 }
 
-func (u *inboundUpdater) Receive(sender actormodel.ActorRef, message any) actormodel.Actor {
+func (u *inboundUpdater) Receive(message any) actormodel.Actor {
 	switch castedMsg := message.(type) {
 	case InboundUpdate:
-		return u.inboundUpdate(sender, castedMsg)
+		return u.inboundUpdate(castedMsg)
 	}
 	return u
 }
 
-func (u *inboundUpdater) inboundUpdate(_ actormodel.ActorRef, msg InboundUpdate) actormodel.Actor {
+func (u *inboundUpdater) inboundUpdate(msg InboundUpdate) actormodel.Actor {
 	_ = u.recordUpdaterFactory.New(u.Ctx(), msg.Key, msg.Value)
 	return u
 }

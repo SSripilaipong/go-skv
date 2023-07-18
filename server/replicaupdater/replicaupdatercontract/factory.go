@@ -2,7 +2,6 @@ package replicaupdatercontract
 
 import (
 	"context"
-	"go-skv/common/actormodel"
 )
 
 type Factory interface {
@@ -15,5 +14,5 @@ type InboundUpdater interface {
 }
 
 type Factory2 interface {
-	NewInboundUpdater(ctx context.Context) (actormodel.ActorRef, error)
+	NewInboundUpdater(ctx context.Context) (chan<- any, error)
 }

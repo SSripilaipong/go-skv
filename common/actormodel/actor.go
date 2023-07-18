@@ -7,44 +7,37 @@ import (
 )
 
 type Actor interface {
-	Receive(sender ActorRef, message any) Actor
-	setProps(ctx context.Context, ch chan packet, ref ActorRef)
+	Receive(message any) Actor
+	setProps(ctx context.Context, ch chan any)
 }
 
 type Embed struct {
 	ctx context.Context
-	ch  chan packet
-	ref ActorRef
+	ch  chan any
 }
 
-func (t *Embed) setProps(ctx context.Context, ch chan packet, ref ActorRef) {
+func (t *Embed) setProps(ctx context.Context, ch chan any) {
 	t.ctx = ctx
 	t.ch = ch
-	t.ref = ref
 }
 
-func (t *Embed) Ref() ActorRef {
-	return t.ref
+func (t *Embed) Self() chan<- any {
+	return t.ch
 }
 
 func (t *Embed) Ctx() context.Context {
 	return t.ctx
 }
 
-func (t *Embed) TellBlocking(ctx context.Context, receiver ActorRef, message any) error {
-	return tellBlocking(ctx, receiver.channel(), t.ch, message)
-}
-
-type packet struct {
-	sender  ActorRef
-	message any
+func (t *Embed) TellBlocking(ctx context.Context, receiver chan<- any, message any) error {
+	return tellBlocking(ctx, receiver, message)
 }
 
 type spawnParams struct {
 	bufferSize int
 }
 
-func Spawn(ctx context.Context, actor Actor, options ...func(*spawnParams)) ActorRef {
+func Spawn(ctx context.Context, actor Actor, options ...func(*spawnParams)) (chan<- any, func()) {
 	params := spawnParams{
 		bufferSize: 0,
 	}
@@ -53,22 +46,23 @@ func Spawn(ctx context.Context, actor Actor, options ...func(*spawnParams)) Acto
 		option(&params)
 	}
 
-	ch := make(chan packet, params.bufferSize)
+	ch := make(chan any, params.bufferSize)
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
-	ref := actorRef{ch: ch, wg: wg}
-	go runActorLoop(ctx, ch, wg, actor, ref)
-	return ref
+	go runActorLoop(ctx, ch, wg, actor)
+	return ch, wg.Wait
 }
 
-func runActorLoop(ctx context.Context, ch chan packet, wg *sync.WaitGroup, actor Actor, ref actorRef) {
+func runActorLoop(ctx context.Context, ch chan any, wg *sync.WaitGroup, actor Actor) {
 	defer func() { wg.Done() }()
 
 	for {
 		select {
-		case pk := <-ch:
-			actor.setProps(ctx, ch, ref)
-			actor = actor.Receive(pk.sender, pk.message)
+		case message := <-ch:
+			actor.setProps(ctx, ch)
+			if actor = actor.Receive(message); actor == nil {
+				return
+			}
 		case <-ctx.Done():
 			return
 		}
@@ -81,9 +75,9 @@ func WithBufferSize(size int) func(*spawnParams) {
 	}
 }
 
-func tellBlocking(ctx context.Context, recvCh chan packet, sendCh chan packet, message any) error {
+func tellBlocking(ctx context.Context, recvCh chan<- any, message any) error {
 	select {
-	case recvCh <- packet{sender: actorRef{ch: sendCh}, message: message}:
+	case recvCh <- message:
 		return nil
 	case <-ctx.Done():
 		return commoncontract.ContextClosedError{}
@@ -92,6 +86,6 @@ func tellBlocking(ctx context.Context, recvCh chan packet, sendCh chan packet, m
 
 type assertTypeEmbedActor struct{ Embed }
 
-func (assertTypeEmbedActor) Receive(ActorRef, any) Actor { return nil }
+func (assertTypeEmbedActor) Receive(any) Actor { return nil }
 
 var _ Actor = &assertTypeEmbedActor{}

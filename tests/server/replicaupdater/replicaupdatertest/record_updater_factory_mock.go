@@ -2,21 +2,20 @@ package replicaupdatertest
 
 import (
 	"context"
-	"go-skv/common/actormodel"
 	"go-skv/tests"
 	"sync"
 	"time"
 )
 
 type RecordUpdaterFactoryMock struct {
-	New_Return actormodel.ActorRef
+	New_Return chan<- any
 	New_ctx    context.Context
 	New_key    string
 	New_value  string
 	New_wg     *sync.WaitGroup
 }
 
-func (t *RecordUpdaterFactoryMock) New(ctx context.Context, key string, value string) actormodel.ActorRef {
+func (t *RecordUpdaterFactoryMock) New(ctx context.Context, key string, value string) chan<- any {
 	defer func() {
 		if t.New_wg != nil {
 			t.New_wg.Done()

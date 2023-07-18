@@ -52,3 +52,19 @@ func ContextWithTimeout(timeout time.Duration) context.Context {
 	ctx, _ := context.WithTimeout(context.Background(), timeout)
 	return ctx
 }
+
+func WaitForMessageWithTimeout[T any](ch <-chan any, t T, timeout time.Duration) (T, bool) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+
+	for {
+		select {
+		case message := <-ch:
+			if expectedMessage, ok := message.(T); ok {
+				return expectedMessage, true
+			}
+		case <-ctx.Done():
+			return t, false
+		}
+	}
+}
