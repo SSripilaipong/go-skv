@@ -64,7 +64,10 @@ func Spawn(ctx context.Context, actor Actor, options ...func(*spawnParams)) (cha
 }
 
 func runActorLoop(ctx context.Context, ch chan any, wg *sync.WaitGroup, actor Actor) {
-	defer func() { wg.Done() }()
+	defer func() {
+		wg.Done()
+		close(ch)
+	}()
 
 	for {
 		select {
