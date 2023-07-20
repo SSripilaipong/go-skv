@@ -36,6 +36,6 @@ func (s *updating) receiveResponseFromRepository(msg dbstoragecontract.RecordCha
 		return s
 	}
 
-	s.recordFactory.NewActor(s.Ctx())
-	return &creating{}
+	s.ScheduleReceive(commonmessage.Start{})
+	return &creating{recordFactory: s.recordFactory}
 }

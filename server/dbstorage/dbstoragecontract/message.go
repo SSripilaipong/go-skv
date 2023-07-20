@@ -15,3 +15,14 @@ type UpdateReplicaValue struct {
 	Value   string
 	ReplyTo chan<- any
 }
+
+type RecordMode uint8
+
+const (
+	OwnerMode RecordMode = iota
+	ReplicaMode
+)
+
+type SetRecordMode struct {
+	Mode RecordMode
+}

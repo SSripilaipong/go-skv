@@ -38,6 +38,15 @@ func (t *Embed) SendIfNotDone(ch chan<- any, msg any) bool {
 	}
 }
 
+func (t *Embed) ScheduleReceive(msg any) {
+	go func() {
+		select {
+		case t.ch <- msg:
+		case <-t.Ctx().Done():
+		}
+	}()
+}
+
 func (t *Embed) TellBlocking(ctx context.Context, receiver chan<- any, message any) error {
 	return tellBlocking(ctx, receiver, message)
 }

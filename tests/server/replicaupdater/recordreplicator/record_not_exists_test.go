@@ -28,3 +28,27 @@ func Test_should_create_new_record_if_retrieved_record_channel_is_empty(t *testi
 		assert.Equal(t, "the same ctx", recordFactory.NewActor_ctx.Value("test"))
 	})
 }
+
+func Test_should_set_mode_to_replica_on_the_created_record(t *testing.T) {
+	storage := make(chan any)
+	createdRecord := make(chan any)
+	recordFactory := &storagerepositorytest.RecordFactoryMock{}
+	factory := recordreplicator.NewFactory(storage, recordFactory)
+
+	tests.ContextScope(func(ctx context.Context) {
+		replicator, _ := factory.New(ctx, "", "")
+		defer close(replicator)
+
+		getRecord, _ := waitForMessageWithTimeout[dbstoragecontract.GetRecord](storage)
+
+		recordFactory.NewActor_Return = createdRecord
+		recordFactory.NewActor_WaitUntilCalledOnce(defaultTimeout, func() {
+			sendWithTimeout(getRecord.ReplyTo, dbstoragecontract.RecordChannel{Ch: nil})
+		})
+
+		setRecordMode, ok := waitForMessageWithTimeout[dbstoragecontract.SetRecordMode](createdRecord)
+
+		assert.True(t, ok)
+		assert.Equal(t, dbstoragecontract.SetRecordMode{Mode: dbstoragecontract.ReplicaMode}, setRecordMode)
+	})
+}

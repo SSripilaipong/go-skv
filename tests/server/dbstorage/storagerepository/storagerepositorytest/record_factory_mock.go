@@ -15,8 +15,8 @@ type RecordFactoryMock struct {
 	New_ctx         context.Context
 	New_wg          *sync.WaitGroup
 	NewActor_wg     *sync.WaitGroup
-	NewActor_Return chan<- any
 	NewActor_ctx    context.Context
+	NewActor_Return chan<- any
 }
 
 func (t *RecordFactoryMock) NewActor(ctx context.Context) chan<- any {
