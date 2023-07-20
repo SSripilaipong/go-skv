@@ -3,6 +3,7 @@ package recordreplicator
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
+	"go-skv/common/commonmessage"
 	"go-skv/server/dbstorage/dbstoragecontract"
 	"go-skv/server/replicaupdater/recordreplicator"
 	"go-skv/tests"
@@ -49,7 +50,8 @@ func Test_should_set_mode_to_replica_on_the_created_record(t *testing.T) {
 		setRecordMode, ok := waitForMessageWithTimeout[dbstoragecontract.SetRecordMode](createdRecord)
 
 		assert.True(t, ok)
-		assert.Equal(t, dbstoragecontract.SetRecordMode{Mode: dbstoragecontract.ReplicaMode}, setRecordMode)
+		assert.Equal(t, dbstoragecontract.ReplicaMode, setRecordMode.Mode)
+		assert.Equal(t, "set record mode", setRecordMode.Memo)
 	})
 }
 
@@ -70,11 +72,40 @@ func Test_should_save_the_created_record_to_storage(t *testing.T) {
 			sendWithTimeout(getRecord.ReplyTo, dbstoragecontract.RecordChannel{Ch: nil})
 		})
 
-		_, ok := waitForMessageWithTimeout[dbstoragecontract.SetRecordMode](createdRecord)
-		assert.True(t, ok)
+		setRecordMode, _ := waitForMessageWithTimeout[dbstoragecontract.SetRecordMode](createdRecord)
+
+		sendWithTimeout(setRecordMode.ReplyTo, commonmessage.Ok{Memo: "set record mode"})
 
 		saveRecord, ok := waitForMessageWithTimeout[dbstoragecontract.SaveRecord](storage)
+
 		assert.True(t, ok)
 		assert.Equal(t, dbstoragecontract.SaveRecord{Key: "fff", Ch: createdRecord}, saveRecord)
+	})
+}
+
+func Test_should_not_save_the_created_record_to_storage_before_ok_from_set_record_mode(t *testing.T) {
+	storage := make(chan any)
+	createdRecord := make(chan any)
+	recordFactory := &storagerepositorytest.RecordFactoryMock{}
+	factory := recordreplicator.NewFactory(storage, recordFactory)
+
+	tests.ContextScope(func(ctx context.Context) {
+		replicator, _ := factory.New(ctx, "", "")
+		defer close(replicator)
+
+		getRecord, _ := waitForMessageWithTimeout[dbstoragecontract.GetRecord](storage)
+
+		recordFactory.NewActor_Return = createdRecord
+		recordFactory.NewActor_WaitUntilCalledOnce(defaultTimeout, func() {
+			sendWithTimeout(getRecord.ReplyTo, dbstoragecontract.RecordChannel{Ch: nil})
+		})
+
+		setRecordMode, _ := waitForMessageWithTimeout[dbstoragecontract.SetRecordMode](createdRecord)
+
+		sendWithTimeout(setRecordMode.ReplyTo, commonmessage.Ok{Memo: "from something else"})
+
+		_, ok := waitForMessageWithTimeout[dbstoragecontract.SaveRecord](storage)
+
+		assert.False(t, ok)
 	})
 }

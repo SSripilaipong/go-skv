@@ -29,5 +29,7 @@ const (
 )
 
 type SetRecordMode struct {
-	Mode RecordMode
+	Mode    RecordMode
+	Memo    string
+	ReplyTo chan<- any
 }

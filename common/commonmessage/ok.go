@@ -1,3 +1,5 @@
 package commonmessage
 
-type Ok struct{}
+type Ok struct {
+	Memo string
+}
