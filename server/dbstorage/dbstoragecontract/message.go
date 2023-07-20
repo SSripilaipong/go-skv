@@ -9,6 +9,11 @@ type RecordChannel struct {
 	Ch chan<- any
 }
 
+type SaveRecord struct {
+	Key string
+	Ch  chan<- any
+}
+
 // record messages -> should move to a separate file
 
 type UpdateReplicaValue struct {

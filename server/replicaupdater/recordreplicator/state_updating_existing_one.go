@@ -9,6 +9,8 @@ import (
 type updating struct {
 	actormodel.Embed
 	recordFactory dbstoragecontract.Factory
+	storage       chan<- any
+	key           string
 	value         string
 }
 
@@ -37,5 +39,9 @@ func (s *updating) receiveResponseFromRepository(msg dbstoragecontract.RecordCha
 	}
 
 	s.ScheduleReceive(commonmessage.Start{})
-	return &creating{recordFactory: s.recordFactory}
+	return &creating{
+		recordFactory: s.recordFactory,
+		storage:       s.storage,
+		key:           s.key,
+	}
 }

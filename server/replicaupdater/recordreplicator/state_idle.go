@@ -25,6 +25,8 @@ func (s *idle) Receive(message any) actormodel.Actor {
 
 		return &updating{
 			recordFactory: s.recordFactory,
+			storage:       s.storage,
+			key:           s.key,
 			value:         s.value,
 		}
 	}

@@ -52,3 +52,29 @@ func Test_should_set_mode_to_replica_on_the_created_record(t *testing.T) {
 		assert.Equal(t, dbstoragecontract.SetRecordMode{Mode: dbstoragecontract.ReplicaMode}, setRecordMode)
 	})
 }
+
+func Test_should_save_the_created_record_to_storage(t *testing.T) {
+	storage := make(chan any)
+	createdRecord := make(chan any)
+	recordFactory := &storagerepositorytest.RecordFactoryMock{}
+	factory := recordreplicator.NewFactory(storage, recordFactory)
+
+	tests.ContextScope(func(ctx context.Context) {
+		replicator, _ := factory.New(ctx, "fff", "")
+		defer close(replicator)
+
+		getRecord, _ := waitForMessageWithTimeout[dbstoragecontract.GetRecord](storage)
+
+		recordFactory.NewActor_Return = createdRecord
+		recordFactory.NewActor_WaitUntilCalledOnce(defaultTimeout, func() {
+			sendWithTimeout(getRecord.ReplyTo, dbstoragecontract.RecordChannel{Ch: nil})
+		})
+
+		_, ok := waitForMessageWithTimeout[dbstoragecontract.SetRecordMode](createdRecord)
+		assert.True(t, ok)
+
+		saveRecord, ok := waitForMessageWithTimeout[dbstoragecontract.SaveRecord](storage)
+		assert.True(t, ok)
+		assert.Equal(t, dbstoragecontract.SaveRecord{Key: "fff", Ch: createdRecord}, saveRecord)
+	})
+}
