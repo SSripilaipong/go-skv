@@ -2,6 +2,7 @@ package storagerecord
 
 import (
 	"context"
+	"go-skv/common/actormodel"
 	"go-skv/server/dbstorage/dbstoragecontract"
 )
 
@@ -16,8 +17,8 @@ type recordFactory struct {
 }
 
 func (r recordFactory) NewActor(ctx context.Context) chan<- any {
-	//TODO implement me
-	panic("implement me")
+	ch, _ := actormodel.Spawn(ctx, &RecordAdapter{Record: r.New(ctx)})
+	return ch
 }
 
 func (r recordFactory) New(ctx context.Context) dbstoragecontract.Record {

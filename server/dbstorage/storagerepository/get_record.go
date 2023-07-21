@@ -23,6 +23,7 @@ func (c getRecordCommand) execute(s *state) {
 	record, exists := s.records[c.Key]
 	if !exists {
 		c.Failure(dbstoragecontract.RecordNotFoundError{})
+		return
 	}
 	c.Execute(record)
 }

@@ -5,6 +5,7 @@ import (
 	"go-skv/common/actormodel"
 	"go-skv/common/commonmessage"
 	"go-skv/server/dbstorage/dbstoragecontract"
+	"go-skv/server/dbstorage/storagerecord"
 	"go-skv/server/replicaupdater/replicaupdatercontract"
 )
 
@@ -44,12 +45,6 @@ func newStorageAdapter(dbStorage dbstoragecontract.Storage) chan<- any {
 	return ch
 }
 
-type getRawRecord struct {
-	ReplyTo chan<- any
-}
-
-type terminate struct{}
-
 type storageAdapter struct {
 	actormodel.Embed
 	dbStorage dbstoragecontract.Storage
@@ -61,8 +56,8 @@ func (s *storageAdapter) Receive(message any) actormodel.Actor {
 		go func() {
 			_ = s.dbStorage.GetRecord(context.Background(), msg.Key, func(record dbstoragecontract.Record) {
 				defer close(msg.ReplyTo)
-				recordCh, _ := actormodel.Spawn(context.Background(), &recordAdapter{record: record})
-				msg.ReplyTo <- dbstoragecontract.RecordChannel{Ch: actormodel.ExtendedSenderChannel(recordCh)}
+				recordCh, _ := actormodel.Spawn(context.Background(), &storagerecord.RecordAdapter{Record: record})
+				msg.ReplyTo <- dbstoragecontract.RecordChannel{Ch: recordCh}
 			}, func(error) {
 				defer close(msg.ReplyTo)
 				msg.ReplyTo <- dbstoragecontract.RecordChannel{}
@@ -74,45 +69,15 @@ func (s *storageAdapter) Receive(message any) actormodel.Actor {
 			defer close(msg.ReplyTo)
 
 			ch := make(chan any)
-			msg.Ch <- getRawRecord{ReplyTo: ch}
+			msg.Ch <- storagerecord.GetRawRecordFromAdapter{ReplyTo: ch}
 
 			record := (<-ch).(dbstoragecontract.Record)
-			msg.Ch <- terminate{}
+			msg.Ch <- storagerecord.TerminateAdapter{}
 
 			_ = s.dbStorage.Save(context.Background(), msg.Key, record, func(error) {}) // assume success
 
 			msg.ReplyTo <- commonmessage.Ok{Memo: msg.Memo}
 		}()
-	}
-	return s
-}
-
-type recordAdapter struct {
-	actormodel.Embed
-	record dbstoragecontract.Record
-}
-
-func (s *recordAdapter) Receive(message any) actormodel.Actor {
-	switch msg := message.(type) {
-	case dbstoragecontract.UpdateReplicaValue:
-		go func() {
-			_ = s.record.SetValue(context.Background(), msg.Value, func(dbstoragecontract.RecordData) {
-				defer close(msg.ReplyTo)
-				msg.ReplyTo <- commonmessage.Ok{Memo: msg.Memo}
-			})
-		}()
-	case dbstoragecontract.SetRecordMode:
-		go func() {
-			defer close(msg.ReplyTo)
-			msg.ReplyTo <- commonmessage.Ok{Memo: msg.Memo}
-		}()
-	case getRawRecord:
-		go func() {
-			defer close(msg.ReplyTo)
-			msg.ReplyTo <- s.record
-		}()
-	case terminate:
-		return nil
 	}
 	return s
 }

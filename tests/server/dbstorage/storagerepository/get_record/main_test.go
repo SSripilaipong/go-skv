@@ -50,3 +50,22 @@ func Test_should_call_failure_when_record_not_exists(t *testing.T) {
 	goutil.PanicUnhandledError(storage.Join())
 	assert.Equal(t, dbstoragecontract.RecordNotFoundError{}, failureErr)
 }
+
+func Test_should_not_call_execute_when_record_not_exists(t *testing.T) {
+	storage := storagerepository.New(0, &storagerepositorytest.RecordFactoryMock{})
+
+	var executeIsCalled bool
+	tests.ContextScope(func(ctx context.Context) {
+		ctx, _ = context.WithTimeout(ctx, defaultTimeout)
+		goutil.PanicUnhandledError(storage.Start(ctx))
+
+		goutil.PanicUnhandledError(storage.GetRecord(context.Background(), "xxx", func(dbstoragecontract.Record) {
+			executeIsCalled = true
+		}, func(err error) {
+		}))
+
+	})
+
+	goutil.PanicUnhandledError(storage.Join())
+	assert.False(t, executeIsCalled)
+}

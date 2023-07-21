@@ -2,6 +2,7 @@ package actormodel
 
 import (
 	"context"
+	"fmt"
 	"go-skv/common/commoncontract"
 	"sync"
 )
@@ -110,6 +111,7 @@ func ExtendedSenderChannel(originalCh chan<- any) chan<- any {
 	userChan := make(chan any)
 	go func() {
 		defer func() {
+			fmt.Println("Extended Channel Exits")
 			recover()            // in case the main channel is closed
 			for range userChan { // ignore all remaining messages
 			}
