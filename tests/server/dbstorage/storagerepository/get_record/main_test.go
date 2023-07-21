@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func Test_should_call_success_with_existing_record(t *testing.T) {
+func Test_should_call_execute_with_existing_record(t *testing.T) {
 	storage := storagerepository.New(0, &storagerepositorytest.RecordFactoryMock{})
 
 	var existingRecord, retrievedRecord dbstoragecontract.Record
@@ -31,4 +31,22 @@ func Test_should_call_success_with_existing_record(t *testing.T) {
 
 	goutil.PanicUnhandledError(storage.Join())
 	assert.Equal(t, existingRecord, retrievedRecord)
+}
+
+func Test_should_call_failure_when_record_not_exists(t *testing.T) {
+	storage := storagerepository.New(0, &storagerepositorytest.RecordFactoryMock{})
+
+	var failureErr error
+	tests.ContextScope(func(ctx context.Context) {
+		ctx, _ = context.WithTimeout(ctx, defaultTimeout)
+		goutil.PanicUnhandledError(storage.Start(ctx))
+
+		goutil.PanicUnhandledError(storage.GetRecord(context.Background(), "xxx", func(dbstoragecontract.Record) {}, func(err error) {
+			failureErr = err
+		}))
+
+	})
+
+	goutil.PanicUnhandledError(storage.Join())
+	assert.Equal(t, dbstoragecontract.RecordNotFoundError{}, failureErr)
 }
