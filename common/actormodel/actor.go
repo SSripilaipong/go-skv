@@ -22,7 +22,7 @@ func (t *Embed) setProps(ctx context.Context, ch chan any) {
 }
 
 func (t *Embed) Self() chan<- any {
-	return closableUserChannel(t.ch)
+	return ExtendedSenderChannel(t.ch)
 }
 
 func (t *Embed) Ctx() context.Context {
@@ -69,7 +69,7 @@ func Spawn(ctx context.Context, actor Actor, options ...func(*spawnParams)) (cha
 	wg.Add(1)
 	go runActorLoop(ctx, ch, wg, actor)
 
-	return closableUserChannel(ch), wg.Wait
+	return ExtendedSenderChannel(ch), wg.Wait
 }
 
 func runActorLoop(ctx context.Context, ch chan any, wg *sync.WaitGroup, actor Actor) {
@@ -106,7 +106,7 @@ func tellBlocking(ctx context.Context, recvCh chan<- any, message any) error {
 	}
 }
 
-func closableUserChannel(originalCh chan<- any) chan<- any {
+func ExtendedSenderChannel(originalCh chan<- any) chan<- any {
 	userChan := make(chan any)
 	go func() {
 		defer func() {

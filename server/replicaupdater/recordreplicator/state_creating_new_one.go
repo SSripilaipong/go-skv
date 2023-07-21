@@ -49,9 +49,10 @@ func (s *creating_settingRecordMode) Receive(message any) actormodel.Actor {
 	case commonmessage.Ok:
 		if msg.Memo == setRecordModeMemo {
 			if sent := s.SendIfNotDone(s.storage, dbstoragecontract.SaveRecord{
-				Key:  s.key,
-				Ch:   s.createdRecord,
-				Memo: saveRecordMemo,
+				Key:     s.key,
+				Ch:      s.createdRecord,
+				ReplyTo: s.Self(),
+				Memo:    saveRecordMemo,
 			}); !sent {
 				return nil
 			}

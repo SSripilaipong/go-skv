@@ -13,6 +13,6 @@ type InboundUpdater interface {
 	Join()
 }
 
-type Factory2 interface {
+type ActorFactory interface {
 	NewInboundUpdater(ctx context.Context) (chan<- any, error)
 }

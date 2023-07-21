@@ -12,7 +12,7 @@ type InboundUpdate struct {
 	Value string
 }
 
-func NewFactory2(recordUpdaterFactory recordreplicator.Factory) replicaupdatercontract.Factory2 {
+func NewActorFactory(recordUpdaterFactory recordreplicator.Factory) replicaupdatercontract.ActorFactory {
 	return factory2{recordUpdaterFactory: recordUpdaterFactory}
 }
 

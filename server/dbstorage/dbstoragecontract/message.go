@@ -10,9 +10,10 @@ type RecordChannel struct {
 }
 
 type SaveRecord struct {
-	Key  string
-	Ch   chan<- any
-	Memo string
+	Key     string
+	Ch      chan<- any
+	ReplyTo chan<- any
+	Memo    string
 }
 
 // record messages -> should move to a separate file

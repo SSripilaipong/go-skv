@@ -133,9 +133,9 @@ func Test_should_retry_updating_after_record_is_saved(t *testing.T) {
 
 		sendWithTimeout(setRecordMode.ReplyTo, commonmessage.Ok{Memo: "set record mode"})
 
-		waitForMessageWithTimeout[dbstoragecontract.SaveRecord](storage)
+		saveRecord, _ := waitForMessageWithTimeout[dbstoragecontract.SaveRecord](storage)
 
-		sendWithTimeout(setRecordMode.ReplyTo, commonmessage.Ok{Memo: "save record"})
+		sendWithTimeout(saveRecord.ReplyTo, commonmessage.Ok{Memo: "save record"})
 
 		retryUpdating, ok := waitForMessageWithTimeout[dbstoragecontract.UpdateReplicaValue](createdRecord)
 		assert.True(t, ok)

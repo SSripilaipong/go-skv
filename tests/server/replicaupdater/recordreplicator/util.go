@@ -6,6 +6,7 @@ import (
 )
 
 func sendWithTimeout(actor chan<- any, message any) bool {
+	defer close(actor)
 	return goutil.SendWithTimeout(actor, message, defaultTimeout)
 }
 

@@ -11,7 +11,7 @@ import (
 
 func Test_should_create_new_record_updater(t *testing.T) {
 	recordUpdaterFactory := &replicaupdatertest.RecordUpdaterFactoryMock{New_Return: make(chan any)}
-	factory := replicaupdater.NewFactory2(recordUpdaterFactory)
+	factory := replicaupdater.NewActorFactory(recordUpdaterFactory)
 
 	tests.ContextScope(func(ctx context.Context) {
 		updater, _ := factory.NewInboundUpdater(context.WithValue(ctx, "test", "same context"))
