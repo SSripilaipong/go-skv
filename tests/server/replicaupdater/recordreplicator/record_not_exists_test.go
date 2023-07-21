@@ -79,7 +79,9 @@ func Test_should_save_the_created_record_to_storage(t *testing.T) {
 		saveRecord, ok := waitForMessageWithTimeout[dbstoragecontract.SaveRecord](storage)
 
 		assert.True(t, ok)
-		assert.Equal(t, dbstoragecontract.SaveRecord{Key: "fff", Ch: createdRecord}, saveRecord)
+		assert.Equal(t, "fff", saveRecord.Key)
+		assert.Equal(t, chan<- any(createdRecord), saveRecord.Ch)
+		assert.Equal(t, "save record", saveRecord.Memo)
 	})
 }
 
@@ -107,5 +109,37 @@ func Test_should_not_save_the_created_record_to_storage_before_ok_from_set_recor
 		_, ok := waitForMessageWithTimeout[dbstoragecontract.SaveRecord](storage)
 
 		assert.False(t, ok)
+	})
+}
+
+func Test_should_retry_updating_after_record_is_saved(t *testing.T) {
+	storage := make(chan any)
+	createdRecord := make(chan any)
+	recordFactory := &storagerepositorytest.RecordFactoryMock{}
+	factory := recordreplicator.NewFactory(storage, recordFactory)
+
+	tests.ContextScope(func(ctx context.Context) {
+		replicator, _ := factory.New(ctx, "fff", "ggg")
+		defer close(replicator)
+
+		getRecord, _ := waitForMessageWithTimeout[dbstoragecontract.GetRecord](storage)
+
+		recordFactory.NewActor_Return = createdRecord
+		recordFactory.NewActor_WaitUntilCalledOnce(defaultTimeout, func() {
+			sendWithTimeout(getRecord.ReplyTo, dbstoragecontract.RecordChannel{Ch: nil})
+		})
+
+		setRecordMode, _ := waitForMessageWithTimeout[dbstoragecontract.SetRecordMode](createdRecord)
+
+		sendWithTimeout(setRecordMode.ReplyTo, commonmessage.Ok{Memo: "set record mode"})
+
+		waitForMessageWithTimeout[dbstoragecontract.SaveRecord](storage)
+
+		sendWithTimeout(setRecordMode.ReplyTo, commonmessage.Ok{Memo: "save record"})
+
+		retryUpdating, ok := waitForMessageWithTimeout[dbstoragecontract.UpdateReplicaValue](createdRecord)
+		assert.True(t, ok)
+		assert.Equal(t, "ggg", retryUpdating.Value)
+		assert.Equal(t, "update replica", retryUpdating.Memo)
 	})
 }

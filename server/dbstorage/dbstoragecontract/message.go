@@ -10,8 +10,9 @@ type RecordChannel struct {
 }
 
 type SaveRecord struct {
-	Key string
-	Ch  chan<- any
+	Key  string
+	Ch   chan<- any
+	Memo string
 }
 
 // record messages -> should move to a separate file
@@ -19,6 +20,7 @@ type SaveRecord struct {
 type UpdateReplicaValue struct {
 	Value   string
 	ReplyTo chan<- any
+	Memo    string
 }
 
 type RecordMode uint8

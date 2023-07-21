@@ -32,6 +32,7 @@ func (s *updating) receiveResponseFromRepository(msg dbstoragecontract.RecordCha
 		if sent := s.SendIfNotDone(msg.Ch, dbstoragecontract.UpdateReplicaValue{
 			Value:   s.value,
 			ReplyTo: s.Self(),
+			Memo:    updateReplicaMemo,
 		}); !sent {
 			return nil
 		}
@@ -43,5 +44,6 @@ func (s *updating) receiveResponseFromRepository(msg dbstoragecontract.RecordCha
 		recordFactory: s.recordFactory,
 		storage:       s.storage,
 		key:           s.key,
+		value:         s.value,
 	}
 }

@@ -40,6 +40,7 @@ func Test_should_update_replica_value_on_the_retrieved(t *testing.T) {
 		msg, ok := waitForMessageWithTimeout[dbstoragecontract.UpdateReplicaValue](recordChan)
 		assert.True(t, ok)
 		assert.Equal(t, "vvv", msg.Value)
+		assert.Equal(t, "update replica", msg.Memo)
 	})
 }
 
@@ -58,7 +59,7 @@ func Test_should_stop_after_update_replica_value_message_is_responded_with_ok(t 
 
 		updateReplicaValue, _ := waitForMessageWithTimeout[dbstoragecontract.UpdateReplicaValue](recordChan)
 
-		sendWithTimeout(updateReplicaValue.ReplyTo, commonmessage.Ok{})
+		sendWithTimeout(updateReplicaValue.ReplyTo, commonmessage.Ok{Memo: "update replica"})
 
 		stopped := tests.CallWithTimeout(defaultTimeout, join)
 		assert.True(t, stopped)
