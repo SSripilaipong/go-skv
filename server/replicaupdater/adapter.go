@@ -65,14 +65,12 @@ func (s *storageAdapter) Receive(message any) actormodel.Actor {
 		}()
 	case dbstoragecontract.SaveRecord:
 		go func() {
-			defer close(msg.Ch)
 			defer close(msg.ReplyTo)
 
 			ch := make(chan any)
 			msg.Ch <- storagerecord.GetRawRecordFromAdapter{ReplyTo: ch}
 
 			record := (<-ch).(dbstoragecontract.Record)
-			msg.Ch <- storagerecord.TerminateAdapter{}
 
 			_ = s.dbStorage.Save(context.Background(), msg.Key, record, func(error) {}) // assume success
 

@@ -20,3 +20,6 @@ server2:
 
 client1:
 	go run client.go connect localhost:5555
+
+client2:
+	go run client.go connect localhost:6555
