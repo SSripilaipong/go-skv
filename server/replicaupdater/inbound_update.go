@@ -49,7 +49,7 @@ func (t inboundUpdaterInteractor) addRecordToStorageCmd(key, value string, recor
 		}
 
 		goutil.PanicUnhandledError(
-			state.dbStorage.Add(context.Background(), key, record, retryUpdatingAgain),
+			state.dbStorage.Save(context.Background(), key, record, retryUpdatingAgain),
 		)
 	}
 }

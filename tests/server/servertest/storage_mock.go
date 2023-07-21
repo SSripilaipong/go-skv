@@ -65,7 +65,7 @@ func (s *DbStorageMock) GetOrCreateRecord(ctx context.Context, key string, execu
 	return nil
 }
 
-func (s *DbStorageMock) Add(ctx context.Context, key string, record dbstoragecontract.Record, failure func(err error)) error {
+func (s *DbStorageMock) Save(ctx context.Context, key string, record dbstoragecontract.Record, failure func(err error)) error {
 	defer func() {
 		if s.Add_wg != nil {
 			s.Add_wg.Done()

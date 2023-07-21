@@ -79,7 +79,7 @@ func (s *storageAdapter) Receive(message any) actormodel.Actor {
 			record := (<-ch).(dbstoragecontract.Record)
 			msg.Ch <- terminate{}
 
-			_ = s.dbStorage.Add(context.Background(), msg.Key, record, func(error) {}) // assume success
+			_ = s.dbStorage.Save(context.Background(), msg.Key, record, func(error) {}) // assume success
 
 			msg.ReplyTo <- commonmessage.Ok{Memo: msg.Memo}
 		}()
