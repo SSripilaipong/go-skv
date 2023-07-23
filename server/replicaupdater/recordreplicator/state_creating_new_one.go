@@ -58,6 +58,7 @@ func (s *creating_settingRecordMode) Receive(message any) actormodel.Actor {
 			}
 			return &creating_savingRecord{
 				createdRecord: s.createdRecord,
+				key:           s.key,
 				value:         s.value,
 			}
 		}
@@ -67,6 +68,7 @@ func (s *creating_settingRecordMode) Receive(message any) actormodel.Actor {
 
 type creating_savingRecord struct {
 	actormodel.Embed
+	key           string
 	value         string
 	createdRecord chan<- any
 }
@@ -75,7 +77,7 @@ func (s *creating_savingRecord) Receive(message any) actormodel.Actor {
 	switch message.(type) {
 	case commonmessage.Ok:
 		s.ScheduleReceive(dbstoragecontract.RecordChannel{Ch: s.createdRecord})
-		return &updating{value: s.value}
+		return &updating{key: s.key, value: s.value}
 	}
 	return s
 }

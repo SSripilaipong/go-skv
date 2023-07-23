@@ -1,13 +1,11 @@
 package clientsidepeer
 
 import (
-	"fmt"
 	"go-skv/common/util/goutil"
 	"go-skv/server/replicaupdater/replicaupdatercontract"
 )
 
 func (t interactor) UpdateReplicaFromPeer(key string, value string) error {
-	logUpdateReplicaFromPeer(key, value)
 	return t.sendCommand(updateReplicaFromPeerCommand{
 		key:                   key,
 		value:                 value,
@@ -31,8 +29,4 @@ func (c updateReplicaFromPeerCommand) execute(s *state) {
 	}
 
 	goutil.PanicUnhandledError(updater.Update(c.key, c.value))
-}
-
-func logUpdateReplicaFromPeer(key string, value string) {
-	fmt.Printf("log: client receive replica (%#v, %#v)\n", key, value)
 }

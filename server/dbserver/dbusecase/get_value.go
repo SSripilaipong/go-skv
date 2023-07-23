@@ -2,6 +2,7 @@ package dbusecase
 
 import (
 	"context"
+	"fmt"
 	"go-skv/common/util/goutil"
 	"go-skv/server/dbstorage/dbstoragecontract"
 )
@@ -25,6 +26,7 @@ func (u usecase) GetValue(ctx context.Context, request GetValueRequest) (GetValu
 
 	select {
 	case result := <-resultCh:
+		fmt.Printf("DbServer: GetValue(%#v) -> %#v\n", request.Key, result.Value) // TODO: remove demo log
 		return GetValueResponse{Value: result.Value}, nil
 	case <-ctx.Done():
 		return GetValueResponse{}, ContextCancelledError{}

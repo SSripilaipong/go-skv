@@ -1,6 +1,7 @@
 package recordreplicator
 
 import (
+	"fmt"
 	"go-skv/common/actormodel"
 	"go-skv/common/commonmessage"
 	"go-skv/server/dbstorage/dbstoragecontract"
@@ -19,6 +20,7 @@ func (s *updating) Receive(message any) actormodel.Actor {
 	case dbstoragecontract.RecordChannel:
 		return s.receiveResponseFromRepository(msg)
 	case commonmessage.Ok:
+		fmt.Printf("ReplicaUpdater: UpdateReplica(%#v, %#v)\n", s.key, s.value) // TODO: remove demo log
 		return nil
 	default:
 		return s
