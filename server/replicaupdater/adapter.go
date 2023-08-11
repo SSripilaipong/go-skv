@@ -6,35 +6,7 @@ import (
 	"go-skv/common/commonmessage"
 	"go-skv/server/dbstorage/dbstoragecontract"
 	"go-skv/server/dbstorage/storagerecord"
-	"go-skv/server/replicaupdater/replicaupdatercontract"
 )
-
-func NewFactoryAdapter(factory replicaupdatercontract.ActorFactory) replicaupdatercontract.Factory {
-	return factoryAdapter{factory: factory}
-}
-
-type factoryAdapter struct {
-	factory replicaupdatercontract.ActorFactory
-}
-
-func (a factoryAdapter) NewInboundUpdater(ctx context.Context) (replicaupdatercontract.InboundUpdater, error) {
-	ch, err := a.factory.NewInboundUpdater(ctx)
-	return adapter{ch: ch}, err
-}
-
-type adapter struct {
-	ch chan<- any
-}
-
-func (a adapter) Update(key string, value string) error {
-	go func() {
-		a.ch <- InboundUpdate{
-			Key:   key,
-			Value: value,
-		}
-	}()
-	return nil
-}
 
 func newStorageAdapter(dbStorage dbstoragecontract.Storage) chan<- any {
 	ch, _ := actormodel.Spawn(context.Background(), &storageAdapter{dbStorage: dbStorage})

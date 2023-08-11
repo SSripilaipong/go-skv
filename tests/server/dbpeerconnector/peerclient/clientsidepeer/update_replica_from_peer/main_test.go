@@ -5,6 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go-skv/common/util/goutil"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
+	"go-skv/server/replicaupdater/replicaupdatercontract"
 	"go-skv/tests"
 	"go-skv/tests/server/dbpeerconnector/peerclient/clientsidepeer/clientsidepeertest"
 	"testing"
@@ -12,9 +13,7 @@ import (
 )
 
 func Test_should_create_inbound_replica_updater_if_not_exists(t *testing.T) {
-	replicaUpdaterFactory := &clientsidepeertest.ReplicaUpdaterFactoryMock{
-		NewInboundUpdater_Return: &clientsidepeertest.ReplicaInboundUpdaterMock{},
-	}
+	replicaUpdaterFactory := &clientsidepeertest.ReplicaUpdaterFactory2Mock{}
 	factory := clientsidepeertest.NewFactory(
 		clientsidepeertest.WithReplicaUpdaterFactory(replicaUpdaterFactory),
 	)
@@ -33,9 +32,7 @@ func Test_should_create_inbound_replica_updater_if_not_exists(t *testing.T) {
 }
 
 func Test_should_not_create_inbound_replica_updater_if_already_exists(t *testing.T) {
-	replicaUpdaterFactory := &clientsidepeertest.ReplicaUpdaterFactoryMock{
-		NewInboundUpdater_Return: &clientsidepeertest.ReplicaInboundUpdaterMock{},
-	}
+	replicaUpdaterFactory := &clientsidepeertest.ReplicaUpdaterFactory2Mock{}
 	factory := clientsidepeertest.NewFactory(
 		clientsidepeertest.WithReplicaUpdaterFactory(replicaUpdaterFactory),
 	)
@@ -55,9 +52,7 @@ func Test_should_not_create_inbound_replica_updater_if_already_exists(t *testing
 }
 
 func Test_should_pass_global_context_when_create_inbound_replica_updater(t *testing.T) {
-	replicaUpdaterFactory := &clientsidepeertest.ReplicaUpdaterFactoryMock{
-		NewInboundUpdater_Return: &clientsidepeertest.ReplicaInboundUpdaterMock{},
-	}
+	replicaUpdaterFactory := &clientsidepeertest.ReplicaUpdaterFactory2Mock{}
 	factory := clientsidepeertest.NewFactory(
 		clientsidepeertest.WithReplicaUpdaterFactory(replicaUpdaterFactory),
 	)
@@ -76,8 +71,8 @@ func Test_should_pass_global_context_when_create_inbound_replica_updater(t *test
 }
 
 func Test_should_send_update_to_inbound_replica_updater_with_key_and_value(t *testing.T) {
-	updater := &clientsidepeertest.ReplicaInboundUpdaterMock{}
-	replicaUpdaterFactory := &clientsidepeertest.ReplicaUpdaterFactoryMock{NewInboundUpdater_Return: updater}
+	updater := make(chan any, 1)
+	replicaUpdaterFactory := &clientsidepeertest.ReplicaUpdaterFactory2Mock{NewInboundUpdater_Return: updater}
 	factory := clientsidepeertest.NewFactory(
 		clientsidepeertest.WithReplicaUpdaterFactory(replicaUpdaterFactory),
 	)
@@ -92,6 +87,7 @@ func Test_should_send_update_to_inbound_replica_updater_with_key_and_value(t *te
 		time.Sleep(defaultTimeout)
 	})
 	goutil.PanicUnhandledError(peer.Join())
-	assert.Equal(t, "xxx", updater.Update_key)
-	assert.Equal(t, "yyy", updater.Update_value)
+
+	msg, _ := goutil.ReceiveNoBlock(updater)
+	assert.Equal(t, replicaupdatercontract.InboundUpdate{Key: "xxx", Value: "yyy"}, msg.(replicaupdatercontract.InboundUpdate))
 }

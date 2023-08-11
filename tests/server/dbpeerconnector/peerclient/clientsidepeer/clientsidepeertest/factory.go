@@ -8,15 +8,17 @@ import (
 )
 
 type factoryDependency struct {
-	bufferSize            int
-	defaultSendingTimeout time.Duration
-	replicaUpdaterFactory replicaupdatercontract.Factory
+	bufferSize             int
+	defaultSendingTimeout  time.Duration
+	replicaUpdaterFactory  replicaupdatercontract.Factory
+	replicaUpdaterFactory2 replicaupdatercontract.ActorFactory
 }
 
 func defaultFactoryDependency() factoryDependency {
 	return factoryDependency{
-		replicaUpdaterFactory: &ReplicaUpdaterFactoryMock{},
-		defaultSendingTimeout: 100 * time.Millisecond,
+		replicaUpdaterFactory:  &ReplicaUpdaterFactoryMock{},
+		replicaUpdaterFactory2: &ReplicaUpdaterFactory2Mock{},
+		defaultSendingTimeout:  100 * time.Millisecond,
 	}
 }
 
@@ -25,12 +27,12 @@ func NewFactory(options ...func(*factoryDependency)) clientsidepeercontract.Fact
 	for _, option := range options {
 		option(&deps)
 	}
-	return clientsidepeer.NewFactory(deps.bufferSize, deps.defaultSendingTimeout, deps.replicaUpdaterFactory)
+	return clientsidepeer.NewFactory(deps.bufferSize, deps.defaultSendingTimeout, deps.replicaUpdaterFactory2)
 }
 
-func WithReplicaUpdaterFactory(factory replicaupdatercontract.Factory) func(*factoryDependency) {
+func WithReplicaUpdaterFactory(factory replicaupdatercontract.ActorFactory) func(*factoryDependency) {
 	return func(deps *factoryDependency) {
-		deps.replicaUpdaterFactory = factory
+		deps.replicaUpdaterFactory2 = factory
 	}
 }
 

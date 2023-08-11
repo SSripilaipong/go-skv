@@ -7,11 +7,6 @@ import (
 	"go-skv/server/replicaupdater/replicaupdatercontract"
 )
 
-type InboundUpdate struct {
-	Key   string
-	Value string
-}
-
 func NewActorFactory(recordUpdaterFactory recordreplicator.Factory) replicaupdatercontract.ActorFactory {
 	return factory{recordUpdaterFactory: recordUpdaterFactory}
 }
@@ -36,13 +31,13 @@ type inboundUpdater struct {
 
 func (u *inboundUpdater) Receive(message any) actormodel.Actor {
 	switch castedMsg := message.(type) {
-	case InboundUpdate:
+	case replicaupdatercontract.InboundUpdate:
 		return u.inboundUpdate(castedMsg)
 	}
 	return u
 }
 
-func (u *inboundUpdater) inboundUpdate(msg InboundUpdate) actormodel.Actor {
+func (u *inboundUpdater) inboundUpdate(msg replicaupdatercontract.InboundUpdate) actormodel.Actor {
 	_, _ = u.recordUpdaterFactory.New(u.Ctx(), msg.Key, msg.Value)
 	return u
 }

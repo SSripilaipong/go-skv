@@ -18,7 +18,7 @@ func RunCli() {
 
 func startServer(config servercli.Config) error {
 	storage := dbstorage.New(16, 4)
-	replicaUpdaterFactory := replicaupdater.NewFactory2(storage, storagerecord.NewFactory(16))
+	replicaUpdaterFactory := replicaupdater.NewFactory(storage, storagerecord.NewFactory(16))
 	peerConnector := dbpeerconnector.New(config.PeeringPort, config.AdvertisedIp, config.ExistingPeerAddresses, replicaUpdaterFactory)
 	controller := dbserver.New(config.DbPort, storage)
 

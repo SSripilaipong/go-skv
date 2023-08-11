@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/stretchr/testify/assert"
 	"go-skv/server/replicaupdater"
+	"go-skv/server/replicaupdater/replicaupdatercontract"
 	"go-skv/tests"
 	"go-skv/tests/server/replicaupdater/replicaupdatertest"
 	"testing"
@@ -17,7 +18,7 @@ func Test_should_create_new_record_updater(t *testing.T) {
 		updater, _ := factory.NewInboundUpdater(context.WithValue(ctx, "test", "same context"))
 
 		recordUpdaterFactory.New_WaitUntilCalledOnce(defaultTimeout, func() {
-			sendWithTimeout(updater, replicaupdater.InboundUpdate{Key: "kkk", Value: "vvv"})
+			sendWithTimeout(updater, replicaupdatercontract.InboundUpdate{Key: "kkk", Value: "vvv"})
 		})
 
 	})

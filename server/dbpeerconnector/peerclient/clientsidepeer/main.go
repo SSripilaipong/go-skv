@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func NewFactory(bufferSize int, defaultSendingTimeout time.Duration, replicaUpdaterFactory replicaupdatercontract.Factory) clientsidepeercontract.Factory {
+func NewFactory(bufferSize int, defaultSendingTimeout time.Duration, replicaUpdaterFactory replicaupdatercontract.ActorFactory) clientsidepeercontract.Factory {
 	return factory{
 		replicaUpdaterFactory: replicaUpdaterFactory,
 		bufferSize:            bufferSize,
@@ -18,7 +18,7 @@ func NewFactory(bufferSize int, defaultSendingTimeout time.Duration, replicaUpda
 }
 
 type factory struct {
-	replicaUpdaterFactory replicaupdatercontract.Factory
+	replicaUpdaterFactory replicaupdatercontract.ActorFactory
 	bufferSize            int
 	defaultSendingTimeout time.Duration
 }
@@ -37,7 +37,7 @@ func (f factory) New(ctx context.Context) (peerconnectorcontract.Peer, error) {
 }
 
 type interactor struct {
-	replicaUpdaterFactory replicaupdatercontract.Factory
+	replicaUpdaterFactory replicaupdatercontract.ActorFactory
 	ch                    chan command
 	wg                    *sync.WaitGroup
 	defaultTimeout        time.Duration

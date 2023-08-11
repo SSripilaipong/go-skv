@@ -8,7 +8,7 @@ import (
 	"go-skv/server/replicaupdater/replicaupdatercontract"
 )
 
-func New(advertisedAddress string, replicaUpdaterFactory replicaupdatercontract.Factory) peerclientcontract.Client {
+func New(advertisedAddress string, replicaUpdaterFactory replicaupdatercontract.ActorFactory) peerclientcontract.Client {
 	return peerclientmanager.New(
 		clientsidepeer.NewFactory(0, 0, replicaUpdaterFactory),
 		peergrpcgateway.NewConnector(advertisedAddress),

@@ -16,7 +16,7 @@ func (t interactor) UpdateReplicaFromPeer(key string, value string) error {
 type updateReplicaFromPeerCommand struct {
 	key                   string
 	value                 string
-	replicaUpdaterFactory replicaupdatercontract.Factory
+	replicaUpdaterFactory replicaupdatercontract.ActorFactory
 }
 
 func (c updateReplicaFromPeerCommand) execute(s *state) {
@@ -28,5 +28,8 @@ func (c updateReplicaFromPeerCommand) execute(s *state) {
 		s.inboundUpdater = updater
 	}
 
-	goutil.PanicUnhandledError(updater.Update(c.key, c.value))
+	select {
+	case updater <- replicaupdatercontract.InboundUpdate{Key: c.key, Value: c.value}:
+	case <-s.ctx.Done():
+	}
 }

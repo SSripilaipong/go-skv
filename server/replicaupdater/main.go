@@ -6,6 +6,6 @@ import (
 	"go-skv/server/replicaupdater/replicaupdatercontract"
 )
 
-func NewFactory2(dbStorage dbstoragecontract.Storage, recordFactory dbstoragecontract.Factory) replicaupdatercontract.Factory {
-	return NewFactoryAdapter(NewActorFactory(recordreplicator.NewFactory(newStorageAdapter(dbStorage), recordFactory)))
+func NewFactory(dbStorage dbstoragecontract.Storage, recordFactory dbstoragecontract.Factory) replicaupdatercontract.ActorFactory {
+	return NewActorFactory(recordreplicator.NewFactory(newStorageAdapter(dbStorage), recordFactory))
 }

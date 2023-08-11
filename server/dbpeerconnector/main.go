@@ -9,7 +9,7 @@ import (
 	"go-skv/server/replicaupdater/replicaupdatercontract"
 )
 
-func New(port int, advertisedAddress string, existingPeerAddresses []string, replicaUpdaterFactory replicaupdatercontract.Factory) peerconnectorcontract.Connector {
+func New(port int, advertisedAddress string, existingPeerAddresses []string, replicaUpdaterFactory replicaupdatercontract.ActorFactory) peerconnectorcontract.Connector {
 	return connectormanager.New(
 		existingPeerAddresses,
 		peerclient.New(advertisedAddress, replicaUpdaterFactory),
