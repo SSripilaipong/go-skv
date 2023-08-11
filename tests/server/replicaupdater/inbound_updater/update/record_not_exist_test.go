@@ -94,7 +94,7 @@ func Test_should_add_initialized_replica_record_to_storage(t *testing.T) {
 	})
 	updater.Join()
 
-	assert.NotZero(t, storage.Add_ctx)
+	assert.NotNil(t, storage.Add_ctx)
 	assert.Equal(t, "aaa", storage.Add_key)
 	assert.True(t, initializedRecord == storage.Add_record)
 }
