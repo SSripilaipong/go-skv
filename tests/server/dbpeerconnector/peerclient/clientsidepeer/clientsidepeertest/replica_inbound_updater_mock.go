@@ -22,6 +22,3 @@ func (u *ReplicaInboundUpdaterMock) Update(key string, value string) error {
 
 	return nil
 }
-
-func (u *ReplicaInboundUpdaterMock) Join() {
-}

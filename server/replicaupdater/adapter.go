@@ -36,10 +36,6 @@ func (a adapter) Update(key string, value string) error {
 	return nil
 }
 
-func (a adapter) Join() {
-	panic("deprecated")
-}
-
 func newStorageAdapter(dbStorage dbstoragecontract.Storage) chan<- any {
 	ch, _ := actormodel.Spawn(context.Background(), &storageAdapter{dbStorage: dbStorage})
 	return ch
