@@ -1,4 +1,4 @@
-package servercli
+package cli
 
 type Config struct {
 	DbPort                int

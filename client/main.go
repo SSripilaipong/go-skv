@@ -1,16 +1,14 @@
 package client
 
 import (
-	"go-skv/client/clientcli"
+	"github.com/urfave/cli/v2"
+	clientCli "go-skv/client/cli"
 	"go-skv/client/clientconnection"
 	"go-skv/client/clientrepl"
 )
 
-func RunCli() {
-	cli := clientcli.New(
-		clientrepl.NewReplRunner(
-			clientconnection.New,
-		),
-	)
-	cli.Run()
+func NewCliCommands() []*cli.Command {
+	return clientCli.NewCommands(clientrepl.NewReplRunner(
+		clientconnection.New,
+	))
 }

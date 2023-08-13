@@ -13,13 +13,13 @@ test:
 	go test ./tests/...
 
 server1:
-	go run server.go start --db-port 5555 --peer-port 5556 --peers=localhost:6556
+	go run main.go server start --db-port 5555 --peer-port 5556 --peers=localhost:6556
 
 server2:
-	go run server.go start --db-port 6555 --peer-port 6551 --peers=localhost:5556
+	go run main.go server start --db-port 6555 --peer-port 6551 --peers=localhost:5556
 
 client1:
-	go run client.go connect localhost:5555
+	go run main.go client connect localhost:5555
 
 client2:
-	go run client.go connect localhost:6555
+	go run main.go client connect localhost:6555

@@ -1,22 +1,15 @@
-package servercli
+package cli
 
 import (
 	"github.com/urfave/cli/v2"
 )
-
-func newCliApp(dep dependency) *cli.App {
-	return &cli.App{
-		EnableBashCompletion: true,
-		Commands:             commands(dep),
-	}
-}
 
 var dbPortFlagName = "db-port"
 var peeringPortFlagName = "peer-port"
 var advertisedIpFlagName = "advertised-ip"
 var existingPeerAddresses = "peers"
 
-func commands(dep dependency) []*cli.Command {
+func NewCommands(start func(Config) error) []*cli.Command {
 	return []*cli.Command{
 		{
 			Name: "start",
@@ -42,7 +35,7 @@ func commands(dep dependency) []*cli.Command {
 				},
 			},
 			Action: func(cCtx *cli.Context) error {
-				return dep.Start(Config{
+				return start(Config{
 					DbPort:                cCtx.Int(dbPortFlagName),
 					PeeringPort:           cCtx.Int(peeringPortFlagName),
 					AdvertisedIp:          cCtx.String(advertisedIpFlagName),

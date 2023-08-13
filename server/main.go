@@ -1,22 +1,22 @@
 package server
 
 import (
+	"github.com/urfave/cli/v2"
 	"go-skv/common/util/goutil"
+	serverCli "go-skv/server/cli"
 	"go-skv/server/dbmanager"
 	"go-skv/server/dbpeerconnector"
 	"go-skv/server/dbserver"
 	"go-skv/server/dbstorage"
 	"go-skv/server/dbstorage/storagerecord"
 	"go-skv/server/replicaupdater"
-	"go-skv/server/servercli"
 )
 
-func RunCli() {
-	cli := servercli.New(startServer)
-	cli.Run()
+func NewCliCommands() []*cli.Command {
+	return serverCli.NewCommands(startServer)
 }
 
-func startServer(config servercli.Config) error {
+func startServer(config serverCli.Config) error {
 	storage := dbstorage.New(16, 4)
 	replicaUpdaterFactory := replicaupdater.NewFactory(storage, storagerecord.NewFactory(16))
 	peerConnector := dbpeerconnector.New(config.PeeringPort, config.AdvertisedIp, config.ExistingPeerAddresses, replicaUpdaterFactory)
