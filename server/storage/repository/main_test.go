@@ -5,12 +5,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go-skv/common/test"
 	"go-skv/common/util/goutil"
-	"go-skv/server/storage/message"
+	storageMessage "go-skv/server/storage/message"
 	"testing"
 	"time"
 )
-
-var testDefaultTimeout = 100 * time.Millisecond
 
 func Test_should_notify_termination(t *testing.T) {
 	var isNotified bool
@@ -19,9 +17,39 @@ func Test_should_notify_termination(t *testing.T) {
 	test.ContextScope(func(ctx context.Context) {
 		repo := newRepository(ctx, 1)
 
-		goutil.SendWithTimeout[any](repo, message.Terminate{Notify: done}, testDefaultTimeout)
-		_, isNotified = goutil.ReceiveWithTimeout(done, testDefaultTimeout)
+		send(repo, storageMessage.Terminate{Notify: done})
+
+		_, isNotified = receive(done)
 	})
 
 	assert.True(t, isNotified)
+}
+
+func Test_should_acknowledge_save_with_memo(t *testing.T) {
+	test.ContextScope(func(ctx context.Context) {
+		repo := newRepository(ctx, 1)
+
+		ch := make(chan any)
+		send(repo, storageMessage.SaveRecord{
+			Key:     "abc",
+			Channel: nil,
+			Memo:    "myMemo",
+			ReplyTo: ch,
+		})
+
+		reply, _ := receive(ch)
+		assert.Equal(t, storageMessage.Ack{Memo: "myMemo"}, reply)
+
+		send(repo, storageMessage.Terminate{Notify: make(chan struct{})})
+	})
+}
+
+var defaultTimeout = 100 * time.Millisecond
+
+func send(ch chan<- any, msg any) {
+	goutil.SendWithTimeout[any](ch, msg, defaultTimeout)
+}
+
+func receive[T any](ch <-chan T) (T, bool) {
+	return goutil.ReceiveWithTimeout[T](ch, defaultTimeout)
 }

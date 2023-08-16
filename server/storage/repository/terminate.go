@@ -7,6 +7,8 @@ import (
 
 func terminate(ctx context.Context) func(storageMessage.Terminate) {
 	return func(msg storageMessage.Terminate) {
+		defer close(msg.Notify)
+
 		select {
 		case msg.Notify <- struct{}{}:
 		case <-ctx.Done():
