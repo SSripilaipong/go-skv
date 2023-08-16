@@ -1,8 +1,8 @@
 package recordreplicator
 
 import (
+	"go-skv/common/test"
 	"go-skv/common/util/goutil"
-	"go-skv/tests"
 )
 
 func sendWithTimeout(actor chan<- any, message any) bool {
@@ -11,5 +11,5 @@ func sendWithTimeout(actor chan<- any, message any) bool {
 }
 
 func waitForMessageWithTimeout[T any](actor <-chan any) (T, bool) {
-	return tests.WaitForMessageWithTimeout[T](actor, defaultTimeout*10)
+	return test.WaitForMessageWithTimeout[T](actor, defaultTimeout*10)
 }

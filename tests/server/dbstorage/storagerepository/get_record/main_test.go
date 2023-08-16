@@ -3,10 +3,10 @@ package getValue
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
+	"go-skv/common/test"
 	"go-skv/common/util/goutil"
 	"go-skv/server/dbstorage/dbstoragecontract"
 	"go-skv/server/dbstorage/storagerepository"
-	"go-skv/tests"
 	"go-skv/tests/server/dbstorage/storagerepository/storagerepositorytest"
 	"testing"
 )
@@ -16,7 +16,7 @@ func Test_should_call_execute_with_existing_record(t *testing.T) {
 
 	var existingRecord, retrievedRecord dbstoragecontract.Record
 
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		ctx, _ = context.WithTimeout(ctx, defaultTimeout)
 		goutil.PanicUnhandledError(storage.Start(ctx))
 		goutil.PanicUnhandledError(storage.GetOrCreateRecord(context.Background(), "aaa", func(record dbstoragecontract.Record) {
@@ -37,7 +37,7 @@ func Test_should_call_failure_when_record_not_exists(t *testing.T) {
 	storage := storagerepository.New(0, &storagerepositorytest.RecordFactoryMock{})
 
 	var failureErr error
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		ctx, _ = context.WithTimeout(ctx, defaultTimeout)
 		goutil.PanicUnhandledError(storage.Start(ctx))
 
@@ -55,7 +55,7 @@ func Test_should_not_call_execute_when_record_not_exists(t *testing.T) {
 	storage := storagerepository.New(0, &storagerepositorytest.RecordFactoryMock{})
 
 	var executeIsCalled bool
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		ctx, _ = context.WithTimeout(ctx, defaultTimeout)
 		goutil.PanicUnhandledError(storage.Start(ctx))
 

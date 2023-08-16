@@ -2,7 +2,7 @@ package replicaupdatertest
 
 import (
 	"context"
-	"go-skv/tests"
+	"go-skv/common/test"
 	"sync"
 	"time"
 )
@@ -29,5 +29,5 @@ func (t *RecordUpdaterFactoryMock) New(ctx context.Context, key string, value st
 }
 
 func (t *RecordUpdaterFactoryMock) New_WaitUntilCalledOnce(timeout time.Duration, f func()) {
-	tests.MockWaitUntilCalledNthTimes(&t.New_wg, 1, timeout, f)
+	test.MockWaitUntilCalledNthTimes(&t.New_wg, 1, timeout, f)
 }

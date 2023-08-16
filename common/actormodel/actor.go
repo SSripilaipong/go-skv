@@ -3,6 +3,7 @@ package actormodel
 import (
 	"context"
 	"go-skv/common/commoncontract"
+	"go-skv/common/util/goutil"
 	"sync"
 )
 
@@ -22,7 +23,7 @@ func (t *Embed) setProps(ctx context.Context, ch chan any) {
 }
 
 func (t *Embed) Self() chan<- any {
-	return ExtendedSenderChannel(t.ch)
+	return goutil.ExtendedSenderChannel(t.ch)
 }
 
 func (t *Embed) Ctx() context.Context {
@@ -69,7 +70,7 @@ func Spawn(ctx context.Context, actor Actor, options ...func(*spawnParams)) (cha
 	wg.Add(1)
 	go runActorLoop(ctx, ch, wg, actor)
 
-	return ExtendedSenderChannel(ch), wg.Wait
+	return goutil.ExtendedSenderChannel(ch), wg.Wait
 }
 
 func runActorLoop(ctx context.Context, ch chan any, wg *sync.WaitGroup, actor Actor) {
@@ -104,22 +105,6 @@ func tellBlocking(ctx context.Context, recvCh chan<- any, message any) error {
 	case <-ctx.Done():
 		return commoncontract.ContextClosedError{}
 	}
-}
-
-func ExtendedSenderChannel(originalCh chan<- any) chan<- any {
-	userChan := make(chan any)
-	go func() {
-		defer func() {
-			recover()            // in case the main channel is closed
-			for range userChan { // ignore all remaining messages
-			}
-		}()
-
-		for msg := range userChan {
-			originalCh <- msg
-		}
-	}()
-	return userChan
 }
 
 type assertTypeEmbedActor struct{ Embed }

@@ -3,10 +3,10 @@ package start
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
+	"go-skv/common/test"
 	"go-skv/common/util/goutil"
 	"go-skv/server/dbpeerconnector/peerclient/peerclientcontract"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
-	"go-skv/tests"
 	"go-skv/tests/server/dbpeerconnector/connectormanager/connectormanagertest"
 	"go-skv/tests/server/dbpeerconnector/dbpeerconnectortest"
 	"testing"
@@ -21,7 +21,7 @@ func Test_should_try_to_connect_to_an_existing_peer(t *testing.T) {
 		connectormanagertest.WithClient(client),
 	)
 
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		goutil.PanicUnhandledError(connector.Start(ctx))
 	})
 
@@ -38,7 +38,7 @@ func Test_should_connect_to_next_peer_if_the_first_peer_cannot_be_connected(t *t
 		connectormanagertest.WithClient(client),
 	)
 
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		goutil.PanicUnhandledError(connector.Start(ctx))
 	})
 
@@ -54,7 +54,7 @@ func Test_should_not_connect_to_next_peer_if_the_first_peer_can_be_connected(t *
 		connectormanagertest.WithClient(client),
 	)
 
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		goutil.PanicUnhandledError(connector.Start(ctx))
 	})
 
@@ -64,7 +64,7 @@ func Test_should_not_connect_to_next_peer_if_the_first_peer_can_be_connected(t *
 func Test_should_not_panic_when_no_available_peer(t *testing.T) {
 	connector := connectormanagertest.New()
 
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		assert.NotPanics(t, goutil.WillPanicUnhandledError(func() error { return connector.Start(ctx) }))
 	})
 }
@@ -80,7 +80,7 @@ func Test_should_save_connected_peer_to_repository(t *testing.T) {
 		connectormanagertest.WithPeerRepo(peerRepo),
 	)
 
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		goutil.PanicUnhandledError(connector.Start(ctx))
 	})
 
@@ -97,7 +97,7 @@ func Test_should_save_connected_peer_to_repository_with_its_address_as_its_name(
 		connectormanagertest.WithPeerRepo(peerRepo),
 	)
 
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		goutil.PanicUnhandledError(connector.Start(ctx))
 	})
 
@@ -110,7 +110,7 @@ func Test_should_not_save_to_repository_when_cannot_to_connect_to_peer(t *testin
 		connectormanagertest.WithPeerRepo(peerRepo),
 	)
 
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		goutil.PanicUnhandledError(connector.Start(ctx))
 	})
 

@@ -47,3 +47,19 @@ func SendWithTimeoutOrPanic[T any](dataChan chan T, data T, timeout time.Duratio
 		panic(fmt.Errorf("unexpected error"))
 	}
 }
+
+func ExtendedSenderChannel[T any](originalCh chan<- T) chan<- T {
+	userChan := make(chan T)
+	go func() {
+		defer func() {
+			recover()            // in case the main channel is closed
+			for range userChan { // ignore all remaining messages
+			}
+		}()
+
+		for msg := range userChan {
+			originalCh <- msg
+		}
+	}()
+	return userChan
+}

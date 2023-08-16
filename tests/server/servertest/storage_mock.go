@@ -2,9 +2,9 @@ package servertest
 
 import (
 	"context"
+	"go-skv/common/test"
 	"go-skv/common/util/goutil"
 	"go-skv/server/dbstorage/dbstoragecontract"
-	"go-skv/tests"
 	"go-skv/tests/server/dbstorage/dbstoragetest"
 	"sync"
 	"time"
@@ -55,7 +55,7 @@ func (s *DbStorageMock) GetRecord(ctx context.Context, key string, execute func(
 }
 
 func (s *DbStorageMock) GetRecord_WaitUntilCalledOnce(timeout time.Duration, f func()) bool {
-	return tests.MockWaitUntilCalledNthTimes(&s.GetRecord_wg, 1, timeout, f)
+	return test.MockWaitUntilCalledNthTimes(&s.GetRecord_wg, 1, timeout, f)
 }
 
 func (s *DbStorageMock) GetOrCreateRecord(ctx context.Context, key string, execute func(dbstoragecontract.Record)) error {
@@ -78,5 +78,5 @@ func (s *DbStorageMock) Save(ctx context.Context, key string, record dbstorageco
 	return nil
 }
 func (s *DbStorageMock) Add_WaitUntillCalledOnce(timeout time.Duration, f func()) bool {
-	return tests.MockWaitUntilCalledNthTimes(&s.Add_wg, 1, timeout, f)
+	return test.MockWaitUntilCalledNthTimes(&s.Add_wg, 1, timeout, f)
 }

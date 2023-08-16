@@ -3,10 +3,10 @@ package getValue
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
+	"go-skv/common/test"
 	"go-skv/common/util/goutil"
 	"go-skv/server/dbstorage/dbstoragecontract"
 	"go-skv/server/dbstorage/storagerepository"
-	"go-skv/tests"
 	"go-skv/tests/server/dbstorage/dbstoragetest"
 	"go-skv/tests/server/dbstorage/storagerepository/storagerepositorytest"
 	"testing"
@@ -18,7 +18,7 @@ func Test_should_call_success_with_newly_created_record(t *testing.T) {
 	storage := storagerepository.New(0, factory)
 
 	var successRecord dbstoragecontract.Record
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		goutil.PanicUnhandledError(storage.Start(ctx))
 
 		goutil.PanicUnhandledError(storage.GetOrCreateRecord(ctx, "", func(record dbstoragecontract.Record) { successRecord = record }))
@@ -34,7 +34,7 @@ func Test_should_not_create_same_record_twice(t *testing.T) {
 	factory := &storagerepositorytest.RecordFactoryMock{}
 	storage := storagerepository.New(0, factory)
 
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		goutil.PanicUnhandledError(storage.Start(ctx))
 		goutil.PanicUnhandledError(storage.GetOrCreateRecord(ctx, "aaa", signalDone))
 		goutil.ReceiveWithTimeoutOrPanic(done, defaultTimeout)
@@ -54,7 +54,7 @@ func Test_should_create_new_record_if_the_key_is_not_duplicate_to_existing_ones(
 	factory := &storagerepositorytest.RecordFactoryMock{}
 	storage := storagerepository.New(0, factory)
 
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		goutil.PanicUnhandledError(storage.Start(ctx))
 		goutil.PanicUnhandledError(storage.GetOrCreateRecord(ctx, "aaa", signalDone))
 		goutil.ReceiveWithTimeoutOrPanic(done, defaultTimeout)
@@ -73,7 +73,7 @@ func Test_should_pass_global_context_when_creating_new_record(t *testing.T) {
 	factory := &storagerepositorytest.RecordFactoryMock{}
 	storage := storagerepository.New(0, factory)
 
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		globalCtx := context.WithValue(ctx, "test", "abc123")
 		goutil.PanicUnhandledError(storage.Start(globalCtx))
 
@@ -89,7 +89,7 @@ func Test_should_call_success_with_the_same_record_if_key_is_the_same(t *testing
 	storage := storagerepository.New(0, factory)
 
 	var firstRecord, secondRecord dbstoragecontract.Record
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		goutil.PanicUnhandledError(storage.Start(ctx))
 
 		goutil.PanicUnhandledError(storage.GetOrCreateRecord(ctx, "aaa", func(record dbstoragecontract.Record) {

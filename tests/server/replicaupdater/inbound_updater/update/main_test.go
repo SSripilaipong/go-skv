@@ -3,9 +3,9 @@ package update
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
+	"go-skv/common/test"
 	"go-skv/server/replicaupdater"
 	"go-skv/server/replicaupdater/replicaupdatercontract"
-	"go-skv/tests"
 	"go-skv/tests/server/replicaupdater/replicaupdatertest"
 	"testing"
 )
@@ -14,7 +14,7 @@ func Test_should_create_new_record_updater(t *testing.T) {
 	recordUpdaterFactory := &replicaupdatertest.RecordUpdaterFactoryMock{New_Return: make(chan any)}
 	factory := replicaupdater.NewActorFactory(recordUpdaterFactory)
 
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		updater, _ := factory.NewInboundUpdater(context.WithValue(ctx, "test", "same context"))
 
 		recordUpdaterFactory.New_WaitUntilCalledOnce(defaultTimeout, func() {

@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"github.com/stretchr/testify/assert"
+	"go-skv/common/test"
 	"go-skv/common/util/goutil"
-	"go-skv/tests"
 	"go-skv/tests/server/dbpeerconnector/connectormanager/connectormanagertest"
 	"testing"
 )
@@ -20,7 +20,7 @@ func Test_should_not_start_server_if_connecting_to_existing_peers_panics(t *test
 	)
 
 	assert.Panics(t, func() {
-		tests.ContextScope(func(ctx context.Context) {
+		test.ContextScope(func(ctx context.Context) {
 			goutil.PanicUnhandledError(connector.Start(ctx))
 		})
 	})

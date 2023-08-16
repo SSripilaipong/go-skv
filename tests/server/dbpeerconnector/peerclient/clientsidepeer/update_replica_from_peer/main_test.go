@@ -3,10 +3,10 @@ package update_replica_from_peer
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
+	"go-skv/common/test"
 	"go-skv/common/util/goutil"
 	"go-skv/server/dbpeerconnector/peerconnectorcontract"
 	"go-skv/server/replicaupdater/replicaupdatercontract"
-	"go-skv/tests"
 	"go-skv/tests/server/dbpeerconnector/peerclient/clientsidepeer/clientsidepeertest"
 	"testing"
 	"time"
@@ -18,7 +18,7 @@ func Test_should_create_inbound_replica_updater_if_not_exists(t *testing.T) {
 		clientsidepeertest.WithReplicaUpdaterFactory(replicaUpdaterFactory),
 	)
 	var peer peerconnectorcontract.Peer
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		var err error
 		peer, err = factory.New(ctx)
 		goutil.PanicUnhandledError(err)
@@ -37,7 +37,7 @@ func Test_should_not_create_inbound_replica_updater_if_already_exists(t *testing
 		clientsidepeertest.WithReplicaUpdaterFactory(replicaUpdaterFactory),
 	)
 	var peer peerconnectorcontract.Peer
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		var err error
 		peer, err = factory.New(ctx)
 		goutil.PanicUnhandledError(err)
@@ -57,7 +57,7 @@ func Test_should_pass_global_context_when_create_inbound_replica_updater(t *test
 		clientsidepeertest.WithReplicaUpdaterFactory(replicaUpdaterFactory),
 	)
 	var peer peerconnectorcontract.Peer
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		var err error
 		peer, err = factory.New(context.WithValue(ctx, "test", "abc555"))
 		goutil.PanicUnhandledError(err)
@@ -77,7 +77,7 @@ func Test_should_send_update_to_inbound_replica_updater_with_key_and_value(t *te
 		clientsidepeertest.WithReplicaUpdaterFactory(replicaUpdaterFactory),
 	)
 	var peer peerconnectorcontract.Peer
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		var err error
 		peer, err = factory.New(ctx)
 		goutil.PanicUnhandledError(err)

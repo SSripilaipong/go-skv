@@ -4,9 +4,9 @@ import (
 	"context"
 	"github.com/stretchr/testify/assert"
 	"go-skv/common/commonmessage"
+	"go-skv/common/test"
 	"go-skv/server/dbstorage/dbstoragecontract"
 	"go-skv/server/replicaupdater/recordreplicator"
-	"go-skv/tests"
 	"go-skv/tests/server/dbstorage/storagerepository/storagerepositorytest"
 	"testing"
 )
@@ -16,7 +16,7 @@ func Test_should_create_new_record_if_retrieved_record_channel_is_empty(t *testi
 	recordFactory := &storagerepositorytest.RecordFactoryMock{}
 	factory := recordreplicator.NewFactory(storage, recordFactory)
 
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		replicator, _ := factory.New(context.WithValue(ctx, "test", "the same ctx"), "", "")
 		defer close(replicator)
 
@@ -36,7 +36,7 @@ func Test_should_set_mode_to_replica_on_the_created_record(t *testing.T) {
 	recordFactory := &storagerepositorytest.RecordFactoryMock{}
 	factory := recordreplicator.NewFactory(storage, recordFactory)
 
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		replicator, _ := factory.New(ctx, "", "")
 		defer close(replicator)
 
@@ -61,7 +61,7 @@ func Test_should_save_the_created_record_to_storage(t *testing.T) {
 	recordFactory := &storagerepositorytest.RecordFactoryMock{}
 	factory := recordreplicator.NewFactory(storage, recordFactory)
 
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		replicator, _ := factory.New(ctx, "fff", "")
 		defer close(replicator)
 
@@ -91,7 +91,7 @@ func Test_should_not_save_the_created_record_to_storage_before_ok_from_set_recor
 	recordFactory := &storagerepositorytest.RecordFactoryMock{}
 	factory := recordreplicator.NewFactory(storage, recordFactory)
 
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		replicator, _ := factory.New(ctx, "", "")
 		defer close(replicator)
 
@@ -118,7 +118,7 @@ func Test_should_retry_updating_after_record_is_saved(t *testing.T) {
 	recordFactory := &storagerepositorytest.RecordFactoryMock{}
 	factory := recordreplicator.NewFactory(storage, recordFactory)
 
-	tests.ContextScope(func(ctx context.Context) {
+	test.ContextScope(func(ctx context.Context) {
 		replicator, _ := factory.New(ctx, "fff", "ggg")
 		defer close(replicator)
 
