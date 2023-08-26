@@ -1,18 +1,18 @@
 package repository
 
 import (
-	storageMessage "go-skv/server/storage/message"
+	. "go-skv/server/storage/repository/message"
 )
 
-func switchMessage(terminate func(storageMessage.Terminate), saveRecord func(storageMessage.SaveRecord), forwardToRecord func(msg storageMessage.ForwardToRecord)) func(raw any) (isTerminated bool) {
+func switchMessage(terminate func(Terminate), saveRecord func(SaveRecord), forwardToRecord func(msg ForwardToRecord)) func(raw any) (isTerminated bool) {
 	return func(raw any) (isTerminated bool) {
 		switch msg := raw.(type) {
-		case storageMessage.Terminate:
+		case Terminate:
 			terminate(msg)
 			return true
-		case storageMessage.SaveRecord:
+		case SaveRecord:
 			saveRecord(msg)
-		case storageMessage.ForwardToRecord:
+		case ForwardToRecord:
 			forwardToRecord(msg)
 		}
 		return false

@@ -5,7 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go-skv/common/test"
 	"go-skv/common/util/goutil"
-	storageMessage "go-skv/server/storage/message"
+	. "go-skv/server/storage/repository/message"
 	"testing"
 	"time"
 )
@@ -17,7 +17,7 @@ func Test_should_notify_termination(t *testing.T) {
 	test.ContextScope(func(ctx context.Context) {
 		repo := newRepository(ctx, 1)
 
-		send(repo, storageMessage.Terminate{Notify: done})
+		send(repo, Terminate{Notify: done})
 
 		_, isNotified = receive(done)
 	})
@@ -30,7 +30,7 @@ func Test_should_acknowledge_save_with_memo(t *testing.T) {
 		repo := newRepository(ctx, 1)
 
 		ch := make(chan any)
-		send(repo, storageMessage.SaveRecord{
+		send(repo, SaveRecord{
 			Key:     "",
 			Channel: nil,
 			Memo:    "myMemo",
@@ -38,9 +38,9 @@ func Test_should_acknowledge_save_with_memo(t *testing.T) {
 		})
 
 		reply, _ := receive(ch)
-		assert.Equal(t, storageMessage.Ack{Memo: "myMemo"}, reply)
+		assert.Equal(t, Ack{Memo: "myMemo"}, reply)
 
-		send(repo, storageMessage.Terminate{Notify: make(chan struct{})})
+		send(repo, Terminate{Notify: make(chan struct{})})
 	})
 }
 
@@ -49,14 +49,14 @@ func Test_should_forward_message_to_saved_record(t *testing.T) {
 		repo := newRepository(ctx, 1)
 
 		recordChan := make(chan any)
-		send(repo, storageMessage.SaveRecord{
+		send(repo, SaveRecord{
 			Key:     "abc",
 			Channel: recordChan,
 			Memo:    "",
 			ReplyTo: make(chan<- any, 1),
 		})
 
-		send(repo, storageMessage.ForwardToRecord{
+		send(repo, ForwardToRecord{
 			Key:     "abc",
 			Message: "Hello Record",
 			Memo:    "",
@@ -66,7 +66,7 @@ func Test_should_forward_message_to_saved_record(t *testing.T) {
 		forwardedMessage, _ := receive(recordChan)
 		assert.Equal(t, "Hello Record", forwardedMessage)
 
-		send(repo, storageMessage.Terminate{Notify: make(chan struct{})})
+		send(repo, Terminate{Notify: make(chan struct{})})
 	})
 }
 
