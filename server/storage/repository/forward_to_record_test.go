@@ -27,3 +27,26 @@ func TestForwardToRecord_should_reply_with_record_not_found_message_containing_m
 		}, reply)
 	})
 }
+
+func TestForwardToRecord_should_reply_with_record_not_found_if_existing_keys_dont_match_the_requested_key(t *testing.T) {
+	existingRecords := make(map[string]chan<- any)
+	existingRecords[""] = make(chan<- any)
+
+	test.ContextScope(func(ctx context.Context) {
+		handle := forwardToRecord(ctx, existingRecords)
+
+		replyChan := make(chan any)
+		go handle(message.ForwardToRecord{
+			Key:     "yyy",
+			Message: nil,
+			Memo:    "HeHe",
+			ReplyTo: replyChan,
+		})
+		reply, _ := receive(replyChan)
+
+		assert.Equal(t, message.RecordNotFound{
+			Key:  "yyy",
+			Memo: "HeHe",
+		}, reply)
+	})
+}

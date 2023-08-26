@@ -10,7 +10,7 @@ func forwardToRecord(ctx context.Context, records map[string]chan<- any) func(ms
 	return func(msg storageMessage.ForwardToRecord) {
 		defer close(msg.ReplyTo)
 
-		record, exists := records[""]
+		record, exists := records[msg.Key]
 		if !exists {
 			goutil.SendWithinCtx[any](ctx, msg.ReplyTo, storageMessage.RecordNotFound{Key: msg.Key, Memo: msg.Memo})
 			return
