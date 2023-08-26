@@ -31,7 +31,7 @@ func Test_should_acknowledge_save_with_memo(t *testing.T) {
 
 		ch := make(chan any)
 		send(repo, storageMessage.SaveRecord{
-			Key:     "abc",
+			Key:     "",
 			Channel: nil,
 			Memo:    "myMemo",
 			ReplyTo: ch,
@@ -39,6 +39,32 @@ func Test_should_acknowledge_save_with_memo(t *testing.T) {
 
 		reply, _ := receive(ch)
 		assert.Equal(t, storageMessage.Ack{Memo: "myMemo"}, reply)
+
+		send(repo, storageMessage.Terminate{Notify: make(chan struct{})})
+	})
+}
+
+func Test_should_forward_message_to_saved_record(t *testing.T) {
+	test.ContextScope(func(ctx context.Context) {
+		repo := newRepository(ctx, 1)
+
+		recordChan := make(chan any)
+		send(repo, storageMessage.SaveRecord{
+			Key:     "abc",
+			Channel: recordChan,
+			Memo:    "",
+			ReplyTo: make(chan<- any, 1),
+		})
+
+		send(repo, storageMessage.ForwardToRecord{
+			Key:     "abc",
+			Message: "Hello Record",
+			Memo:    "",
+			ReplyTo: make(chan<- any, 1),
+		})
+
+		forwardedMessage, _ := receive(recordChan)
+		assert.Equal(t, "Hello Record", forwardedMessage)
 
 		send(repo, storageMessage.Terminate{Notify: make(chan struct{})})
 	})
