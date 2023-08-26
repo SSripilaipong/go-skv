@@ -38,6 +38,22 @@ func Test_should_ack_when_set_value(t *testing.T) {
 	})
 }
 
+func Test_should_reply_newly_set_value_when_request_get_value_after_request_set_value(t *testing.T) {
+	factory := NewFactory(1)
+
+	test.ContextScope(func(ctx context.Context) {
+		record := factory.New(ctx, "Hello")
+
+		send(record, SetValue{Value: "World", Memo: "", ReplyTo: make(chan any, 1)})
+
+		replyChan := make(chan any)
+		send(record, GetValue{Memo: "QQQ", ReplyTo: replyChan})
+		reply, _ := receive(replyChan)
+
+		assert.Equal(t, Value{Value: "World", Memo: "QQQ"}, reply)
+	})
+}
+
 var defaultTimeout = 100 * time.Millisecond
 
 func send(ch chan<- any, msg any) {
