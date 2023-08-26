@@ -13,6 +13,7 @@ func (f factory) New(ctx context.Context, value string) chan<- any {
 	ch := make(chan any, f.channelBufferSize)
 
 	go loop(ctx, switchMessage(
+		setValue(ctx, &value),
 		getValue(ctx, &value),
 	), ch)
 

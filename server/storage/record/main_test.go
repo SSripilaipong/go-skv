@@ -17,10 +17,24 @@ func Test_should_reply_value_when_request_with_get_value(t *testing.T) {
 		record := factory.New(ctx, "Hello")
 
 		replyChan := make(chan any)
-		send(record, GetValue{ReplyTo: replyChan})
+		send(record, GetValue{Memo: "MMM", ReplyTo: replyChan})
 		reply, _ := receive(replyChan)
 
-		assert.Equal(t, Value{Value: "Hello"}, reply)
+		assert.Equal(t, Value{Value: "Hello", Memo: "MMM"}, reply)
+	})
+}
+
+func Test_should_ack_when_set_value(t *testing.T) {
+	factory := NewFactory(1)
+
+	test.ContextScope(func(ctx context.Context) {
+		record := factory.New(ctx, "Hello")
+
+		replyChan := make(chan any)
+		send(record, SetValue{Value: "World", Memo: "YeeHee", ReplyTo: replyChan})
+		reply, _ := receive(replyChan)
+
+		assert.Equal(t, Ack{Memo: "YeeHee"}, reply)
 	})
 }
 
