@@ -21,3 +21,8 @@ type ForwardToRecord struct {
 	Memo    string
 	ReplyTo chan<- any
 }
+
+type RecordNotFound struct {
+	Key  string
+	Memo string
+}

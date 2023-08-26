@@ -1,6 +1,7 @@
 package goutil
 
 import (
+	"context"
 	"fmt"
 	"time"
 )
@@ -62,4 +63,11 @@ func ExtendedSenderChannel[T any](originalCh chan<- T) chan<- T {
 		}
 	}()
 	return userChan
+}
+
+func SendWithinCtx[C any](ctx context.Context, ch chan<- C, msg C) {
+	select {
+	case ch <- msg:
+	case <-ctx.Done():
+	}
 }
