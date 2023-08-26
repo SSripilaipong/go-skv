@@ -8,6 +8,8 @@ import (
 
 func setValue(ctx context.Context, value *string) func(msg SetValue) {
 	return func(msg SetValue) {
+		defer close(msg.ReplyTo)
+
 		*value = msg.Value
 		goutil.SendWithinCtx[any](ctx, msg.ReplyTo, Ack{Memo: msg.Memo})
 	}
