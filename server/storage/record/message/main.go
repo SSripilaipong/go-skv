@@ -11,10 +11,6 @@ type SetValue struct {
 	ReplyTo chan any
 }
 
-type Ack struct {
-	Memo string
-}
-
 type Value struct {
 	Value string
 	Memo  string
